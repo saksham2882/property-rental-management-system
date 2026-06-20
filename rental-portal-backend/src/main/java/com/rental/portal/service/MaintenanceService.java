@@ -51,7 +51,8 @@ public class MaintenanceService {
             }
         }
 
-        return maintenanceRequestRepo.findAll();
+        // Security check: If UserPrincipal is unavailable, deny access instead of exposing all records
+        throw new AccessDeniedException("Authentication required to access maintenance requests");
     }
 
 
