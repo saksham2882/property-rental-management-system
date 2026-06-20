@@ -1,5 +1,6 @@
 package com.rental.portal.service;
 
+import com.rental.portal.dto.UserResponse;
 import com.rental.portal.model.User;
 import com.rental.portal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -16,11 +18,35 @@ public class UserService {
     private UserRepository userRepository;
 
 
-    public List<User> getAllUsers(String role) {
+    public List<UserResponse> getAllUsers(String role) {
+        List<User> users;
         if (role != null) {
-            return userRepository.findByRole(role);
+            users = userRepository.findByRole(role);
+        } else {
+            users = userRepository.findAll();
         }
-        return userRepository.findAll();
+        // Map to UserResponse to exclude password field
+        return users.stream()
+                .map(this::mapToUserResponse)
+                .collect(Collectors.toList());
+    }
+
+    private UserResponse mapToUserResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .phone(user.getPhone())
+                .city(user.getCity())
+                .preferredLocations(user.getPreferredLocations())
+                .budgetMin(user.getBudgetMin())
+                .budgetMax(user.getBudgetMax())
+                .createdAt(user.getCreatedAt())
+                .emailAlerts(user.getEmailAlerts())
+                .smsAlerts(user.getSmsAlerts())
+                .wishlist(user.getWishlist())
+                .build();
     }
 
 

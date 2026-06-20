@@ -139,6 +139,14 @@ public class PropertyService {
             return Optional.empty();
         }
 
+        // Validate rating is not null and within valid bounds
+        if (review.getRating() == null) {
+            throw new IllegalArgumentException("Rating cannot be null");
+        }
+        if (review.getRating() < 1 || review.getRating() > 5) {
+            throw new IllegalArgumentException("Rating must be between 1 and 5");
+        }
+
         review.setId(UUID.randomUUID().toString().substring(0, 8));
         review.setPropertyId(id);
         review.setCreatedAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
@@ -147,8 +155,13 @@ public class PropertyService {
 
         Property property = propOpt.get();
         List<Review> reviews = reviewRepository.findByPropertyId(id);
-        
-        double avg = reviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
+
+        // Filter out null ratings before calculating average
+        double avg = reviews.stream()
+                .filter(r -> r.getRating() != null)
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0);
         property.setAverageRating(Math.round(avg * 10.0) / 10.0);
         property.setTotalReviews(reviews.size());
         propertyRepository.save(property);

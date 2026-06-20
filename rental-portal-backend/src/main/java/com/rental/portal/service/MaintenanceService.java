@@ -1,8 +1,13 @@
 package com.rental.portal.service;
 
 import com.rental.portal.model.MaintenanceRequest;
+import com.rental.portal.model.User;
 import com.rental.portal.repository.MaintenanceRequestRepository;
+import com.rental.portal.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -19,9 +24,33 @@ public class MaintenanceService {
 
 
     public List<MaintenanceRequest> getRequests(String tenantId) {
-        if (tenantId != null) {
-            return maintenanceRequestRepo.findByTenantId(tenantId);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            User currentUser = userPrincipal.getUser();
+            String userRole = currentUser.getRole();
+
+            // If a specific tenantId is requested, verify the caller is authorized
+            if (tenantId != null) {
+                // ADMIN and STAFF can access any tenant's records
+                // Regular users can only access their own records
+                boolean isAdminOrStaff = "ADMIN".equalsIgnoreCase(userRole) || "STAFF".equalsIgnoreCase(userRole);
+                boolean isOwnRecord = tenantId.equals(currentUser.getId());
+
+                if (!isAdminOrStaff && !isOwnRecord) {
+                    throw new AccessDeniedException("You are not authorized to access this tenant's maintenance requests");
+                }
+                return maintenanceRequestRepo.findByTenantId(tenantId);
+            }
+
+            // If no tenantId specified, ADMIN and STAFF can see all, others see only their own
+            if ("ADMIN".equalsIgnoreCase(userRole) || "STAFF".equalsIgnoreCase(userRole)) {
+                return maintenanceRequestRepo.findAll();
+            } else {
+                return maintenanceRequestRepo.findByTenantId(currentUser.getId());
+            }
         }
+
         return maintenanceRequestRepo.findAll();
     }
 
