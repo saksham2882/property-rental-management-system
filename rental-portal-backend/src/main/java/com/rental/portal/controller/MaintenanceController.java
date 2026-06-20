@@ -19,7 +19,7 @@ public class MaintenanceController {
 
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<MaintenanceRequest>> getRequests(@RequestParam(required = false) String tenantId) {
         List<MaintenanceRequest> requests = maintenanceService.getRequests(tenantId);
         return ResponseEntity.ok(requests);
@@ -35,7 +35,7 @@ public class MaintenanceController {
 
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MaintenanceRequest> updateRequest(@PathVariable String id, @RequestBody MaintenanceRequest updateData) {
         return maintenanceService.updateRequest(id, updateData)
                 .map(ResponseEntity::ok)
