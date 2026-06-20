@@ -24,34 +24,31 @@ public class MaintenanceService {
 
 
     public List<MaintenanceRequest> getRequests(String tenantId) {
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
             User currentUser = userPrincipal.getUser();
             String userRole = currentUser.getRole();
 
-            // If a specific tenantId is requested, verify the caller is authorized
             if (tenantId != null) {
-                // ADMIN and STAFF can access any tenant's records
-                // Regular users can only access their own records
-                boolean isAdminOrStaff = "ADMIN".equalsIgnoreCase(userRole) || "STAFF".equalsIgnoreCase(userRole);
+                boolean isAdmin = "ADMIN".equalsIgnoreCase(userRole);
                 boolean isOwnRecord = tenantId.equals(currentUser.getId());
 
-                if (!isAdminOrStaff && !isOwnRecord) {
+                if (!isAdmin && !isOwnRecord) {
                     throw new AccessDeniedException("You are not authorized to access this tenant's maintenance requests");
                 }
                 return maintenanceRequestRepo.findByTenantId(tenantId);
             }
 
-            // If no tenantId specified, ADMIN and STAFF can see all, others see only their own
-            if ("ADMIN".equalsIgnoreCase(userRole) || "STAFF".equalsIgnoreCase(userRole)) {
+            if ("ADMIN".equalsIgnoreCase(userRole)) {
                 return maintenanceRequestRepo.findAll();
             } else {
                 return maintenanceRequestRepo.findByTenantId(currentUser.getId());
             }
         }
 
-        // Security check: If UserPrincipal is unavailable, deny access instead of exposing all records
         throw new AccessDeniedException("Authentication required to access maintenance requests");
     }
 

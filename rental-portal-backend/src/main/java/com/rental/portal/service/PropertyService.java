@@ -139,7 +139,6 @@ public class PropertyService {
             return Optional.empty();
         }
 
-        // Validate rating is not null and within valid bounds
         if (review.getRating() == null) {
             throw new IllegalArgumentException("Rating cannot be null");
         }
@@ -156,7 +155,6 @@ public class PropertyService {
         Property property = propOpt.get();
         List<Review> reviews = reviewRepository.findByPropertyId(id);
 
-        // Filter out null ratings before calculating average
         double avg = reviews.stream()
                 .filter(r -> r.getRating() != null)
                 .mapToInt(Review::getRating)
