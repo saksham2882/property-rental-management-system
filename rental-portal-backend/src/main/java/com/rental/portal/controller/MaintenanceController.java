@@ -19,7 +19,6 @@ public class MaintenanceController {
 
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<MaintenanceRequest>> getRequests(@RequestParam(required = false) String tenantId) {
         List<MaintenanceRequest> requests = maintenanceService.getRequests(tenantId);
         return ResponseEntity.ok(requests);
