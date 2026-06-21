@@ -2,6 +2,7 @@ package com.rental.portal.config;
 
 import com.rental.portal.filter.JwtAuthenticationFilter;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,6 +60,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/error").permitAll()
+                    .requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui", "/swagger-ui/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/properties/**").permitAll()
                     .anyRequest().authenticated()
             );
 
