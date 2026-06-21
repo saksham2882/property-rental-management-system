@@ -1,0 +1,11 @@
+services:
+  backend:
+    build:
+      context: ./rental-portal-backend
+      dockerfile: Dockerfile
+    container_name: rental-portal-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    restart: unless-stopped
