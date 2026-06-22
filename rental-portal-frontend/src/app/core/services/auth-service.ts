@@ -5,8 +5,8 @@ import { catchError } from 'rxjs/operators';
 import { User } from '../models/user-model';
 import { ApiService } from '../global/api-service';
 
-@Injectable({ 
-  providedIn: 'root' 
+@Injectable({
+  providedIn: 'root'
 })
 export class AuthService {
 
@@ -27,7 +27,7 @@ export class AuthService {
       tap(res => {
         this.currentUser.set(res.user);
         this.isLoggedIn.set(true);
-        localStorage.setItem('rental_token', res.token);
+        localStorage.setItem('auth-token', res.token);
         localStorage.setItem('rental_user', JSON.stringify(res.user));
       }),
       map(res => [res.user]),
@@ -40,7 +40,7 @@ export class AuthService {
       tap(response => {
         this.currentUser.set(response.user);
         this.isLoggedIn.set(true);
-        localStorage.setItem('rental_token', response.token);
+        localStorage.setItem('auth-token', response.token);
         localStorage.setItem('rental_user', JSON.stringify(response.user));
       }),
       map(response => response.user)
@@ -50,7 +50,7 @@ export class AuthService {
   logout() {
     this.currentUser.set(null);
     this.isLoggedIn.set(false);
-    localStorage.removeItem('rental_token');
+    localStorage.removeItem('auth-token');
     localStorage.removeItem('rental_user');
     this.router.navigate(['/auth/login']);
   }
