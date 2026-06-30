@@ -56,7 +56,7 @@
             }
           </a>
 
-          <div class="menu">
+          <div class="menu" clickOutside (clickOutside)="userDropdownOpen = false">
             <button class="user flex items-center gap-2" (click)="toggleUserDropdown()">
               <span class="avatar flex items-center justify-center">
                 {{ ((currentUser$ | async)?.name || 'U').substring(0,1).toUpperCase() }}
@@ -83,7 +83,7 @@
           </div>
         }
 
-        <button class="icon hamburger hide-desktop flex items-center justify-center" (click)="toggleMobileMenu()" aria-label="Toggle navigation menu">
+        <button class="icon hamburger hide-desktop flex items-center justify-center" (click)="toggleMobileMenu(); $event.stopPropagation()" aria-label="Toggle navigation menu">
           @if (mobileMenuOpen) {
             <app-icon name="x" size="md"></app-icon>
           } @else {
@@ -95,7 +95,7 @@
   </div>
 
   @if (mobileMenuOpen) {
-    <div class="drawer">
+    <div class="drawer" clickOutside (clickOutside)="mobileMenuOpen = false">
       <div class="mobile-links flex flex-col gap-1">
         @if (isLoggedIn$ | async) {
           @if (isAdmin$ | async) {

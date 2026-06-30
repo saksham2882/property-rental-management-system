@@ -1,15 +1,16 @@
-import { Component, inject, signal, HostListener } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { IconComponent } from '../icon/icon';
+import { ClickOutsideDirective } from '../../directives/click-outside-directive';
 import { selectCurrentUser, selectIsLoggedIn, selectIsAdmin } from '../../../store/auth/auth.selectors';
 import { selectUnreadCount } from '../../../store/notifications/notifications.selectors';
 import { logout } from '../../../store/auth/auth.actions';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule, RouterLink, RouterLinkActive, IconComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive, IconComponent, ClickOutsideDirective],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'
 })
@@ -29,17 +30,6 @@ export class Navbar {
   constructor() {
     const theme = localStorage.getItem('theme') || 'light';
     this.isDarkMode.set(theme === 'dark');
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.menu')) {
-      this.userDropdownOpen = false;
-    }
-    if (!target.closest('.drawer') && !target.closest('.hamburger')) {
-      this.mobileMenuOpen = false;
-    }
   }
 
   toggleMobileMenu(): void {

@@ -1,0 +1,25 @@
+<div class="dropdown" [class.open]="isOpen" clickOutside (clickOutside)="isOpen = false">
+
+  <button type="button" class="trigger flex items-center justify-between gap-2" (click)="toggleDropdown()">
+    <div class="left flex items-center gap-2">
+      @if (iconName) {
+        <app-icon [name]="iconName" size="md" class="icon-left"></app-icon>
+      }
+      <span class="text" [class.placeholder]="!value">{{ selectedLabel }}</span>
+    </div>
+    <app-icon name="chevron-down" size="sm" class="arrow"></app-icon>
+  </button>
+
+  @if (isOpen) {
+    <div class="menu flex flex-col glass-card animate-dropdown">
+      @for (opt of options; track opt.value) {
+        <button type="button" 
+                class="option text-start" 
+                [class.selected]="opt.value === value"
+                (click)="selectOption(opt.value)">
+          {{ opt.label }}
+        </button>
+      }
+    </div>
+  }
+</div>
