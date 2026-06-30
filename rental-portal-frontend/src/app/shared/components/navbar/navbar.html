@@ -1,0 +1,132 @@
+<nav class="nav">
+  <div class="wrapper">
+    <div class="row flex items-center justify-between">
+      <a routerLink="/" class="logo flex items-center gap-2" (click)="closeDropdowns()">
+        <span class="badge flex items-center justify-center">
+          <app-icon name="home" size="md"></app-icon>
+        </span>
+        <span class="logo-text ">Rent<span class="logo-accent">Ease</span></span>
+      </a>
+
+      <div class="links flex items-center gap-1 hide-mobile">
+        @if (isLoggedIn$ | async) {
+          @if (isAdmin$ | async) {
+            <a routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="link">Dashboard</a>
+            <a routerLink="/admin/properties" routerLinkActive="active" class="link">Properties</a>
+            <a routerLink="/admin/applications" routerLinkActive="active" class="link">Applications</a>
+            <a routerLink="/admin/tenants" routerLinkActive="active" class="link">Tenants</a>
+            <a routerLink="/admin/rent" routerLinkActive="active" class="link">Rent</a>
+            <a routerLink="/admin/maintenance" routerLinkActive="active" class="link">Work Orders</a>
+          } @else {
+            <a routerLink="/customer/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="link">Dashboard</a>
+            <a routerLink="/customer/properties" routerLinkActive="active" class="link">Find Homes</a>
+            <a routerLink="/customer/applications" routerLinkActive="active" class="link">Applications</a>
+            <a routerLink="/customer/lease" routerLinkActive="active" class="link">My Lease</a>
+            <a routerLink="/customer/rent" routerLinkActive="active" class="link">Pay Rent</a>
+            <a routerLink="/customer/maintenance" routerLinkActive="active" class="link">Support</a>
+          }
+        } @else {
+          <a routerLink="/" class="link">Home</a>
+          <a href="#features" class="link">Features</a>
+          <a href="#how-it-works" class="link">How It Works</a>
+          <a href="#cities" class="link">Cities</a>
+          <a href="#testimonials" class="link">Reviews</a>
+        }
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button class="icon flex items-center justify-center" (click)="toggleTheme()" [attr.aria-label]="isDarkMode() ? 'Switch to light mode' : 'Switch to dark mode'">
+          @if (isDarkMode()) {
+            <app-icon name="sun" size="md"></app-icon>
+          } @else {
+            <app-icon name="moon" size="md"></app-icon>
+          }
+        </button>
+
+        @if (!(isLoggedIn$ | async)) {
+          <a routerLink="/auth/login" class="link hide-mobile">Sign In</a>
+          <a routerLink="/auth/register" class="btn btn-primary btn-sm hide-mobile">Sign Up</a>
+        }
+
+        @if (isLoggedIn$ | async) {
+          <a [routerLink]="(isAdmin$ | async) ? '/admin/notifications' : '/customer/notifications'" class="icon bell flex items-center justify-center" aria-label="View notifications">
+            <app-icon name="bell" size="md"></app-icon>
+            @if ((unreadCount$ | async) || 0 > 0) {
+              <span class="badge flex items-center justify-center">{{ unreadCount$ | async }}</span>
+            }
+          </a>
+
+          <div class="menu">
+            <button class="user flex items-center gap-2" (click)="toggleUserDropdown()">
+              <span class="avatar flex items-center justify-center">
+                {{ ((currentUser$ | async)?.name || 'U').substring(0,1).toUpperCase() }}
+              </span>
+              <span class="name hide-mobile">{{ (currentUser$ | async)?.name }}</span>
+              <app-icon name="chevron-down" size="sm"></app-icon>
+            </button>
+
+            @if (userDropdownOpen) {
+              <div class="dropdown">
+                @if (!(isAdmin$ | async)) {
+                  <a routerLink="/customer/profile" (click)="closeDropdowns()" class="item flex items-center gap-3">
+                    <app-icon name="user" size="sm"></app-icon>
+                    <span>My Profile</span>
+                  </a>
+                }
+                <div class="divider"></div>
+                <button (click)="onLogout()" class="item danger flex items-center gap-3">
+                  <app-icon name="log-out" size="sm"></app-icon>
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            }
+          </div>
+        }
+
+        <button class="icon hamburger hide-desktop flex items-center justify-center" (click)="toggleMobileMenu()" aria-label="Toggle navigation menu">
+          @if (mobileMenuOpen) {
+            <app-icon name="x" size="md"></app-icon>
+          } @else {
+            <app-icon name="menu" size="md"></app-icon>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (mobileMenuOpen) {
+    <div class="drawer">
+      <div class="mobile-links flex flex-col gap-1">
+        @if (isLoggedIn$ | async) {
+          @if (isAdmin$ | async) {
+            <a routerLink="/admin/dashboard" (click)="closeDropdowns()" class="link">Dashboard</a>
+            <a routerLink="/admin/properties" (click)="closeDropdowns()" class="link">Properties</a>
+            <a routerLink="/admin/applications" (click)="closeDropdowns()" class="link">Applications</a>
+            <a routerLink="/admin/tenants" (click)="closeDropdowns()" class="link">Tenants</a>
+            <a routerLink="/admin/rent" (click)="closeDropdowns()" class="link">Rent Tracking</a>
+            <a routerLink="/admin/maintenance" (click)="closeDropdowns()" class="link">Work Orders</a>
+          } @else {
+            <a routerLink="/customer/dashboard" (click)="closeDropdowns()" class="link">Dashboard</a>
+            <a routerLink="/customer/properties" (click)="closeDropdowns()" class="link">Find Homes</a>
+            <a routerLink="/customer/applications" (click)="closeDropdowns()" class="link">Applications</a>
+            <a routerLink="/customer/lease" (click)="closeDropdowns()" class="link">My Lease</a>
+            <a routerLink="/customer/rent" (click)="closeDropdowns()" class="link">Pay Rent</a>
+            <a routerLink="/customer/maintenance" (click)="closeDropdowns()" class="link">Support</a>
+            <div class="divider"></div>
+            <a routerLink="/customer/profile" (click)="closeDropdowns()" class="link">My Profile</a>
+          }
+          <div class="divider"></div>
+          <button (click)="onLogout()" class="link danger">Sign Out</button>
+        } @else {
+          <a routerLink="/" (click)="closeDropdowns()" class="link">Home</a>
+          <a href="#features" (click)="closeDropdowns()" class="link">Features</a>
+          <a href="#how-it-works" (click)="closeDropdowns()" class="link">How It Works</a>
+          <a href="#cities" (click)="closeDropdowns()" class="link">Cities</a>
+          <a href="#testimonials" (click)="closeDropdowns()" class="link">Reviews</a>
+          <a routerLink="/auth/login" (click)="closeDropdowns()" class="link">Sign In</a>
+          <a routerLink="/auth/register" (click)="closeDropdowns()" class="link primary">Sign Up</a>
+        }
+      </div>
+    </div>
+  }
+</nav>
