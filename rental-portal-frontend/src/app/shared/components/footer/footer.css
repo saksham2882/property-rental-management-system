@@ -1,0 +1,139 @@
+footer {
+  background: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgb(148, 163, 184);
+  padding: var(--space-16) 0 var(--space-8);
+}
+
+.wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  }
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+}
+
+.logo-accent {
+  background: linear-gradient(90deg, var(--primary-light), var(--accent-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.desc {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: rgb(100, 116, 139);
+  max-width: 320px;
+}
+
+.socials .link {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgb(148, 163, 184);
+  transition: var(--transition);
+}
+
+.socials .link:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-primary);
+}
+
+.title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+}
+
+.col .desc {
+  font-size: 0.825rem;
+  color: rgb(100, 116, 139);
+  line-height: 1.6;
+}
+
+.links {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.links .link {
+  font-size: 0.875rem;
+  color: rgb(100, 116, 139);
+  transition: var(--transition);
+  display: inline-block;
+}
+
+.links .link:hover {
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+.form-input {
+  flex: 1;
+}
+
+.bottom {
+  padding-top: var(--space-8);
+  margin-top: var(--space-8);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .bottom {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.copyright {
+  font-size: 0.8rem;
+  color: rgb(71, 85, 105);
+}
+
+.bottom .link {
+  font-size: 0.875rem;
+  color: rgb(100, 116, 139);
+  transition: var(--transition);
+}
+
+.bottom .link:hover {
+  color: #ffffff;
+}

@@ -1,0 +1,95 @@
+<footer>
+  <div class="wrapper">
+    <div class="grid grid-4 gap-6">
+      <div class="brand flex flex-col gap-4">
+        <a routerLink="/" class="logo flex items-center gap-2">
+          <app-icon name="home" size="md"></app-icon>
+          <span>Rent<span class="logo-accent">Ease</span></span>
+        </a>
+        
+        @if (isLoggedIn$ | async) {
+          @if (isAdmin$ | async) {
+            <p class="desc">
+              Simplifying property management across India. Centralized control over listings, tenants, leases, and payments.
+            </p>
+          } @else if (isCustomer$ | async) {
+            <p class="desc">
+              Simplifying rent search and tenancies across India. Find verified properties, sign digital leases, and pay rent securely.
+            </p>
+          }
+        } @else {
+          <p class="desc">
+            A premium rental management portal designed to simplify tenancies, leases, rent invoices, and work order operations.
+          </p>
+        }
+
+        <div class="socials flex gap-2">
+          <a href="#" class="link flex items-center justify-center" aria-label="Twitter">
+            <app-icon name="twitter" size="sm"></app-icon>
+          </a>
+          <a href="#" class="link flex items-center justify-center" aria-label="LinkedIn">
+            <app-icon name="linkedin" size="sm"></app-icon>
+          </a>
+          <a href="#" class="link flex items-center justify-center" aria-label="GitHub">
+            <app-icon name="github" size="sm"></app-icon>
+          </a>
+        </div>
+      </div>
+
+      <div class="col flex flex-col gap-4">
+        <h3 class="title">Product & Dashboards</h3>
+        <ul class="links flex flex-col gap-2">
+          @if (isLoggedIn$ | async) {
+            @if (isAdmin$ | async) {
+              <li><a routerLink="/admin/dashboard" class="link">Admin Dashboard</a></li>
+              <li><a routerLink="/admin/properties" class="link">Property Registry</a></li>
+              <li><a routerLink="/admin/tenants" class="link">Tenant Registry</a></li>
+              <li><a routerLink="/admin/rent" class="link">Billing Ledger</a></li>
+              <li><a routerLink="/admin/maintenance" class="link">Work Orders</a></li>
+            }
+            @else if (isCustomer$ | async) {
+              <li><a routerLink="/customer/dashboard" class="link">Customer Dashboard</a></li>
+              <li><a routerLink="/customer/properties" class="link">Browse Catalog</a></li>
+              <li><a routerLink="/customer/applications" class="link">My Applications</a></li>
+              <li><a routerLink="/customer/lease" class="link">Active Lease</a></li>
+              <li><a routerLink="/customer/maintenance" class="link">Maintenance Support</a></li>
+            }
+          } @else {
+            <li><a routerLink="/auth/login" class="link">Find Properties</a></li>
+            <li><a routerLink="/auth/register" class="link">List Property</a></li>
+            <li><a href="#how-it-works" class="link">How It Works</a></li>
+            <li><a href="#cities" class="link">Cities</a></li>
+          }
+        </ul>
+      </div>
+
+      <div class="col flex flex-col gap-4">
+        <h3 class="title">Legal</h3>
+        <ul class="links flex flex-col gap-2">
+          <li><a href="#" class="link">Privacy Policy</a></li>
+          <li><a href="#" class="link">Terms of Service</a></li>
+          <li><a href="#" class="link">Security Standards</a></li>
+          <li><a href="#" class="link">Cookie Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="col flex flex-col gap-4">
+        <h3 class="title">Subscribe to Updates</h3>
+        <p class="desc">Receive notifications about budget deals and newly added localities.</p>
+        <form class="form flex gap-2" (submit)="$event.preventDefault()">
+          <input type="email" placeholder="Enter your email" class="form-input" />
+          <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="bottom flex flex-col items-center justify-between">
+      <p class="copyright">&copy; {{ currentYear }} RentEase Portal. All rights reserved.</p>
+      <div class="links flex gap-6">
+        <a href="#" class="link">Privacy</a>
+        <a href="#" class="link">Terms</a>
+        <a href="#" class="link">Support</a>
+      </div>
+    </div>
+  </div>
+</footer>
