@@ -1,0 +1,125 @@
+<section class="section features text-center" id="features">
+  <div class="container">
+
+    <div class="header flex flex-col items-center gap-2">
+      <span class="badge flex items-center gap-2">
+        <app-icon name="sparkles" size="sm"></app-icon>
+        <span>Everything You Need</span>
+      </span>
+      <h2 class="text-headline">One Portal. Every Rental Need.</h2>
+      <p class="text-muted">No paperwork. No headaches. A digital system engineered for owners and renters alike.</p>
+    </div>
+
+    <div class="grid-3 gap-6">
+      @for (feat of features; track feat.title; let i = $index) {
+        <div class="card snake-border multi-shadow flex flex-col gap-4 text-start">
+          <div class="box">
+            <div class="icon flex items-center justify-center">
+              <app-icon [name]="feat.icon" size="lg"></app-icon>
+            </div>
+          </div>
+          <h3 class="font-semibold text-title">{{ feat.title }}</h3>
+          <p class="text-muted text-sm">{{ feat.desc }}</p>
+          <div class="arrow flex items-center">
+            <app-icon name="arrow-right" size="sm"></app-icon>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section types text-center">
+  <div class="container">
+    <div class="header flex flex-col items-center gap-2">
+      <span class="badge flex items-center gap-2">
+        <app-icon name="home" size="sm"></app-icon>
+        <span>Property Categories</span>
+      </span>
+      <h2 class="text-headline">Find What Fits Your Lifestyle</h2>
+      <p class="text-muted">Browse curated rental catalogs by property configurations</p>
+    </div>
+
+    <div class="grid-4 gap-5">
+      @for (pt of propertyTypes; track pt.type) {
+        <a routerLink="/auth/login" class="card snake-border multi-shadow flex flex-col items-center justify-between gap-4 text-center">
+          <div class="box">
+            <div class="icon flex items-center justify-center">
+              <app-icon [name]="pt.icon" size="xl"></app-icon>
+            </div>
+          </div>
+          <h3 class="font-semibold text-title type">{{ pt.type }}</h3>
+          <p class="text-muted text-sm">{{ pt.desc }}</p>
+          <span class="badge count">{{ pt.count }} listings</span>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+
+<section class="section why text-center" id="why">
+  <div class="container">
+    <div class="header flex flex-col items-center gap-2">
+      <span class="badge flex items-center gap-2">
+        <app-icon name="star-filled" size="sm"></app-icon>
+        <span>Why RentEase</span>
+      </span>
+      <h2 class="text-headline">Built Different. Designed Better.</h2>
+      <p class="text-muted">A modern user experience built on speed, security, and convenience.</p>
+    </div>
+
+    <div class="grid-4 gap-6">
+      @for (w of whyUs; track w.title) {
+        <div class="card snake-border multi-shadow flex flex-col items-start gap-4 text-start">
+          <div class="box">
+            <div class="icon flex items-center justify-center">
+              <app-icon [name]="w.icon" size="lg"></app-icon>
+            </div>
+          </div>
+          <h3 class="font-semibold text-title">{{ w.title }}</h3>
+          <p class="text-muted text-sm">{{ w.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+
+<section class="section cities text-center" id="cities">
+  <div class="container">
+    <div class="header flex flex-col items-center gap-2">
+      <span class="badge flex items-center gap-2">
+        <app-icon name="map-pin" size="sm"></app-icon>
+        <span>City Spotlight</span>
+      </span>
+      <h2 class="text-headline">Top Cities to Rent In</h2>
+      <p class="text-muted">Explore verified properties across India's fastest-growing metros.</p>
+    </div>
+
+    <div class="grid-4 gap-5">
+      @for (city of cities; track city.name; let i = $index) {
+        <a routerLink="/auth/login" class="card index-{{ i + 1 }} multi-shadow flex items-end">
+          <div class="card-bg" [style.background-image]="'url(' + city.image + ')'"></div>
+          
+          <div class="overlay flex flex-col gap-2 text-start">
+            <span class="tag uppercase text-xs font-bold">{{ city.tag }}</span>
+            <h3 class="name text-title font-bold text-white">{{ city.name }}</h3>
+            
+            <div class="info flex items-center gap-2 text-xs">
+              <span><strong>{{ city.properties }}</strong> Listings</span>
+              <span class="divider">·</span>
+              <span>Avg <strong>{{ city.avgRent }}</strong>/mo</span>
+            </div>
+            <span class="btn btn-ghost flex items-center gap-2 text-xs font-bold">
+              <span>Explore Listings</span>
+              <app-icon name="arrow-right" size="sm"></app-icon>
+            </span>
+          </div>
+        </a>
+      }
+    </div>
+  </div>
+</section>
