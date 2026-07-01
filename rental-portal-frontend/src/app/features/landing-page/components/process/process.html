@@ -1,0 +1,37 @@
+<section class="section process" id="how-it-works">
+  <div class="container">
+    <div class="process-grid">
+      
+      <div class="process-info flex flex-col items-start gap-4">
+        <span class="badge flex items-center gap-2">
+          <app-icon name="zap" size="sm"></app-icon>
+          <span>Simple Process</span>
+        </span>
+        <h2 class="text-headline">Get Into Your Dream Home in 5 Steps</h2>
+        <p class="text-muted">From browsing to keys in hand — our streamlined workflow makes renting effortless.</p>
+      </div>
+
+      <div class="pipeline">
+        <div class="pipeline-line"></div>
+        <div class="pipeline-progress"></div>
+
+        @for (step of steps; track step.step; let i = $index) {
+          <div class="card flex flex-col text-start multi-shadow" [style.z-index]="i + 1">
+            
+            <div class="card-header flex items-center justify-between">
+              <div class="circle flex items-center justify-center">
+                <app-icon [name]="step.icon" size="lg"></app-icon>
+              </div>
+              <span class="num font-bold">{{ step.step }}</span>
+            </div>
+            
+            <div class="card-body flex flex-col gap-2">
+              <h3 class="title font-bold">{{ step.title }}</h3>
+              <p class="desc text-muted text-sm">{{ step.desc }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

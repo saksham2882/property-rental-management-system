@@ -1,0 +1,78 @@
+<section class="hero flex items-center justify-center relative overflow-hidden">
+ 
+  <div class="container content flex flex-col items-center text-center">
+
+    <div class="badge flex items-center gap-2">
+      <app-icon name="sparkles" size="sm"></app-icon>
+      <span>Modern Tenancy Redefined · Zero Brokerage</span>
+    </div>
+
+    <h1 class="title">
+      Find Your Perfect Home &<br>
+      <span class="gradient-text">Manage Tenancies Online</span>
+    </h1>
+
+    <p class="subtitle">
+      RentEase streamlines the entire rental lifecycle. Search 2,400+ properties, submit digital applications, sign leases, and pay rent — all in one place.
+    </p>
+
+    <div class="bar">
+      <div class="bar-glow snake-border"></div>
+
+      <form (submit)="onSubmit(); $event.preventDefault();" class="form flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+        <div class="field flex items-center gap-3 flex-1">
+          <span class="icon flex items-center justify-center">
+            <app-icon name="search" size="md"></app-icon>
+          </span>
+          <input type="text" [(ngModel)]="searchQuery" name="search" placeholder="Search property..." class="input" />
+        </div>
+        <div class="divider hide-mobile"></div>
+        
+        <div class="field flex items-center flex-1">
+          <app-dropdown [options]="cityOptions" [(value)]="selectedCity" iconName="map-pin" placeholder="All Cities" class="flex-1"></app-dropdown>
+        </div>
+        <div class="divider hide-mobile"></div>
+        
+        <div class="field flex items-center flex-1">
+          <app-dropdown [options]="typeOptions" [(value)]="selectedType" iconName="home" placeholder="Any Type" class="flex-1"></app-dropdown>
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-md flex items-center justify-center gap-2">
+          <app-icon name="search" size="md"></app-icon>
+          <span>Find Homes</span>
+        </button>
+      </form>
+    </div>
+
+    <div class="points flex items-center justify-center gap-3 flex-wrap">
+      <span class="point"> Fast Maintenance</span>
+      <span class="point"> Razorpay Secured</span>
+      <span class="point"> Zero Brokerage</span>
+    </div>
+  </div>
+
+  <div class="mouse flex justify-center">
+    <div class="dot"></div>
+  </div>
+</section>
+
+
+<section class="stats flex items-center">
+  <div class="container">
+    <div class="grid-4 gap-6">
+
+      @for (stat of stats; track stat.label) {
+        <div class="item snake-border multi-shadow flex items-center gap-4">
+          <div class="stat-icon flex items-center justify-center">
+            <app-icon [name]="stat.icon" size="lg"></app-icon>
+          </div>
+          
+          <div class="flex flex-col gap-1">
+            <span class="value font-bold">{{ stat.value }}</span>
+            <span class="label font-semibold text-xs text-muted">{{ stat.label }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
