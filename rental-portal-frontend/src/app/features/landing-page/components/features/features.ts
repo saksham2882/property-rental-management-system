@@ -4,8 +4,7 @@ import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../../../shared/components/icon/icon';
 
 @Component({
-  selector: 'app-landing-features',
-
+  selector: 'app-features',
   imports: [CommonModule, RouterLink, IconComponent],
   templateUrl: './features.html',
   styleUrl: './features.css'

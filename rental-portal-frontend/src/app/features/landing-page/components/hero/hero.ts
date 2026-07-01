@@ -5,8 +5,7 @@ import { IconComponent } from '../../../../shared/components/icon/icon';
 import { DropdownComponent } from '../../../../shared/components/dropdown/dropdown';
 
 @Component({
-  selector: 'app-landing-hero',
-
+  selector: 'app-hero',
   imports: [CommonModule, FormsModule, IconComponent, DropdownComponent],
   templateUrl: './hero.html',
   styleUrl: './hero.css'
