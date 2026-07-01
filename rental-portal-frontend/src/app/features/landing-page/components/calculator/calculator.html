@@ -1,0 +1,126 @@
+<section class="section" id="calculator">
+  <div class="container flex flex-col items-center">
+
+    <div class="header text-center flex flex-col items-center gap-2">
+      <span class="badge flex items-center gap-2">
+        <app-icon name="trending-up" size="sm"></app-icon>
+        <span>Interactive Calculator</span>
+      </span>
+      <h2 class="text-headline font-bold">Calculate Your <span class="gradient-text">RentEase Savings</span></h2>
+      <p class="text-muted subtitle">See how much you save by cutting out brokers and avoiding excessive security deposits.</p>
+    </div>
+
+    <div class="grid-2 gap-8">
+      <div class="card multi-shadow flex flex-col justify-between">
+        <div>
+          <h3 class="text-title font-bold">Customize Your Plan</h3>
+          <p class="text-sm text-muted desc">Adjust the BHK buttons and sliders to match your target rental property profile.</p>
+
+          <div class="group flex flex-col gap-2">
+            <div class="row flex justify-between items-center">
+              <span class="font-semibold">Monthly Rent</span>
+              <span class="value font-bold text-accent">{{ monthlyRent | priceFormat }}</span>
+            </div>
+            <div class="slider">
+              <input type="range" 
+                     min="5000" 
+                     max="200000" 
+                     step="2500" 
+                     [(ngModel)]="monthlyRent" 
+                     class="range">
+              <div class="flex justify-between text-xs text-muted">
+                <span>₹5k</span>
+                <span>₹50k</span>
+                <span>₹100k</span>
+                <span>₹150k</span>
+                <span>₹200k</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="group flex flex-col gap-3">
+            <span class="font-semibold">Apartment Size</span>
+            <div class="options flex gap-3 flex-wrap">
+              <button class="btn" [class.active]="bhk === 1" (click)="selectBhk(1)">1 BHK</button>
+              <button class="btn" [class.active]="bhk === 2" (click)="selectBhk(2)">2 BHK</button>
+              <button class="btn" [class.active]="bhk === 3" (click)="selectBhk(3)">3 BHK</button>
+              <button class="btn" [class.active]="bhk === 4" (click)="selectBhk(4)">4+ BHK</button>
+            </div>
+          </div>
+
+          <div class="disclaimer flex gap-2 items-start">
+            <app-icon name="alert-triangle" size="sm"></app-icon>
+            <div class="text flex flex-col gap-05">
+              <span class="title font-bold">Listing Dependency Alert</span>
+              <span class="msg text-muted">
+                These calculations are market-average estimates. Upfront values and brokerage rules vary dynamically based on the specific property listed. Please verify exact deposit details directly on active property pages.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="notes flex flex-col gap-1">
+          <div class="flex gap-1 items-center">
+            <app-icon name="star" size="sm"></app-icon>
+            <span class="text-xs text-muted">No hidden setup fees, zero broker premium.</span>
+          </div>
+          <div class="note flex gap-1 items-center">
+            <app-icon name="shield" size="sm"></app-icon>
+            <span class="text-xs text-muted">Deposit held securely in certified escrow account.</span>
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="card multi-shadow flex flex-col justify-between">
+        <div>
+          <h3 class="text-title font-bold">Traditional vs. RentEase</h3>
+          <p class="text-sm text-muted desc">Comparing typical upfront payments required before moving in.</p>
+
+          <div class="list flex flex-col gap-6">
+            <div class="row flex justify-between items-center">
+              <div class="flex flex-col">
+                <span class="font-medium">Brokerage Commission</span>
+                <span class="text-xs text-muted">Traditional agents charge 1 month rent</span>
+              </div>
+              <div class="text-right">
+                <span class="old text-muted">{{ brokerFee | priceFormat }}</span>
+                <span class="new font-bold text-success">FREE</span>
+              </div>
+            </div>
+
+            <div class="row flex justify-between items-center">
+              <div class="flex flex-col">
+                <span class="font-medium">Security Deposit</span>
+                <span class="text-xs text-muted">Traditional (6 months) vs RentEase (2 months)</span>
+              </div>
+              <div class="text-right">
+                <span class="old text-muted">{{ traditionalDeposit | priceFormat }}</span>
+                <span class="new font-bold text-accent">{{ renteaseDeposit | priceFormat }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="divider"></div>
+
+          <div class="box text-center flex flex-col gap-2">
+            <span class="uppercase font-bold text-xs text-muted">Your Total Upfront Savings</span>
+            <div class="amount text-display font-bold gradient-text">
+              {{ totalSavings | priceFormat }}
+            </div>
+            <p class="tagline text-xs font-medium text-muted">
+              🎉 Extra cash in your bank account on Day 1!
+            </p>
+          </div>
+
+          <a href="/auth/register" class="btn btn-primary btn-block btn-md">
+            Claim Your Savings Now
+            <app-icon name="arrow-right"></app-icon>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
