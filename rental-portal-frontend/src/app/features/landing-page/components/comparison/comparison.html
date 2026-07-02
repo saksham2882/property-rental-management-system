@@ -1,0 +1,50 @@
+<section class="section comparison" id="comparison">
+  <div class="container">
+    
+    <div class="header text-center flex flex-col items-center gap-2">
+      <span class="badge flex items-center gap-2">
+        <app-icon name="zap" size="sm"></app-icon>
+        <span>The Difference</span>
+      </span>
+      <h2 class="text-headline font-bold">Why Choose <span class="gradient-text">RentEase</span>?</h2>
+      <p class="text-muted subtitle">A transparent comparison of how we outperform traditional rental agents and landlords across every category.</p>
+    </div>
+
+    <div class="matrix multi-shadow glass-card flex flex-col">
+      <div class="row header flex">
+        <div class="col feature">Feature Comparison</div>
+        <div class="col traditional">Traditional Agents</div>
+        <div class="col rentease active">RentEase Experience</div>
+      </div>
+
+      <div class="flex flex-col">
+        @for (row of comparisons; track row.name) {
+          <div class="row flex">
+            <div class="col feature flex flex-col">
+              <span class="name font-bold">{{ row.name }}</span>
+              <span class="desc text-xs">{{ row.desc }}</span>
+            </div>
+            
+            <div class="col traditional">
+              <div class="status flex items-center gap-2">
+                <span class="icon cross flex items-center justify-center">✕</span>
+                <span class="text text-sm font-medium">{{ row.traditional.text }}</span>
+              </div>
+            </div>
+
+            <div class="col rentease active">
+              <div class="status flex items-center gap-2">
+                <span class="icon check flex items-center justify-center">✓</span>
+                <span class="text text-sm font-bold">{{ row.rentease.text }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="footer text-center">
+      <p class="text-xs text-muted">Comparison based on standard real estate market averages in metropolitan areas.</p>
+    </div>
+  </div>
+</section>
