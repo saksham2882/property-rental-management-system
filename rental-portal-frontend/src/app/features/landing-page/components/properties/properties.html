@@ -1,0 +1,107 @@
+<section class="section properties">
+  <div class="container">
+
+    <div class="header flex items-center justify-between gap-4 flex-wrap">
+      <div>
+        <span class="badge flex items-center gap-2">
+          <app-icon name="sparkles" size="sm"></app-icon>
+          <span>Featured Listings</span>
+        </span>
+        <h2 class="text-headline">Featured Properties</h2>
+        <p class="text-muted">Hand-picked budget-friendly spaces in top tech corridors</p>
+      </div>
+      <a routerLink="/auth/login" class="btn btn-secondary flex items-center gap-2">
+        <span>View All Properties</span>
+        <app-icon name="arrow-right" size="sm"></app-icon>
+      </a>
+    </div>
+
+    
+    <div class="grid gap-6">
+
+      @if ((properties$ | async) && (properties$ | async)!.length > 0) {
+
+        @for (property of (properties$ | async)?.slice(0, 3); track property.id) {
+
+          <div class="card multi-shadow flex flex-col">
+            <div class="preview">
+              <img [src]="(property.images && property.images.length > 0) ? property.images[0] : getFallbackImage(property.id)" alt="{{ property.title }}" />
+              <span class="badge type">{{ property.type }}</span>
+              <span class="badge status font-bold" [class.available]="property.available" [class.rented]="!property.available">
+                {{ property.available ? 'Available' : 'Rented' }}
+              </span>
+            </div>
+
+            <div class="body flex flex-col flex-1 gap-3">
+              <div class="flex justify-between items-center flex-wrap gap-1">
+                <span class="price font-bold">{{ property.rent | priceFormat:'mo' }}</span>
+                <span class="text-xs text-muted">Deposit: {{ property.deposit | priceFormat }}</span>
+              </div>
+
+              <h3 class="title text-title font-semibold">{{ property.title }}</h3>
+
+              <p class="flex items-center gap-1 text-sm text-muted">
+                <app-icon name="map-pin" size="sm"></app-icon>
+                <span>{{ property.locality }}, {{ property.city }}</span>
+              </p>
+
+              <div class="meta flex items-center justify-between text-sm text-muted">
+                <span class="flex items-center gap-1">
+                  <app-icon name="home" size="sm"></app-icon> 
+                  <span>{{ property.bedrooms }} BHK</span>
+                </span>
+                <span class="rating flex items-center gap-1 font-medium">
+                  <app-icon name="star-filled" size="sm"></app-icon> 
+                  <span>{{ property.averageRating || 4.5 }}</span>
+                </span>
+              </div>
+
+              <a routerLink="/auth/login" class="btn btn-secondary btn-block">View Details</a>
+            </div>
+          </div>
+        }
+      } 
+      @else {  
+
+        @for (property of mockProperties; track property.id) {
+          <div class="card multi-shadow flex flex-col">
+            <div class="preview">
+              <img [src]="property.imageUrl" alt="{{ property.title }}" />
+              <span class="badge type">{{ property.type }}</span>
+              <span class="badge status" [class.available]="property.available" [class.rented]="!property.available">
+                {{ property.available ? 'Available' : 'Rented' }}
+              </span>
+            </div>
+
+            <div class="body flex flex-col flex-1 gap-3">
+              <div class="flex justify-between items-center flex-wrap gap-1">
+                <span class="price font-bold">{{ property.rent | priceFormat:'mo' }}</span>
+                <span class="text-xs text-muted">Deposit: {{ property.deposit | priceFormat }}</span>
+              </div>
+
+              <h3 class="title text-title font-semibold">{{ property.title }}</h3>
+
+              <p class="flex items-center gap-1 text-sm text-muted">
+                <app-icon name="map-pin" size="sm"></app-icon>
+                <span>{{ property.locality }}, {{ property.city }}</span>
+              </p>
+
+              <div class="meta flex items-center justify-between text-sm text-muted">
+                <span class="flex items-center gap-1">
+                  <app-icon name="home" size="sm"></app-icon> 
+                  <span>{{ property.bedrooms }} BHK</span>
+                </span>
+                <span class="rating flex items-center gap-1 font-medium">
+                  <app-icon name="star-filled" size="sm"></app-icon> 
+                  <span>{{ property.averageRating }}</span>
+                </span>
+              </div>
+
+              <a routerLink="/auth/login" class="btn btn-secondary btn-block">View Details</a>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</section>

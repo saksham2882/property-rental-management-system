@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../../../shared/components/icon/icon';
-import { PriceFormatPipe } from '../../../../shared/pipes/price-format.pipe';
+import { PriceFormatPipe } from '../../../../shared/pipes/price-format-pipe';
 
 @Component({
   selector: 'app-calculator',

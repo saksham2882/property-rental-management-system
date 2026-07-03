@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../../../shared/components/icon/icon';
 import { DropdownComponent } from '../../../../shared/components/dropdown/dropdown';
+import { cityOptions, typeOptions, stats } from '../mock-data';
 
 @Component({
   selector: 'app-hero',
@@ -18,28 +19,9 @@ export class HeroComponent {
   selectedCity = '';
   selectedType = '';
 
-  cityOptions = [
-    { value: '', label: 'All Cities' },
-    { value: 'Bangalore', label: 'Bangalore' },
-    { value: 'Mumbai', label: 'Mumbai' },
-    { value: 'Delhi', label: 'Delhi' },
-    { value: 'Pune', label: 'Pune' }
-  ];
-
-  typeOptions = [
-    { value: '', label: 'Any Type' },
-    { value: 'Apartment', label: 'Apartment' },
-    { value: 'Villa', label: 'Villa' },
-    { value: 'Independent House', label: 'House' },
-    { value: 'Studio', label: 'Studio' }
-  ];
-
-  stats = [
-    { value: '2,400+', label: 'Properties Listed', icon: 'building' },
-    { value: '18,000+', label: 'Happy Tenants', icon: 'users' },
-    { value: '12', label: 'Cities Covered', icon: 'map-pin' },
-    { value: '₹0', label: 'Zero Brokerage', icon: 'zap' },
-  ];
+  cityOptions = cityOptions;
+  typeOptions = typeOptions;
+  stats = stats;
 
   onSubmit(): void {
     this.search.emit({

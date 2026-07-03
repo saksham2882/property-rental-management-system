@@ -1,0 +1,136 @@
+<section class="section lease">
+  <div class="container">
+    <div class="wrap flex items-center justify-between gap-12">
+
+      <div class="content flex flex-col gap-4 text-start">
+        <span class="badge flex items-center gap-2">
+          <app-icon name="pen" size="sm"></app-icon>
+          <span>Digital Lease Signing</span>
+        </span>
+        <h2 class="text-headline">Sign Your Lease Without Printing a Single Page</h2>
+        <p class="text-muted">Our interactive canvas lets you draw your signature directly on screen. No printing, no scanning, no PDFs to fax. Your signed lease is stored securely and is accessible anytime.</p>
+        <ul class="list flex flex-col gap-3">
+          @for (feature of leaseFeatures; track feature) {
+            <li class="flex items-center gap-2">
+              <app-icon name="check-circle" size="md" class="text-accent"></app-icon>
+              <span>{{ feature }}</span>
+            </li>
+          }
+        </ul>
+        <a routerLink="/auth/register" class="btn btn-primary btn-lg flex items-center gap-2">
+          <span>Start Your Application</span>
+          <app-icon name="arrow-right" size="md"></app-icon>
+        </a>
+      </div>
+      
+      <div class="visual flex-1 flex justify-center items-center">
+        <div class="card multi-shadow flex flex-col">
+          <div class="header flex items-center gap-1">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+            <span class="title text-xs font-semibold">Lease Agreement — Digital Sign</span>
+          </div>
+          
+          <div class="body flex flex-col gap-3">
+            <div class="line"></div>
+            <div class="line short"></div>
+            <div class="line medium"></div>
+            <div class="line"></div>
+            <div class="line short"></div>
+            <div class="sign flex flex-col gap-2">
+              <span class="text-xs font-semibold text-muted">Tenant Signature</span>
+              <div class="signature flex justify-center items-center">
+                <svg viewBox="0 0 200 60" class="svg">
+                  <path d="M 10 40 C 30 10, 60 60, 80 30 C 100 5, 120 50, 150 25 C 170 10, 185 35, 195 30" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="badge flex items-center justify-center gap-1 success">
+                <app-icon name="check-circle" size="sm"></app-icon>
+                <span>Digitally Signed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section payment">
+  <div class="container">
+    <div class="header text-center flex flex-col items-center gap-2">
+      <span class="badge flex items-center gap-2">
+        <app-icon name="credit-card" size="sm"></app-icon>
+        <span>Secure Payments</span>
+      </span>
+      <h2 class="text-headline">Pay Rent in Under 30 Seconds</h2>
+      <p class="text-muted subtitle">Multiple payment modes supported via Razorpay's enterprise-grade checkout infrastructure.</p>
+    </div>
+
+    <div class="grid-4 gap-6">
+      @for (mode of paymentModes; track mode.name) {
+        <div class="item snake-border multi-shadow flex flex-col items-center text-center gap-3">
+          <div class="box {{ mode.class }} flex items-center justify-center">
+            <app-icon [name]="mode.icon" size="xl"></app-icon>
+          </div>
+          <h3 class="name font-bold text-title">{{ mode.name }}</h3>
+          <p class="desc text-muted text-sm">{{ mode.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section maintenance">
+  <div class="container">
+    <div class="wrap flex items-center justify-between">
+
+      <div class="content flex flex-col gap-4 text-start">
+        <span class="badge flex items-center gap-2">
+          <app-icon name="wrench" size="sm"></app-icon>
+          <span>Maintenance Desk</span>
+        </span>
+        <h2 class="text-headline">Transparent Issue Resolution Tracking</h2>
+        <p class="text-muted">Submit maintenance requests with photos in under a minute. Track real-time work order progress, read admin comments, and get instant closure notifications.</p>
+
+        <div class="features grid-2 gap-4">
+          @for (feature of maintenanceFeatures; track feature.text) {
+            <div class="item flex items-center gap-2">
+              <app-icon [name]="feature.icon" size="md" class="text-accent"></app-icon>
+              <span class="text-sm font-medium">{{ feature.text }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="visual flex-1 flex justify-center">
+        <div class="card multi-shadow flex flex-col">
+          <div class="ticket flex flex-col gap-3">
+
+            <div class="header flex justify-between items-center">
+              <span class="badge warning">In Progress</span>
+              <span class="id font-bold text-xs">#MT-2847</span>
+            </div>
+            <h4 class="title text-sm font-semibold">Water Heater Malfunction</h4>
+            <p class="text-xs text-muted">Unit A-304 · Raised 2 days ago</p>
+
+            <div class="timeline flex flex-col gap-4">
+              @for (step of ticketSteps; track step.label) {
+                <div class="step {{ step.state }} flex gap-3 items-center">
+                  <div class="dot flex-shrink-0"></div>
+                  <span class="text-xs font-semibold" [class]="step.colorClass">{{ step.label }}</span>
+                  <span class="time text-muted ml-auto">{{ step.time }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,140 @@
+<section class="section neighborhood" id="neighborhood">
+  <div class="container">
+    <div class="header text-center flex flex-col items-center gap-2">
+      <span class="badge flex items-center gap-2">
+        <app-icon name="map-pin" size="sm"></app-icon>
+        <span>Local Insights</span>
+      </span>
+      <h2 class="text-headline font-bold">Your Guide to the <span class="gradient-text">Neighborhood</span></h2>
+      <p class="text-muted subtitle">Discover how RentEase properties put you closer to everything that matters in the urban landscape.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card multi-shadow flex flex-col">
+        
+        <div class="tabs flex gap-2">
+          @for (cat of categories; track cat.id) {
+            <button class="btn flex items-center gap-1" 
+                    [class.active]="activeCategoryId === cat.id" 
+                    (click)="selectCategory(cat.id)">
+              <app-icon [name]="cat.icon" size="sm"></app-icon>
+              <span class="text-xs font-semibold">{{ cat.name }}</span>
+            </button>
+          }
+        </div>
+
+        <div class="panel flex flex-col flex-1 gap-2">
+          <p class="label text-xs font-bold text-accent uppercase">Convenience Radius</p>
+          <p class="desc text-sm text-muted">{{ currentCategory.tagline }}</p>
+          
+          <div class="list flex flex-col gap-3">
+            @for (dest of currentCategory.destinations; track dest.name) {
+              
+              <div class="item flex justify-between items-center"
+                   (mouseenter)="hoveredDest = dest" 
+                   (mouseleave)="hoveredDest = null"
+                   [class.hovered]="hoveredDest === dest">
+                <div class="left items-center gap-3">
+                  <div class="icon items-center justify-center">
+                    <app-icon [name]="dest.icon" class="text-accent"></app-icon>
+                  </div>
+                  <div>
+                    <h4 class="name font-bold text-sm">{{ dest.name }}</h4>
+                    <span class="text-xs text-muted">Distance: {{ dest.distance }}</span>
+                  </div>
+                </div>
+
+                <div class="flex gap-2">
+                  @if (dest.walkTime !== 'N/A') {
+                    <span class="pill walk flex items-center gap-1">
+                      🚶 <span class="text-xs font-medium">{{ dest.walkTime }}</span>
+                    </span>
+                  }
+                  <span class="pill drive flex items-center gap-1">
+                    🚗 <span class="text-xs font-medium">{{ dest.driveTime }}</span>
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="map multi-shadow">
+        <div class="wrap flex items-center justify-center">
+
+          <svg viewBox="0 0 100 100" class="svg">
+            <defs>
+              <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="100" height="100" fill="url(#grid)" />
+            <line *ngIf="hoveredDest" 
+                  [attr.x1]="50" 
+                  [attr.y1]="50" 
+                  [attr.x2]="hoveredDest.coords.x" 
+                  [attr.y2]="hoveredDest.coords.y"
+                  class="line animate-dash" />
+                  
+            @for (dest of currentCategory.destinations; track dest.name) {
+              <line [attr.x1]="50" 
+                    [attr.y1]="50" 
+                    [attr.x2]="dest.coords.x" 
+                    [attr.y2]="dest.coords.y"
+                    class="line static"
+                    [class.highlight]="hoveredDest === dest" />
+            }
+
+            <circle cx="50" cy="50" r="6" class="hub-glow" />
+            <circle cx="50" cy="50" r="3.5" class="hub-core" />
+            <text x="50" y="59" class="hub-label" text-anchor="middle">RentEase Home</text>
+
+            @for (dest of currentCategory.destinations; track dest.name) {
+              <g [class.active-node]="hoveredDest === dest" 
+                 (mouseenter)="hoveredDest = dest"
+                 (mouseleave)="hoveredDest = null"
+              >  
+                <circle [attr.cx]="dest.coords.x" 
+                        [attr.cy]="dest.coords.y" 
+                        r="3.5" 
+                        class="node-glow" />
+                <circle [attr.cx]="dest.coords.x" 
+                        [attr.cy]="dest.coords.y" 
+                        r="1.8" 
+                        class="node-core" />
+                <text [attr.x]="dest.coords.x" 
+                      [attr.y]="dest.coords.y - 4" 
+                      class="node-label" 
+                      text-anchor="middle">
+                  {{ dest.name }}
+                </text>
+              </g>
+            }
+          </svg>
+   
+          <div class="tooltip flex flex-col gap-1" [class.visible]="hoveredDest">
+            @if (hoveredDest) {
+              <span class="text-xs uppercase font-bold text-accent">Selected Node</span>
+              <h4 class="text-sm font-bold">{{ hoveredDest.name }}</h4>
+
+              <div class="flex gap-4 flex-wrap">
+                <span class="text-xs">📏 Distance: <strong>{{ hoveredDest.distance }}</strong></span>
+                @if (hoveredDest.walkTime !== 'N/A') {
+                  <span class="text-xs">🚶 Walk: <strong>{{ hoveredDest.walkTime }}</strong></span>
+                }
+                <span class="text-xs">🚗 Drive: <strong>{{ hoveredDest.driveTime }}</strong></span>
+              </div>
+            } 
+            @else {
+              <div class="flex items-center justify-center">
+                <span class="text-xs text-center text-muted-light">Hover nodes or list items to view routes</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
