@@ -1,0 +1,167 @@
+<section class="section social" id="testimonials">
+  <div>
+    <div class="header text-center flex flex-col items-center gap-2">
+      <span class="badge flex items-center gap-2">
+        <app-icon name="star-filled" size="sm"></app-icon>
+        <span>Testimonials</span>
+      </span>
+      <h2 class="text-headline">Loved by Thousands</h2>
+      <p class="text-muted subtitle">Real experiences from tenants and property managers using RentEase.</p>
+    </div>
+
+    <div class="marquee-container">
+      <div class="marquee-row">
+        <div class="track track-left">
+          
+          @for (item of testimonials; track item.name + '-1') {
+            <div class="card multi-shadow flex flex-col justify-between text-start gap-4">
+              <div class="flex gap-1">
+                @for (s of getStars(item.stars); track s) {
+                  <app-icon name="star-filled" size="sm" class="text-warning"></app-icon>
+                }
+              </div>
+              <p class="text-muted text-sm">"{{ item.text }}"</p>
+              <div class="flex items-center gap-3">
+                <div class="avatar flex items-center justify-center font-bold">{{ item.initials }}</div>
+                <div class="flex flex-col">
+                  <span class="text-sm font-bold">{{ item.name }}</span>
+                  <span class="text-xs text-muted font-semibold">{{ item.role }}</span>
+                </div>
+              </div>
+            </div>
+          }
+          
+          @for (item of testimonials; track item.name + '-2') {
+            <div class="card multi-shadow flex flex-col justify-between text-start gap-4">
+              <div class="flex gap-1">
+                @for (s of getStars(item.stars); track s) {
+                  <app-icon name="star-filled" size="sm" class="text-warning"></app-icon>
+                }
+              </div>
+              <p class="text-muted text-sm">"{{ item.text }}"</p>
+              <div class="flex items-center gap-3">
+                <div class="avatar flex items-center justify-center font-bold">{{ item.initials }}</div>
+                <div class="flex flex-col">
+                  <span class="text-sm font-bold">{{ item.name }}</span>
+                  <span class="text-xs text-muted font-semibold">{{ item.role }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      
+      <div class="marquee-row">
+        <div class="track track-right">
+          
+          @for (item of testimonials; track item.name + '-3') {
+            <div class="card multi-shadow flex flex-col justify-between text-start gap-4">
+              <div class="flex gap-1">
+                @for (s of getStars(item.stars); track s) {
+                  <app-icon name="star-filled" size="sm" class="text-warning"></app-icon>
+                }
+              </div>
+              <p class="text-muted text-sm">"{{ item.text }}"</p>
+              <div class="flex items-center gap-3">
+                <div class="avatar flex items-center justify-center font-bold">{{ item.initials }}</div>
+                <div class="flex flex-col">
+                  <span class="text-sm font-bold">{{ item.name }}</span>
+                  <span class="text-xs text-muted font-semibold">{{ item.role }}</span>
+                </div>
+              </div>
+            </div>
+          }
+          
+          @for (item of testimonials; track item.name + '-4') {
+            <div class="card multi-shadow flex flex-col justify-between text-start gap-4">
+              <div class="flex gap-1">
+                @for (s of getStars(item.stars); track s) {
+                  <app-icon name="star-filled" size="sm" class="text-warning"></app-icon>
+                }
+              </div>
+              <p class="text-muted text-sm">"{{ item.text }}"</p>
+              <div class="flex items-center gap-3">
+                <div class="avatar flex items-center justify-center font-bold">{{ item.initials }}</div>
+                <div class="flex flex-col">
+                  <span class="text-sm font-bold">{{ item.name }}</span>
+                  <span class="text-xs text-muted font-semibold">{{ item.role }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section faq" id="faq">
+  <div class="container">
+
+    <div class="header text-center flex flex-col items-center gap-2">
+      <span class="badge flex items-center gap-2">
+        <app-icon name="info" size="sm"></app-icon>
+        <span>FAQ Support</span>
+      </span>
+      <h2 class="text-headline">Frequently Asked Questions</h2>
+      <p class="text-muted subtitle">Got questions? We have got answers. Find info about lease contracts, billing, and listings.</p>
+    </div>
+
+    <div class="accordion flex flex-col gap-4">
+      @for (faq of faqs; track faq.q; let i = $index) {
+
+        <div class="item multi-shadow flex flex-col" [class.active]="activeFaqIndex === i">
+          <button (click)="toggleFaq(i)" class="btn flex justify-between items-center text-start gap-4">
+            <span class="question font-semibold">{{ faq.q }}</span>
+            <span class="icon flex items-center justify-center">
+              <app-icon [name]="activeFaqIndex === i ? 'chevron-up' : 'chevron-down'" size="sm"></app-icon>
+            </span>
+          </button>
+
+          <div class="content" [style.maxHeight]="activeFaqIndex === i ? '200px' : '0'">
+            <div class="body">
+              <p class="text-sm text-muted">{{ faq.a }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section newsletter">
+  <div class="container">
+    <div class="card snake-border multi-shadow text-center flex flex-col items-center">
+      <span class="badge uppercase flex items-center gap-2">
+        <app-icon name="bell" size="sm"></app-icon>
+        <span>Stay Updated</span>
+      </span>
+      <h2 class="title">Subscribe to the RentEase Newsletter</h2>
+      <p class="subtitle">Get monthly updates on rental trends, prime property deals, and helpful guides directly in your inbox.</p>
+      
+      @if (subscribed) {
+        <div class="success flex items-center justify-center gap-2">
+          <app-icon name="check-circle" size="md"></app-icon>
+          <span>Awesome! You are successfully subscribed.</span>
+        </div>
+      } 
+      @else {  
+        <form (submit)="onSubscribe(); $event.preventDefault();" class="form flex items-center">
+          <div class="input-wrapper flex items-center">
+            <app-icon name="mail" size="md" class="mail-icon"></app-icon>
+            <input type="email" [(ngModel)]="emailAddress" name="email" placeholder="Enter your email address..." class="input-field" required />
+          </div>
+          <button type="submit" class="btn subscribe-btn flex items-center">
+            <span>Subscribe</span>
+            <app-icon name="arrow-right" size="sm"></app-icon>
+          </button>
+        </form>
+      }
+    </div>
+  </div>
+</section>
