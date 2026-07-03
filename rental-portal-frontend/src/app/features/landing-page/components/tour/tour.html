@@ -1,0 +1,86 @@
+<section class="section tour" id="tour">
+  <div class="container">
+
+    <div class="header text-center flex flex-col items-center gap-2">
+      <span class="badge flex items-center gap-2">
+        <app-icon name="eye" size="sm"></app-icon>
+        <span>Interactive Demo</span>
+      </span>
+      <h2 class="text-headline font-bold">Experience a <span class="gradient-text">360&deg; Virtual Tour</span></h2>
+      <p class="text-muted subtitle">Take a sneak peek inside our signature residences. Click hotspots to explore modern premium fittings.</p>
+    </div>
+    
+    <div class="grid">
+      <div class="view multi-shadow">
+        <img [src]="currentRoom.imageUrl" [alt]="currentRoom.name">
+        <div class="overlay"></div>
+
+        @for (hotspot of currentRoom.hotspots; track hotspot.label) {
+          <button class="spot flex items-center" 
+                  [style.left.%]="hotspot.x" 
+                  [style.top.%]="hotspot.y" 
+                  (click)="showHotspot(hotspot)"
+                  [class.active]="activeHotspot === hotspot">
+            <span class="ring"></span>
+            <span class="dot"></span>
+          </button>
+        }
+ 
+        @if (activeHotspot) {
+          <div class="bubble flex flex-col gap-2">
+            <div class="flex justify-between items-center">
+              <span class="label font-bold text-xs uppercase text-accent">Feature Focus</span>
+              <button class="close flex items-center justify-center" (click)="activeHotspot = null">
+                <app-icon name="x" size="sm"></app-icon>
+              </button>
+            </div>
+            <h4 class="title font-bold">{{ activeHotspot.label }}</h4>
+            <p class="desc text-muted">{{ activeHotspot.desc }}</p>
+          </div>
+        }
+      </div>
+
+
+      <div class="card multi-shadow flex flex-col justify-between">
+        <div class="tabs flex gap-2">
+          @for (room of rooms; track room.id) {
+            <button class="btn" 
+                    [class.active]="activeRoomId === room.id" 
+                    (click)="selectRoom(room.id)">
+              {{ room.name }}
+            </button>
+          }
+        </div>
+
+        <div class="body flex flex-col justify-between flex-1 gap-6">
+          <div>
+            <h3 class="title font-bold">{{ currentRoom.title }}</h3>
+            <p class="desc text-muted">{{ currentRoom.description }}</p>
+          </div>
+
+          <div class="flex flex-col gap-4">
+            <span class="label uppercase text-xs font-bold text-muted block">Key Highlights</span>
+            <div class="list flex flex-wrap gap-2">
+              @for (amenity of currentRoom.amenities; track amenity) {
+                <span class="pill flex items-center gap-1">
+                  <app-icon name="check-circle" class="text-accent"></app-icon>
+                  <span class="text-xs font-medium">{{ amenity }}</span>
+                </span>
+              }
+            </div>
+
+            <div class="footer flex items-center gap-4 flex-wrap">
+              <a routerLink="/auth/login" class="btn btn-accent btn-lg flex-1">
+                <span>View Similar Units</span>
+                <app-icon name="search"></app-icon>
+              </a>
+              <span class="text-xs text-muted">
+                Tap hotspots on the image to view specifications
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
