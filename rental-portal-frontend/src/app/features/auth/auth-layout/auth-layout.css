@@ -1,0 +1,184 @@
+.page {
+  display: flex;
+  min-height: 100vh;
+}
+
+.left {
+  display: none;
+  flex: 1;
+  background: linear-gradient(150deg, #020205 0%, #0d0b21 50%, #01030d 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .left {
+    display: flex;
+  }
+}
+
+.left::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('/auth_luxury_rental.jpg') center/cover no-repeat;
+  opacity: 0.28;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.content {
+  z-index: 1;
+  width: 100%;
+  padding: 48px;
+  gap: 48px;
+}
+
+.light {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+.light-1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.4) 0%, transparent 70%);
+  top: -100px;
+  right: -100px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.light-2 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.3) 0%, transparent 70%);
+  bottom: -80px;
+  left: -80px;
+  animation: float 5s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-15px) scale(1.05);
+  }
+}
+
+.logo-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-name {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.logo-span {
+  background: linear-gradient(90deg, #c084fc, #99f5e3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.visual {
+  flex: 1;
+  justify-content: center;
+  max-width: 500px;
+}
+
+.main-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1.15;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+}
+
+.desc {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: rgba(233, 231, 231, 0.8);
+}
+
+.right {
+  flex: 1;
+  justify-content: center;
+  background: var(--bg);
+  padding: 32px 24px;
+}
+
+.back {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 8px 16px !important;
+  border-radius: var(--radius-md);
+  color: var(--text-2);
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
+}
+
+.back app-icon {
+  color: var(--muted);
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.back:hover {
+  color: #7c3aed;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.back:hover app-icon {
+  color: #7c3aed;
+  transform: scale(1.1);
+}
+
+@media (max-width: 1023px) {
+  .back {
+    top: 24px;
+    left: 24px;
+  }
+
+  .right {
+    flex-direction: column;
+    justify-content: center;
+    padding: 96px 24px 32px;
+  }
+}
+
+@media (max-width: 575px) {
+  .back {
+    top: 16px;
+    left: 16px;
+    padding: 6px 12px !important;
+    font-size: 0.8rem;
+  }
+
+  .right {
+    padding: 72px 16px 24px;
+  }
+}
