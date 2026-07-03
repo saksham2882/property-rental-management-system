@@ -326,3 +326,54 @@ export const rooms: Room[] = [
         ]
     }
 ];
+
+
+
+// Showcase Component Data
+export const leaseFeatures = [
+  'Legally binding digital agreements',
+  'Instant email delivery of signed copy',
+  'Cloud-stored with 7-year retention',
+  'Works on any device or browser'
+];
+
+export const paymentModes = [
+  {
+    icon: 'credit-card',
+    class: 'primary',
+    name: 'Credit / Debit Card',
+    desc: 'Visa, Mastercard, Amex — all cards accepted with 3D Secure verification.'
+  },
+  {
+    icon: 'zap',
+    class: 'accent',
+    name: 'UPI Instant Pay',
+    desc: 'Pay using GPay, PhonePe, BHIM or any UPI ID. Instant settlement.'
+  },
+  {
+    icon: 'building',
+    class: 'success',
+    name: 'Net Banking',
+    desc: 'Direct bank transfer from 50+ banks supported across India.'
+  },
+  {
+    icon: 'file-text',
+    class: 'warning',
+    name: 'Auto PDF Invoice',
+    desc: 'Download a professional rent invoice PDF immediately after each payment.'
+  }
+];
+
+export const maintenanceFeatures = [
+  { icon: 'upload', text: 'Photo upload support' },
+  { icon: 'bell', text: 'Progress notifications' },
+  { icon: 'users', text: 'Contractor assignment' },
+  { icon: 'clock', text: 'SLA response tracking' }
+];
+
+export const ticketSteps = [
+  { state: 'done', label: 'Ticket Raised', time: 'Mon 9:30 AM', colorClass: '' },
+  { state: 'done', label: 'Admin Acknowledged', time: 'Mon 11:45 AM', colorClass: '' },
+  { state: 'active', label: 'Technician Assigned', time: 'Tue 9:00 AM', colorClass: 'text-primary' },
+  { state: 'pending', label: 'Work Completed', time: 'Pending', colorClass: 'text-muted' }
+];
