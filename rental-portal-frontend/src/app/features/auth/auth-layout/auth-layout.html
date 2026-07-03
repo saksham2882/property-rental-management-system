@@ -1,0 +1,30 @@
+<div class="page">
+
+  <div class="left">
+    <div class="content flex flex-col relative">
+      <div class="logo flex items-center gap-3">
+        <span class="logo-icon"><img src="./favicon.svg" alt="RentEase"></span>
+        <span class="logo-name">Rent<span class="logo-span">Ease</span></span>
+      </div>
+
+      <div class="visual flex flex-col relative">
+        <div class="light light-1"></div>
+        <div class="light light-2"></div>
+        <div class="flex flex-col gap-4">
+          <h2 class="main-title">Simplify Your Tenancy</h2>
+          <p class="desc">Experience modern renting with zero brokerage, digital lease signing, and instant portal maintenance support.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="right flex items-center relative">
+    <a routerLink="/" class="back">
+      <app-icon name="home" size="sm"></app-icon>
+      <span>Back to Home</span>
+    </a>
+
+    <router-outlet></router-outlet>
+  </div>
+</div>
