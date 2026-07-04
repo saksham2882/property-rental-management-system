@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { User } from '../models/user-model';
 import { ApiService } from '../global/api-service';
-import { AuthService } from './auth-service';
 
 @Injectable({ 
   providedIn: 'root' 
@@ -10,10 +9,9 @@ import { AuthService } from './auth-service';
 export class UserService {
 
   private api = inject(ApiService);
-  private authService = inject(AuthService);
 
   getAllUsers(role?: string): Observable<User[]> {
-    const url =  `/users?role=${role}`;
+    const url = role ? `/users?role=${role}` : '/users';
     return this.api.get<User[]>(url);
   }
 
@@ -22,42 +20,14 @@ export class UserService {
   }
 
   updateProfile(userId: any, data: Partial<User>): Observable<User> {
-    return this.api.patch<User>(`/users/${userId}`, data).pipe(
-      tap(updated => {
-        this.authService.currentUser.set(updated);
-        localStorage.setItem('rental_user', JSON.stringify(updated));
-      })
-    );
+    return this.api.patch<User>(`/users/${userId}`, data);
   }
 
-  addToWishlist(propertyId: any): Observable<any> {
-    const userId = this.authService.currentUser()?.id;
-    return this.api.post(`/users/${userId}/wishlist/${propertyId}`, {}).pipe(
-      tap(() => {
-        const user = this.authService.currentUser();
-        if (user) {
-          if (!user.wishlist) user.wishlist = [];
-          if (!user.wishlist.includes(propertyId)) {
-            user.wishlist.push(propertyId);
-          }
-          this.authService.currentUser.set({ ...user });
-          localStorage.setItem('rental_user', JSON.stringify(user));
-        }
-      })
-    );
+  addToWishlist(userId: any, propertyId: any): Observable<any> {
+    return this.api.post(`/users/${userId}/wishlist/${propertyId}`, {});
   }
 
-  removeFromWishlist(propertyId: any): Observable<any> {
-    const userId = this.authService.currentUser()?.id;
-    return this.api.delete(`/users/${userId}/wishlist/${propertyId}`).pipe(
-      tap(() => {
-        const user = this.authService.currentUser();
-        if (user && user.wishlist) {
-          user.wishlist = user.wishlist.filter(id => id !== propertyId);
-          this.authService.currentUser.set({ ...user });
-          localStorage.setItem('rental_user', JSON.stringify(user));
-        }
-      })
-    );
+  removeFromWishlist(userId: any, propertyId: any): Observable<any> {
+    return this.api.delete(`/users/${userId}/wishlist/${propertyId}`);
   }
 }
