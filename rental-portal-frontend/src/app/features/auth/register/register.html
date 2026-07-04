@@ -1,0 +1,274 @@
+<div class="container animate-auth-card-right">
+  
+  <div class="card">
+    <div class="flex flex-col gap-3">
+      
+      <div class="stepper relative flex items-center justify-between">
+        <div class="track">
+          <div class="fill" [style.--step-progress]="currentStep === 1 ? '0%' : currentStep === 2 ? '50%' : '100%'"></div>
+        </div>
+
+        <div class="node" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+          <div class="bubble">
+            @if (currentStep > 1) {
+              <app-icon name="check-circle" size="sm"></app-icon>
+            } @else {
+              <span>1</span>
+            }
+          </div>
+        </div>
+
+        <div class="node" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+          <div class="bubble">
+            @if (currentStep > 2) {
+              <app-icon name="check-circle" size="sm"></app-icon>
+            } @else {
+              <span>2</span>
+            }
+          </div>
+        </div>
+
+        <div class="node" [class.active]="currentStep >= 3">
+          <div class="bubble">
+            <span>3</span>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="header flex-col">
+        <h1 class="title">Join <span class="gradient-text">RentEase</span></h1>
+        <p class="subtitle text-accent">Setup credentials & account profile</p>
+      </div>
+
+      @if (error$ | async; as errorMsg) {
+        <div class="error-banner flex items-center animate-slideDown">
+          <app-icon name="alert-circle" size="md"></app-icon>
+          <span>{{ errorMsg }}</span>
+        </div>
+      }
+
+      <form [formGroup]="registerForm" (submit)="onSubmit(); $event.preventDefault();" class="flex flex-col gap-3">
+        
+        @if (currentStep === 1) {
+          <div class="step-content animate-fadeIn">
+            
+            <div class="form-group">
+              <label class="form-label">Account Type</label>
+              <div class="roles">
+                <label class="role" [class.active]="registerForm.get('role')?.value === 'customer'">
+                  <input type="radio" value="customer" formControlName="role" class="sr-only" />
+                  <app-icon name="home" size="sm"></app-icon>
+                  <span>Tenant</span>
+                </label>
+                <label class="role" [class.active]="registerForm.get('role')?.value === 'admin'">
+                  <input type="radio" value="admin" formControlName="role" class="sr-only" />
+                  <app-icon name="building" size="sm"></app-icon>
+                  <span>Manager</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="form-label">Email Address</label>
+              <div class="input-wrap">
+                <span class="icon-left"><app-icon name="mail" size="md"></app-icon></span>
+                <input id="email" type="email" formControlName="email" required class="form-input" placeholder="name@example.com"
+                  [class.is-error]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" />
+              </div>
+              @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+                <span class="form-error">Please enter a valid email address.</span>
+              }
+            </div>
+
+            <div class="form-grid-2">
+
+              <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-wrap">
+                  <span class="icon-left"><app-icon name="lock" size="md"></app-icon></span>
+                  <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" required class="form-input input-password" placeholder="••••••••"
+                    [class.is-error]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" />
+                  <button type="button" (click)="togglePassword()" class="toggle-btn">
+                    <app-icon [name]="showPassword ? 'eye-off' : 'eye'" size="md"></app-icon>
+                  </button>
+                </div>
+                @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
+                  <span class="form-error">Minimum 8 character required.</span>
+                }
+              </div>
+
+              <div class="form-group">
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <div class="input-wrap">
+                  <span class="icon-left"><app-icon name="lock" size="md"></app-icon></span>
+                  <input id="confirmPassword" required [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" class="form-input input-password" placeholder="••••••••"
+                    [class.is-error]="registerForm.get('confirmPassword')?.touched && (registerForm.get('confirmPassword')?.invalid || registerForm.hasError('mismatch'))" />
+                  <button type="button" (click)="toggleConfirmPassword()" class="toggle-btn">
+                    <app-icon [name]="showConfirmPassword ? 'eye-off' : 'eye'" size="md"></app-icon>
+                  </button>
+                </div>
+                @if (registerForm.get('confirmPassword')?.touched && registerForm.get('confirmPassword')?.invalid) {
+                  <span class="form-error">Confirm password is required.</span>
+                }
+                @if (registerForm.get('confirmPassword')?.touched && !registerForm.get('confirmPassword')?.invalid && registerForm.hasError('mismatch')) {
+                  <span class="form-error">Confirm password not match.</span>
+                }
+              </div>
+            </div>
+
+          </div>
+        }
+
+        
+        @if (currentStep === 2) {
+          <div class="step-content animate-fadeIn">
+            
+            <div class="step-header flex flex-row items-center text-center alert-warning">
+              <app-icon name="warning" size="sm"></app-icon>
+              <p class="text-xs">Please enter your legal name and contact number for lease verification.</p>
+            </div>
+
+            <div class="form-group">
+              <label for="name" class="form-label">Full Name</label>
+              <div class="input-wrap">
+                <span class="icon-left"><app-icon name="user" size="md"></app-icon></span>
+                <input id="name" type="text" formControlName="name" class="form-input" placeholder="John Doe"
+                  [class.is-error]="registerForm.get('name')?.touched && registerForm.get('name')?.invalid" />
+              </div>
+              @if (registerForm.get('name')?.touched && registerForm.get('name')?.invalid) {
+                <span class="form-error">Min. 3 characters required.</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="phone" class="form-label">Phone Number</label>
+              <div class="input-wrap">
+                <span class="icon-left"><app-icon name="phone" size="md"></app-icon></span>
+                <input id="phone" type="text" formControlName="phone" class="form-input" placeholder="9876543210"
+                  [class.is-error]="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid" />
+              </div>
+              @if (registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid) {
+                <span class="form-error">Please enter a valid 10-digit number.</span>
+              }
+            </div>
+
+          </div>
+        }
+
+        
+        @if (currentStep === 3) {
+          <div class="step-content animate-fadeIn">
+            
+            @if (registerForm.get('role')?.value === 'customer') {
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="city" class="form-label">Current City</label>
+                  <div class="input-wrap">
+                    <span class="icon-left"><app-icon name="map-pin" size="md"></app-icon></span>
+                    <input id="city" type="text" formControlName="city" class="form-input" placeholder="e.g. Bangalore"
+                      [class.is-error]="registerForm.get('city')?.touched && registerForm.get('city')?.invalid" />
+                  </div>
+                  @if (registerForm.get('city')?.touched && registerForm.get('city')?.invalid) {
+                    <span class="form-error">Please enter city name.</span>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label for="budgetMax" class="form-label">Max Budget (₹/mo)</label>
+                  <div class="input-wrap">
+                    <span class="icon-left"><app-icon name="indian-rupee" size="md"></app-icon></span>
+                    <input id="budgetMax" type="number" formControlName="budgetMax" class="form-input" placeholder="e.g. 25000"
+                      [class.is-error]="registerForm.get('budgetMax')?.touched && registerForm.get('budgetMax')?.invalid" />
+                  </div>
+                  @if (registerForm.get('budgetMax')?.touched && registerForm.get('budgetMax')?.invalid) {
+                    <span class="form-error">Minimum ₹10000 required.</span>
+                  }
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="preferredLocations" class="form-label">Preferred Localities</label>
+                <div class="input-wrap">
+                  <span class="icon-left"><app-icon name="compass" size="md"></app-icon></span>
+                  <input id="preferredLocations" type="text" formControlName="preferredLocations" class="form-input" placeholder="e.g. HSR Layout, Koramangala"
+                    [class.is-error]="registerForm.get('preferredLocations')?.touched && registerForm.get('preferredLocations')?.invalid" />
+                </div>
+                @if (registerForm.get('preferredLocations')?.touched && registerForm.get('preferredLocations')?.invalid) {
+                  <span class="form-error">Preferred localities are required (min. 3 chars).</span>
+                }
+              </div>
+            } 
+            @else {
+              <div class="owner">
+                <div class="box-icon">
+                  <app-icon name="check-circle" size="lg"></app-icon>
+                </div>
+                <div>
+                  <h4 class="box-title">Owner Account Setup</h4>
+                  <p class="box-text">You'll be redirected to register your properties, list rooms, issue invoices, and invite tenants.</p>
+                </div>
+              </div>
+            }
+
+
+            <div class="form-group">
+              <label for="alerts" class="form-label">Alerts</label>
+              <div class="toggles flex items-center justify-center">
+                <div class="flex items-center gap-2">
+                  <label class="switch">
+                    <input type="checkbox" formControlName="emailAlerts" />
+                    <span class="slider"></span>
+                  </label>
+                  <span class="toggle-text">Email Alerts</span>
+                </div>
+                <hr class="line" />
+                <div class="flex items-center gap-2">
+                  <label class="switch">
+                    <input type="checkbox" formControlName="smsAlerts" />
+                    <span class="slider"></span>
+                  </label>
+                  <span class="toggle-text">SMS Alerts</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        }
+
+        <div class="actions">
+          @if (currentStep > 1) {
+            <button type="button" (click)="prevStep()" class="btn btn-back">
+              <app-icon name="arrow-right" class="rotate-180" size="sm"></app-icon>
+              <span>Back</span>
+            </button>
+          }
+          
+          @if (currentStep < maxSteps) {
+            <button type="button" (click)="nextStep()" class="btn btn-next">
+              <span>Continue</span>
+              <app-icon name="arrow-right" size="sm"></app-icon>
+            </button>
+          } 
+          @else {
+            <button type="submit" class="btn btn-submit" [disabled]="(loading$ | async) === true">
+              @if (loading$ | async) {
+                <span class="spinner-ring white"></span>
+                <span>Registering...</span>
+              } @else {
+                <app-icon name="check-circle" size="sm"></app-icon>
+                <span>Create Account</span>
+              }
+            </button>
+          }
+        </div>
+      </form>
+
+      <div class="form-footer text-accent">
+        Already have an account?
+        <a routerLink="/auth/login" class="link">Sign In</a>
+      </div>
+    </div>
+  </div>
+</div>
