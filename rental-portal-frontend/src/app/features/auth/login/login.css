@@ -1,3 +1,9 @@
+:host {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 .card {
   width: 460px;
   padding: 32px 36px;
@@ -130,6 +136,7 @@
 @media (max-width: 575px) {
   .card {
     width: 100% !important;
+    max-width: 100% !important;
     padding: 24px 20px;
     border-radius: var(--radius-xl);
   }
