@@ -2,12 +2,13 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { AuthService } from '../services/auth-service';
+import { Store } from '@ngrx/store';
+import { logout } from '../../store/auth/auth.actions';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   
   const token = localStorage.getItem('auth-token');
-  const authService = inject(AuthService);
+  const store = inject(Store);
 
   let authReq = req;
   if (token) {
@@ -21,7 +22,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401 || error.status === 403) {
-        authService.logout();
+        store.dispatch(logout());
       }
       return throwError(() => error);
     })

@@ -24,7 +24,6 @@ export const propertiesReducer = createReducer(
   initialState,
   on(
     PropertiesActions.loadProperties,
-    PropertiesActions.loadPropertyById,
     PropertiesActions.createProperty,
     PropertiesActions.updateProperty,
     PropertiesActions.deleteProperty,
@@ -36,6 +35,13 @@ export const propertiesReducer = createReducer(
       error: null
     })
   ),
+
+  on(PropertiesActions.loadPropertyById, (state) => ({
+    ...state,
+    selectedProperty: null,
+    loading: true,
+    error: null
+  })),
 
   on(PropertiesActions.loadPropertiesSuccess, (state, { properties }) => ({
     ...state,

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="tabGlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#14b8a6" />
+    </linearGradient>
+  </defs>
+  <!-- Stylized Bolder Luxury House Line Art (No solid background for transparency) -->
+  <path d="M 236 44 C 248 32, 264 32, 276 44 L 468 236 C 476 244, 470 256, 458 256 L 416 256 L 416 460 C 416 472, 406 480, 394 480 L 118 480 C 106 480, 96 472, 96 460 L 96 256 L 54 256 C 42 256, 36 244, 44 236 Z" 
+        fill="none" 
+        stroke="url(#tabGlowGrad)" 
+        stroke-width="42" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+  
+  <!-- Centered Bold Keyhole Emblem inside the house (enlarged for tab visibility) -->
+  <path d="M 222 280 A 34 34 0 1 1 290 280 C 290 298, 278 308, 270 320 L 270 380 L 242 380 L 242 320 C 234 308, 222 298, 222 280 Z" 
+        fill="url(#tabGlowGrad)" />
+</svg>
