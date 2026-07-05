@@ -182,3 +182,14 @@
     padding: 72px 16px 24px;
   }
 }
+
+@media (max-width: 470px) {
+  .right {
+    padding: 64px 8px 16px;
+  }
+
+  .back {
+    top: 12px;
+    left: 8px;
+  }
+}

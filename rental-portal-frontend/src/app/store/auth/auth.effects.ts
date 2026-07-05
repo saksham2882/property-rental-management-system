@@ -7,12 +7,12 @@ import { Router } from '@angular/router';
 import { UserService } from '../../core/services/user-service';
 import { ToastService } from '../../core/services/toast-service';
 import * as AuthActions from './auth.actions';
-import { User } from '../../core/models/user-model';
 import { AuthService } from '../../core/services/auth-service';
 import { selectCurrentUser } from './auth.selectors';
 
 @Injectable()
 export class AuthEffects {
+
   private actions$ = inject(Actions);
   private store = inject(Store);
   private userService = inject(UserService);
@@ -67,7 +67,7 @@ export class AuthEffects {
             return AuthActions.registerSuccess({ token: res.token, user: res.user });
           }),
           catchError((err) => {
-            const msg = err.error || err.message || 'Registration failed';
+            const msg = (typeof err.error === 'object' ? err.error?.message : err.error) || err.message || 'Registration failed';
             return of(AuthActions.registerFailure({ error: msg }));
           })
         )
@@ -139,7 +139,6 @@ export class AuthEffects {
               ? currentWishlist
               : [...currentWishlist, propertyId];
             
-            // Update local storage
             const updatedUser = { ...user, wishlist };
             localStorage.setItem('rental_user', JSON.stringify(updatedUser));
             
@@ -166,7 +165,6 @@ export class AuthEffects {
             const currentWishlist = user.wishlist || [];
             const wishlist = currentWishlist.filter((id) => id !== propertyId);
             
-            // Update local storage
             const updatedUser = { ...user, wishlist };
             localStorage.setItem('rental_user', JSON.stringify(updatedUser));
             

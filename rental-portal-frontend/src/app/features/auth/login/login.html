@@ -1,0 +1,66 @@
+<div class="card animate-auth-card-left">
+
+  <div class="header flex-col">
+    <h1 class="title"> <span class="gradient-text">Welcome</span> back</h1>
+    <p class="subtitle text-accent">Sign in to manage your properties and tenancies</p>
+  </div>
+
+  @if (error$ | async; as errorMsg) {
+    <div class="error-banner flex items-center animate-slideDown">
+      <app-icon name="alert-circle" size="md"></app-icon>
+      <span>{{ errorMsg }}</span>
+    </div>
+  }
+
+  <form [formGroup]="loginForm" (submit)="onSubmit(); $event.preventDefault();" class="form-group">
+
+    <div class="form-group">
+      <label for="email" class="form-label">Email</label>
+      <div class="input-wrap">
+        <span class="icon-left"><app-icon name="mail" size="md"></app-icon></span>
+        <input id="email" type="email" formControlName="email" class="form-input" placeholder="name@example.com"
+          [class.is-error]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" />
+      </div>
+
+      @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
+        <span class="form-error">
+          <app-icon name="info" size="sm"></app-icon> Please enter a valid email address.
+        </span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="password" class="form-label">Password</label>
+      <div class="input-wrap">
+        <span class="icon-left"><app-icon name="lock" size="md"></app-icon></span>
+        <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-input input-password" placeholder="••••••••"
+          [class.is-error]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" />
+
+        <button type="button" (click)="togglePassword()" class="toggle-btn">
+          <app-icon [name]="showPassword ? 'eye-off' : 'eye'" size="md"></app-icon>
+        </button>
+      </div>
+
+      @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+        <span class="form-error">
+          <app-icon name="info" size="sm"></app-icon> Password must be at least 8 characters.
+        </span>
+      }
+    </div>
+
+    <button type="submit" class="btn btn-submit" [disabled]="(loading$ | async) === true">
+      @if (loading$ | async) {
+        <span class="spinner-ring white"></span>
+        <span>Signing in...</span>
+      } @else {
+        <app-icon name="arrow-right" size="md"></app-icon>
+        <span>Sign In</span>
+      }
+    </button>
+  </form>
+
+  <div class="footer">
+    Don't have an account?
+    <a routerLink="/auth/register" class="link">Sign Up</a>
+  </div>
+</div>

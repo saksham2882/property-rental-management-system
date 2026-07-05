@@ -1,0 +1,94 @@
+<div class="filter-sidebar card animate-fadeIn">
+
+  <div class="sidebar-header">
+    <h3 class="title flex items-center gap-2">
+      <app-icon name="search" size="md"></app-icon>
+      <span>Catalog Filters</span>
+    </h3>
+    <button (click)="resetFilters()" class="btn-reset">Reset All</button>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Search Keywords</label>
+    <div class="input-wrapper">
+      <input type="text" [ngModel]="search" (ngModelChange)="onSearchChange($event)" placeholder="Locality, title or keywords..." class="form-input" />
+      <app-icon name="search" size="sm" class="search-icon"></app-icon>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">City Location</label>
+    <app-dropdown
+      [options]="cityOptions"
+      [value]="city"
+      (valueChange)="onCityChange($event)"
+      placeholder="Select City">
+    </app-dropdown>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Property Type</label>
+    <app-dropdown
+      [options]="typeOptions"
+      [value]="type"
+      (valueChange)="onTypeChange($event)"
+      placeholder="Select Type">
+    </app-dropdown>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Bedrooms (BHK)</label>
+    <app-dropdown
+      [options]="bedroomOptions"
+      [value]="bedrooms"
+      (valueChange)="onBedroomsChange($event)"
+      placeholder="Select BHK">
+    </app-dropdown>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Furnishing Status</label>
+    <app-dropdown
+      [options]="furnishingOptions"
+      [value]="furnishing"
+      (valueChange)="onFurnishingChange($event)"
+      placeholder="Select Furnishing">
+    </app-dropdown>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Availability Status</label>
+    <app-dropdown
+      [options]="availabilityOptions"
+      [value]="available"
+      (valueChange)="onAvailabilityChange($event)"
+      placeholder="Select Availability">
+    </app-dropdown>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Monthly Rent (₹)</label>
+    <div class="range-inputs">
+      <input type="number" min="0" [(ngModel)]="minRent" (ngModelChange)="onRentChange()" placeholder="Min Rent" class="form-input text-xs" />
+      <span class="range-separator">-</span>
+      <input type="number" min="0" [(ngModel)]="maxRent" (ngModelChange)="onRentChange()" placeholder="Max Rent" class="form-input text-xs" />
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Carpet Area (sqft)</label>
+    <div class="range-inputs">
+      <input type="number" min="0" [(ngModel)]="minArea" (ngModelChange)="onAreaChange()" placeholder="Min Area" class="form-input text-xs" />
+      <span class="range-separator">-</span>
+      <input type="number" min="0" [(ngModel)]="maxArea" (ngModelChange)="onAreaChange()" placeholder="Max Area" class="form-input text-xs" />
+    </div>
+  </div>
+
+  <div class="wishlist-toggle">
+    <span class="form-label">Show Wishlist Only</span>
+    <label class="switch-toggle">
+      <input type="checkbox" [ngModel]="favoritesOnly" (ngModelChange)="onFavoritesToggle($event)" />
+      <span class="switch-slider"></span>
+    </label>
+  </div>
+</div>
