@@ -1,0 +1,12 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.empty-state {
+    border: none;
+}
+
+.btn-primary {
+    margin-top: var(--space-2);
+}
