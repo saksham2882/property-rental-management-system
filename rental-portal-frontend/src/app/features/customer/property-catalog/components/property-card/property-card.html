@@ -1,0 +1,100 @@
+@if (isGridView) {
+
+  <div [routerLink]="['/customer/properties', property.id]" class="card flex flex-col multi-shadow">
+
+    <div class="img-box">
+      @if (property.images && property.images.length > 0) {
+        <img [src]="property.images[0]" alt="Rental unit" />
+      } 
+      @else {
+        <div class="no-preview flex items-center">No Image Preview</div>
+      }
+      
+      <button (click)="onWishlistClick($event)" class="btn btn-heart">
+        <app-icon name="heart" class="heart-icon" [class.wishlist-active]="isWishlisted"></app-icon>
+      </button>
+      
+      <span class="badge badge-tag">
+        {{ property.type }}
+      </span>
+
+      <span class="badge avail-badge" [class.occupied]="!property.available">
+        {{ property.available ? 'Available' : 'Occupied' }}
+      </span>
+    </div>
+
+    <div class="card-body flex flex-col">
+      <div class="pricing-row">
+        <span class="rent-val">{{ property.rent | priceFormat:'mo' }}</span>
+        <span class="deposit-val">Dep: {{ property.deposit | priceFormat }}</span>
+      </div>
+      
+      <h3 class="card-title">{{ property.title }}</h3>
+      
+      <p class="location-row flex items-center text-accent">
+        <app-icon name="map-pin" size="sm"></app-icon>
+        <span>{{ property.locality }}, {{ property.city }}</span>
+      </p>
+
+      <div class="card-info text-accent">
+        <span class="item"><app-icon name="home" size="sm"></app-icon> {{ property.bedrooms }} BHK</span>
+        <span class="item"><app-icon name="building" size="sm"></app-icon> {{ property.furnishing }}</span>
+        <span class="item"><app-icon name="star" size="sm"></app-icon> {{ property.averageRating || 4.5 }}</span>
+      </div>
+    </div>
+  </div>
+} 
+@else {
+
+  <div [routerLink]="['/customer/properties', property.id]" class="card property-list-card multi-shadow">
+    
+    <div class="list-img-box">
+      @if (property.images && property.images.length > 0) {
+        <img [src]="property.images[0]" alt="Rental unit" />
+      } @else {
+        <div class="no-preview">No Image Preview</div>
+      }
+      
+      <button (click)="onWishlistClick($event)" class="btn btn-heart">
+        <app-icon name="heart" class="heart-icon" [class.wishlist-active]="isWishlisted"></app-icon>
+      </button>
+    </div>
+
+    <div class="list-details">
+      <div class="list-main">
+        <div class="list-header">
+          <div>
+            <span class="badge badge-label">
+              {{ property.type }}
+            </span>
+            <h3 class="list-title">{{ property.title }}</h3>
+          </div>
+          <div class="list-pricing">
+            <span class="rent-val">{{ property.rent | priceFormat:'mo' }}</span>
+            <span class="deposit-val">Deposit: {{ property.deposit | priceFormat }}</span>
+          </div>
+        </div>
+
+        <p class="location-row flex items-center text-accent">
+          <app-icon name="map-pin" size="sm"></app-icon>
+          <span>{{ property.locality }}, {{ property.city }}</span>
+        </p>
+
+        <p class="description-text">
+          {{ property.description || 'Spacious rental property with all modern amenities situated in a prime residential locality. Perfect for single professionals and families.' }}
+        </p>
+      </div>
+
+      <div class="list-meta-row">
+        <div class="meta-left text-accent">
+          <span class="item"><app-icon name="home" size="sm"></app-icon> {{ property.bedrooms }} BHK</span>
+          <span class="item"><app-icon name="building" size="sm"></app-icon> {{ property.furnishing }}</span>
+          <span class="item"><app-icon name="star" size="sm"></app-icon> {{ property.averageRating || 4.5 }}</span>
+        </div>
+        <span class="badge avail-badge-list" [class.occupied]="!property.available">
+          {{ property.available ? 'Available' : 'Occupied' }}
+        </span>
+      </div>
+    </div>
+  </div>
+}
