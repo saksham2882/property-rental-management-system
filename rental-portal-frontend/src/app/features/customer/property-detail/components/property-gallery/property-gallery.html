@@ -1,0 +1,27 @@
+<div class="flex flex-col gap-4">
+
+  <div class="gallery-main">
+    @if (images && images.length > 0) {
+      @for (img of images; track $index; let idx = $index) {
+        <img [src]="img" [alt]="title" [class.active-slide]="activeImageIndex === idx"
+          class="gallery-slide" (error)="handleImageError($event)" />
+      }
+    } 
+    @else {
+      <div class="no-image flex items-center justify-center">No Preview Image Available</div>
+    }
+    <span class="badge badge-type">
+      {{ type }}
+    </span>
+  </div>
+
+  @if (images && images.length > 1) {
+    <div class="thumb-row">
+      @for (img of images; track $index; let i = $index) {
+        <button (click)="setImage(i)" class="btn thumb-btn" [class.active]="activeImageIndex === i">
+          <img [src]="img" alt="Thumbnail {{ i + 1 }}" (error)="handleImageError($event)" />
+        </button>
+      }
+    </div>
+  }
+</div>

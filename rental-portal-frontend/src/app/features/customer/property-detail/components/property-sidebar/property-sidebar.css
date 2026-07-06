@@ -1,0 +1,152 @@
+:host {
+  display: block;
+}
+
+.card {
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), 0 0 0 1px var(--border);
+  gap: 12px;
+}
+
+.rent-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rent-box {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.rent-price {
+  font-size: 1.85rem;
+  font-weight: 850;
+  color: var(--text-2);
+  letter-spacing: -0.02em;
+}
+
+.divider {
+  margin: 10px 0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-size: 0.84rem;
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.value {
+  font-size: 0.84rem;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.status-tag {
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.status-tag.available {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+}
+
+.status-tag.unavailable {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+}
+
+.action-wrapper {
+  margin-top: 10px;
+}
+
+.apply-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 0.92rem;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-applied {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981 !important;
+  cursor: not-allowed;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.btn-occupied {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444 !important;
+  cursor: not-allowed;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.manager-box {
+  margin-top: 24px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 16px;
+}
+
+.manager-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.manager-details {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 0.95rem;
+}
+
+.manager-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.manager-name {
+  font-size: 0.84rem;
+  font-weight: 750;
+  color: var(--text);
+}
+
+.manager-role {
+  font-size: 0.72rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-top: -1px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #a481f7 0%, #6d28d9 100%);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(109, 40, 217, 0.45);
+}

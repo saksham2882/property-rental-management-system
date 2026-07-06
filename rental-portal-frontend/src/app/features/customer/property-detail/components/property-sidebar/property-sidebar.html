@@ -1,0 +1,70 @@
+<div class="card flex flex-col">
+
+  <div class="flex flex-col gap-1">
+    <span class="rent-label">Monthly Rent</span>
+    <div class="rent-box">
+      <span class="rent-price">{{ property.rent | priceFormat: 'month' }}</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="flex flex-col gap-3">
+    <div class="row">
+      <span class="label">Safety Deposit</span>
+      <span class="value">{{ property.deposit | priceFormat }}</span>
+    </div>
+    <div class="row">
+      <span class="label">Carpet Area</span>
+      <span class="value">{{ property.area }} sqft</span>
+    </div>
+    <div class="row">
+      <span class="label">Property Type</span>
+      <span class="value">{{ property.type }}</span>
+    </div>
+    <div class="row">
+      <span class="label">Availability</span>
+      <span class="badge status-tag" [class.available]="property.available" [class.unavailable]="!property.available">
+        {{ property.available ? 'Available Now' : 'Occupied' }}
+      </span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="action-wrapper">
+    @if (hasAlreadyApplied) {
+      <button class="btn apply-btn btn-applied" [disabled]="true"
+        title="You have already submitted a rental application for this property.">
+        <app-icon name="check-circle" size="md"></app-icon>
+        <span>Already Applied</span>
+      </button>
+    } 
+    @else if (!property.available) {
+      <button class="btn apply-btn btn-occupied" [disabled]="true"
+        title="This property is currently occupied or unavailable for new lease agreements.">
+        <app-icon name="x" size="md"></app-icon>
+        <span>Property Occupied</span>
+      </button>
+    } 
+    @else {
+      <button [routerLink]="['/customer/apply', property.id]" class="btn btn-primary apply-btn">
+        <span>Apply For Rent</span>
+        <app-icon name="arrow-right" size="sm"></app-icon>
+      </button>
+    }
+  </div>
+
+  <div class="manager-box">
+    <span class="manager-label">Property Manager</span>
+    <div class="manager-details">
+      <div class="avatar">
+        {{ 'RentEase Admin'.substring(0,1).toUpperCase() }}
+      </div>
+      <div class="manager-text">
+        <span class="manager-name">RentEase Admin</span>
+        <span class="manager-role">Corporate Manager</span>
+      </div>
+    </div>
+  </div>
+</div>
