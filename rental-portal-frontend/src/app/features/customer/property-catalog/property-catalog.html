@@ -2,27 +2,15 @@
 
   <div class="grid-2">
 
-    <app-catalog-filters
-      [class.show-filters]="showMobileFilters"
-      [(search)]="search"
-      [(city)]="city"
-      [(type)]="type"
-      [(bedrooms)]="bedrooms"
-      [(furnishing)]="furnishing"
-      [(available)]="available"
-      [(minRent)]="minRent"
-      [(maxRent)]="maxRent"
-      [(minArea)]="minArea"
-      [(maxArea)]="maxArea"
-      [(favoritesOnly)]="favoritesOnly"
-      [cityOptions]="cityOptions"
-      [typeOptions]="typeOptions"
-      [bedroomOptions]="bedroomOptions"
-      [furnishingOptions]="furnishingOptions"
-      [availabilityOptions]="availabilityOptions"
-      (filterChange)="applyFilters()"
-      (reset)="resetFilters()">
-    </app-catalog-filters>
+    <div class="filter-sidebar">
+      <app-catalog-filters [class.show-filters]="showMobileFilters" [(search)]="search" [(city)]="city" [(type)]="type"
+        [(bedrooms)]="bedrooms" [(furnishing)]="furnishing" [(available)]="available" [(minRent)]="minRent"
+        [(maxRent)]="maxRent" [(minArea)]="minArea" [(maxArea)]="maxArea" [(favoritesOnly)]="favoritesOnly"
+        [cityOptions]="cityOptions" [typeOptions]="typeOptions" [bedroomOptions]="bedroomOptions"
+        [furnishingOptions]="furnishingOptions" [availabilityOptions]="availabilityOptions" (filterChange)="applyFilters()"
+        (reset)="resetFilters()">
+      </app-catalog-filters>
+    </div>
 
     <div class="flex flex-col gap-6">
 
