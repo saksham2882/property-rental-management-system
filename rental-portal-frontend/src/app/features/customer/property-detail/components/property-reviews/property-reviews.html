@@ -1,0 +1,89 @@
+<div class="card flex flex-col gap-2">
+  <h3 class="sec-subtitle">Verified Tenant Reviews</h3>
+
+  <div class="flex flex-col gap-5">
+    @for (review of displayedReviews; track review.id || review.comment) {
+      <div class="review-item">
+
+        <div class="review-header">
+          <div class="flex items-center gap-3">
+            <div class="avatar">
+              {{ (review.userName || 'Anonymous').substring(0,1).toUpperCase() }}
+            </div>
+            <div class="flex flex-col">
+              <span class="author">{{ review.userName || 'Verified Tenant' }}</span>
+              <span class="date">{{ review.createdAt || 'Recent' }}</span>
+            </div>
+          </div>
+
+          <div class="review-stars">
+            @for (star of [1,2,3,4,5]; track star) {
+              <app-icon name="star" class="star-icon" [class.filled-star]="star <= review.rating"></app-icon>
+            }
+          </div>
+        </div>
+
+        <p class="comment text-accent">{{ review.comment }}</p>
+      </div>
+    }
+
+    @if (reviews.length === 0) {
+      <app-empty-state icon="star" title="No reviews yet" description="Be the first to share your experience with this property!"></app-empty-state>
+    }
+  </div>
+
+
+  @if (reviews.length > 3) {
+    <div class="view-more">
+      <button (click)="toggleShowAllReviews()" class="btn btn-toggle">
+        <span>{{ showAllReviews ? 'Show Less Reviews' : 'View All ' + reviews.length + ' Reviews' }}</span>
+        <app-icon name="chevron-down" size="sm" [class.rotate-up]="showAllReviews"></app-icon>
+      </button>
+    </div>
+  }
+
+
+  <div class="new-review-form">
+    <h4 class="review-title">Write a Review</h4>
+
+    @if (currentUser) {
+      <div class="rating-row">
+        <span class="label">Rating:</span>
+        <div class="star-rating">
+          @for (star of [1,2,3,4,5]; track star) {
+            <button (click)="newRating = star" type="button" class="star-btn" [class.active-star]="star <= newRating">
+              <app-icon name="star" size="lg"></app-icon>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="comment-row">
+        <div class="form-group">
+          <input type="text" [(ngModel)]="newComment" placeholder="Share your feedback about this home..." class="form-input" />
+          <span class="validation" *ngIf="newComment.trim() && newComment.trim().length < 5">
+            Review must be at least 5 characters long.
+          </span>
+        </div>
+        <button (click)="submitReview()" [disabled]="!newComment.trim() || newComment.trim().length < 5"
+          class="btn btn-primary btn-submit">
+          Post Review
+        </button>
+      </div>
+    } 
+    @else {
+      <div class="auth-prompt">
+        <div class="flex items-center justify-center gap-1">
+          <app-icon name="lock" size="md" class="lock-icon"></app-icon>
+          <span>Please log in to write a review. Only verified tenants can write reviews.</span>
+        </div>
+        <div>
+          <a routerLink="/auth/login" class="login-link flex gap-1">
+            <app-icon name="external-link" size="md"></app-icon>
+            <span>Login</span>
+          </a>
+        </div>
+      </div>
+    }
+  </div>
+</div>

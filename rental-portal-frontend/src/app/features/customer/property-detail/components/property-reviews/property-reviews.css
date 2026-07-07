@@ -1,0 +1,266 @@
+:host {
+  display: block;
+}
+
+.card {
+  padding: 32px;
+  box-shadow: var(--shadow-md);
+}
+
+.sec-subtitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-top: 0;
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
+}
+
+.review-item {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.review-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  font-size: 0.95rem;
+}
+
+.author {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.date {
+  font-size: 0.72rem;
+  color: var(--text-2);
+}
+
+.review-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star-icon ::ng-deep svg {
+  width: 14px;
+  height: 14px;
+  color: var(--border-strong) !important;
+  fill: transparent !important;
+}
+
+.star-icon.filled-star ::ng-deep svg {
+  color: #fbbf24 !important;
+  fill: #fbbf24 !important;
+}
+
+.comment {
+  font-size: 0.86rem;
+  line-height: 1.5;
+  margin: 0;
+  padding-left: 52px;
+  overflow-wrap: break-word;
+}
+
+.view-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 24px;
+}
+
+.btn-toggle {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  padding: 8px 18px;
+  border-radius: 12px;
+  display: flex;
+  font-size: 0.82rem;
+}
+
+.btn-toggle:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
+.rotate-up {
+  transform: rotate(180deg);
+}
+
+
+
+
+.new-review-form {
+  margin-top: 32px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.review-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.star-rating {
+  display: flex;
+  gap: 4px;
+}
+
+.star-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  color: var(--border-strong);
+  transition: transform 0.15s ease;
+}
+
+.star-btn:hover {
+  transform: scale(1.15);
+}
+
+.star-btn ::ng-deep svg {
+  color: var(--border-strong) !important;
+  fill: transparent !important;
+}
+
+.star-btn.active-star ::ng-deep svg {
+  color: #fbbf24 !important;
+  fill: #fbbf24 !important;
+}
+
+.comment-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .comment-row {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.form-group {
+  width: 100%;
+}
+
+.form-input {
+  padding: 12px 16px;
+  font-size: 0.84rem;
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.form-input:focus {
+  border-color: var(--bg-2);
+  outline: var(--bg-2);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.validation {
+  font-size: 0.72rem;
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.btn {
+  border-radius: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #9271df 0%, #5f14d7 100%);
+  color: #ffffff !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(109, 40, 217, 0.45);
+}
+
+.btn-submit {
+  flex-shrink: 0;
+  align-self: flex-start;
+  padding: 12px 20px;
+  font-size: 0.84rem;
+  height: 45px;
+}
+
+@media (max-width: 639px) {
+  .btn-submit {
+    width: 100%;
+  }
+}
+
+
+
+.auth-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  background: rgba(139, 92, 246, 0.05);
+  border: 1.5px dashed rgba(139, 92, 246, 0.2);
+  border-radius: 12px;
+  color: var(--text-2);
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.lock-icon {
+  color: #8b5cf6;
+  flex-shrink: 0;
+}
+
+.login-link {
+  color: #8b5cf6;
+  font-weight: 700;
+  text-decoration: underline; 
+}
+
+@media (max-width: 639px) {
+  .auth-prompt{
+    flex-direction: column;
+  }
+
+  .auth-prompt > div app-icon {
+    align-self: flex-start;
+    padding-right: 4px;
+  }
+}
