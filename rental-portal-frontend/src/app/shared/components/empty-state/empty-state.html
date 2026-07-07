@@ -1,0 +1,18 @@
+<div class="empty-state">
+
+    <div class="empty-state-icon">
+        <app-icon [name]="icon" size="3xl"></app-icon>
+    </div>
+
+    <h3>{{ title }}</h3>
+    
+    @if (description) {
+        <p>{{ description }}</p>
+    }
+
+    @if (actionText && actionLink) {
+        <a [routerLink]="actionLink" class="btn btn-primary btn-sm">
+            {{ actionText }}
+        </a>
+    }
+</div>

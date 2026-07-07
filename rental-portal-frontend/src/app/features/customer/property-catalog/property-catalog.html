@@ -1,0 +1,98 @@
+<div class="container animate-fadeIn">
+
+  <div class="grid-2">
+
+    <div class="filter-sidebar">
+      <app-catalog-filters [class.show-filters]="showMobileFilters" [(search)]="search" [(city)]="city" [(type)]="type"
+        [(bedrooms)]="bedrooms" [(furnishing)]="furnishing" [(available)]="available" [(minRent)]="minRent"
+        [(maxRent)]="maxRent" [(minArea)]="minArea" [(maxArea)]="maxArea" [(favoritesOnly)]="favoritesOnly"
+        [cityOptions]="cityOptions" [typeOptions]="typeOptions" [bedroomOptions]="bedroomOptions"
+        [furnishingOptions]="furnishingOptions" [availabilityOptions]="availabilityOptions" (filterChange)="applyFilters()"
+        (reset)="resetFilters()">
+      </app-catalog-filters>
+    </div>
+
+    <div class="flex flex-col gap-6">
+
+      <div class="card toolbar-bar">
+        <span class="results-count">
+          Found <strong>{{ filteredProperties.length }}</strong> active rental listings
+        </span>
+
+        <div class="toolbar-actions">
+          <button (click)="toggleMobileFilters()" class="btn btn-mobile-filters" [class.active]="showMobileFilters">
+            <app-icon name="file-text" size="md"></app-icon>
+            <span>{{ showMobileFilters ? 'Hide Filters' : 'Filters' }}</span>
+          </button>
+
+          <div class="view-toggles">
+            <button (click)="toggleView(true)" class="btn btn-toggle" [class.active]="isGridView">
+              <app-icon name="grid" size="md"></app-icon>
+            </button>
+            <button (click)="toggleView(false)" class="btn btn-toggle" [class.active]="!isGridView">
+              <app-icon name="menu" size="md"></app-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      @if (loading$ | async) {
+        <app-loading-spinner></app-loading-spinner>
+      } 
+      @else {
+        @if (isGridView) {
+
+          <div class="grid-layout">
+            @for (property of paginatedProperties; track property.id) {
+              <app-property-card
+                [property]="property"
+                [isGridView]="true"
+                [isWishlisted]="userWishlist.includes(property.id)"
+                (toggleWishlist)="toggleFavorite(property.id, $event)">
+              </app-property-card>
+            }
+          </div>
+        } 
+        @else {
+
+          <div class="list-layout">
+            @for (property of paginatedProperties; track property.id) {
+              <app-property-card
+                [property]="property"
+                [isGridView]="false"
+                [isWishlisted]="userWishlist.includes(property.id)"
+                (toggleWishlist)="toggleFavorite(property.id, $event)">
+              </app-property-card>
+            }
+          </div>
+        }
+
+        <div class="pagination-bar" *ngIf="totalPages > 1">
+          <button (click)="prevPage()" [disabled]="currentPage === 1" class="btn btn-nav">
+            <app-icon name="arrow-left" size="sm"></app-icon>
+            <span>Previous</span>
+          </button>
+          
+          <div class="page-numbers">
+            <button 
+              *ngFor="let page of pageNumbers" 
+              (click)="setPage(page)" 
+              class="btn btn-page" 
+              [class.active]="currentPage === page">
+              {{ page }}
+            </button>
+          </div>
+
+          <button (click)="nextPage()" [disabled]="currentPage === totalPages" class="btn btn-nav">
+            <span>Next</span>
+            <app-icon name="arrow-right" size="sm"></app-icon>
+          </button>
+        </div>
+
+        @if (filteredProperties.length === 0) {
+          <app-empty-state icon="info" title="No properties found" description="Try updating your budget range or search filters above to explore other listings."></app-empty-state>
+        }
+      }
+    </div>
+  </div>
+</div>
