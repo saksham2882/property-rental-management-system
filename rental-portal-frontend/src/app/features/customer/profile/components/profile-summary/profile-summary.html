@@ -1,0 +1,35 @@
+<div class="card">
+  <div class="avatar">
+    {{ (user.name || 'U').substring(0, 1).toUpperCase() }}
+  </div>
+  <h2 class="name">{{ user.name }}</h2>
+  <span class="badge badge-success text-xs">Tenant Account</span>
+  
+  <div class="details">
+    <div class="row">
+      <app-icon name="mail" size="sm"></app-icon>
+      <span class="truncate">{{ user.email }}</span>
+    </div>
+
+    @if (user.phone) {
+      <div class="row">
+        <app-icon name="phone" size="sm"></app-icon>
+        <span>{{ user.phone }}</span>
+      </div>
+    }
+
+    @if (user.city) {
+      <div class="row">
+        <app-icon name="map-pin" size="sm"></app-icon>
+        <span>{{ user.city }}</span>
+      </div>
+    }
+
+    @if (user.createdAt) {
+      <div class="row">
+        <app-icon name="building" size="sm"></app-icon>
+        <span class="truncate">{{ user.createdAt }}</span>
+      </div>
+    }
+  </div>
+</div>
