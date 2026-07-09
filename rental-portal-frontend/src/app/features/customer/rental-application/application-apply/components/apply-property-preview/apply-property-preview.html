@@ -1,0 +1,38 @@
+<div class="card">
+
+  <h3 class="label">Property Details</h3>
+  <div class="preview-img">
+    @if (property.images && property.images.length > 0) {
+      <img [src]="property.images[0]" alt="Home image" />
+    } 
+    @else {
+      <div class="no-image-placeholder">No image</div>
+    }
+  </div>
+
+  <div class="preview-text">
+    <h4 class="prop-title">{{ property.title }}</h4>
+    <p class="prop-location">
+      <app-icon name="map-pin" size="md"></app-icon>
+      <span>{{ property.locality }}, {{ property.city }}</span>
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="price-row">
+    <span class="label point">Monthly Rent:</span>
+    <span class="price-value">{{ property.rent | priceFormat:'mo' }}</span>
+  </div>
+
+  <div class="price-row">
+    <span class="label point">Safety Deposit:</span>
+    <span class="price-value">{{ property.deposit | priceFormat }}</span>
+  </div>
+
+  <div class="price-row">
+    <span class="label point">Broker Charge:</span>
+    <span class="price-value free">Free</span>
+  </div>
+  
+</div>
