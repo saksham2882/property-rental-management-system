@@ -1,0 +1,116 @@
+<div class="card">
+  <form [formGroup]="profileForm" (submit)="save.emit(); $event.preventDefault();" class="form-layout">
+
+    <div>
+      <h3 class="title sec-title">Contact Information</h3>
+      <div class="form-grid-2">
+        
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <div class="input-wrap">
+            <span class="icon-left"><app-icon name="user" size="md"></app-icon></span>
+            <input type="text" formControlName="name" placeholder="Your Name" class="form-input"
+              [class.is-error]="profileForm.get('name')?.touched && profileForm.get('name')?.invalid" />
+          </div>
+          @if (profileForm.get('name')?.touched && profileForm.get('name')?.invalid) {
+            <span class="form-error">Name is required.</span>
+          }
+        </div>  
+
+        <div class="form-group">
+          <label class="form-label text-muted">Email Address (Read-only)</label>
+          <div class="input-wrap">
+            <span class="icon-left"><app-icon name="mail" size="md"></app-icon></span>
+            <input type="email" formControlName="email" class="form-input readonly" readonly />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <div class="input-wrap">
+            <span class="icon-left"><app-icon name="phone" size="md"></app-icon></span>
+            <input type="text" formControlName="phone" placeholder="9876543210" class="form-input"
+              [class.is-error]="profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid" />
+          </div>
+          @if (profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid) {
+            <span class="form-error">Must be a valid 10-digit number.</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Current City</label>
+          <div class="input-wrap">
+            <span class="icon-left"><app-icon name="map-pin" size="md"></app-icon></span>
+            <input type="text" formControlName="city" placeholder="e.g. Mumbai" class="form-input" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <h3 class="title sec-title">Rental Preferences</h3>
+      <div class="form-layout">
+        
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Minimum Budget (₹)</label>
+            <div class="input-wrap">
+              <span class="icon-left"><app-icon name="indian-rupee" size="md"></app-icon></span>
+              <input type="number" formControlName="budgetMin" placeholder="Min budget" min="10000" class="form-input" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Maximum Budget (₹)</label>
+            <div class="input-wrap">
+              <span class="icon-left"><app-icon name="indian-rupee" size="md"></app-icon></span>
+              <input type="number" formControlName="budgetMax" placeholder="Max budget" min="10000" class="form-input" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Preferred Localities (comma separated)</label>
+          <div class="input-wrap">
+            <span class="icon-left"><app-icon name="map-pin" size="md"></app-icon></span>
+            <input type="text" formControlName="preferredLocations" placeholder="e.g. HSR Layout, Koramangala, Indiranagar" class="form-input" />
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <h3 class="title sec-title">Alert Options</h3>
+      <div class="form-layout">
+        
+        <label class="form-checkbox-label">
+          <input type="checkbox" formControlName="emailAlerts" class="form-checkbox" />
+          <span class="checkbox-text">Notify me via email when new budget deals are listed in my preferred localities</span>
+        </label>
+
+        <label class="form-checkbox-label">
+          <input type="checkbox" formControlName="smsAlerts" class="form-checkbox" />
+          <span class="checkbox-text">Subscribe to phone SMS notifications for lease signature alerts and bill due reminders</span>
+        </label>
+
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-accent btn-sm submit-btn" [disabled]="loading === true">
+        @if (loading) {
+          <span class="spinner-ring white"></span>
+          <span>Saving Settings...</span>
+        } @else {
+          <span>Save Settings</span>
+        }
+      </button>
+    </div>
+
+  </form>
+</div>

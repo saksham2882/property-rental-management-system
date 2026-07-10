@@ -1,0 +1,120 @@
+<div class="container animate-fadeIn">
+
+  <div class="back-link">
+    <a routerLink="/customer/properties" class="btn back-link">
+      <app-icon name="arrow-left" size="sm" class="back-icon"></app-icon>
+      <span>Back to Listings</span>
+    </a>
+  </div>
+
+  @if (property$ | async; as property) {
+    <div class="detail-grid">
+
+      <div class="detail-main">
+
+        <app-property-gallery
+          [images]="property.images || []"
+          [type]="property.type"
+          [title]="property.title">
+        </app-property-gallery>
+
+        <div class="card">
+          <div class="detail-header">
+            <h1 class="text-title">{{ property.title }}</h1>
+
+            <div class="badge" *ngIf="property.averageRating">
+              <div class="rating-stars">
+                <app-icon name="star" size="sm" class="filled-star"></app-icon>
+                <span class="rating-avg">{{ property.averageRating }}</span>
+              </div>
+              <span class="review-count">({{ allReviews.length }} Reviews)</span>
+            </div>
+          </div>
+
+          <p class="location">
+            <app-icon name="map-pin" size="md" class="location-icon"></app-icon>
+            <span>{{ property.locality }}, {{ property.city }}</span>
+          </p>
+
+          <div class="divider"></div>
+
+          <div class="specs-row">
+            <div class="spec-item">
+              <app-icon name="home" size="md"></app-icon>
+              <span>{{ property.bedrooms }} BHK Configuration</span>
+            </div>
+            <div class="spec-item">
+              <app-icon name="building" size="md"></app-icon>
+              <span>{{ property.bathrooms || 2 }} Bathrooms</span>
+            </div>
+            <div class="spec-item">
+              <app-icon name="wrench" size="md"></app-icon>
+              <span>{{ property.furnishing }}</span>
+            </div>
+            <div class="spec-item">
+              <app-icon name="indian-rupee" size="md"></app-icon>
+              <span>{{ property.area }} sqft Carpet Area</span>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <h3 class="subtitle">About this property</h3>
+          <p class="desc">
+            {{ property.description || 'This beautifully designed rental property offers a spacious layout, premium interior fittings, and large windows with abundant natural light. Located in a safe, prime neighborhood with seamless access to public transport, shopping hubs, and offices.' }}
+          </p>
+        </div>
+
+        <div class="card">
+          <h3 class="subtitle">Featured Amenities</h3>
+          <div class="amenities-grid">
+            @for (amenity of property.amenities; track amenity) {
+              <div class="item">
+                <div class="icon">
+                  <app-icon name="check" size="sm"></app-icon>
+                </div>
+                <span>{{ amenity }}</span>
+              </div>
+            }
+
+            @if (!property.amenities || property.amenities.length === 0) {
+              <div class="item">
+                <div class="icon"><app-icon name="check" size="sm"></app-icon></div>
+                <span>Water Supply</span>
+              </div>
+              <div class="item">
+                <div class="icon"><app-icon name="check" size="sm"></app-icon></div>
+                <span>Power Backup</span>
+              </div>
+              <div class="item">
+                <div class="icon"><app-icon name="check" size="sm"></app-icon></div>
+                <span>24/7 Security</span>
+              </div>
+              <div class="item">
+                <div class="icon"><app-icon name="check" size="sm"></app-icon></div>
+                <span>Car Parking</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <app-property-reviews
+          [reviews]="allReviews"
+          [currentUser]="currentUser"
+          (postReview)="onPostReview($event)">
+        </app-property-reviews>
+      </div>
+
+      <div class="detail-sidebar">
+        <app-property-sidebar
+          [property]="property"
+          [hasAlreadyApplied]="hasAlreadyApplied">
+        </app-property-sidebar>
+      </div>
+
+    </div>
+  } 
+  @else {
+    <app-loading-spinner></app-loading-spinner>
+  }
+</div>

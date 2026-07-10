@@ -1,0 +1,19 @@
+@if (isOpen) {
+  <div class="backdrop" (click)="onBackdropClick($event)">
+    <div class="modal animate-scaleIn"
+         [class.size-sm]="size === 'sm'"
+         [class.size-md]="size === 'md'"
+         [class.size-lg]="size === 'lg'"
+         (click)="$event.stopPropagation()">
+
+      <div class="header">
+        <h3 class="title">{{ title }}</h3>
+        <button (click)="onClose()" class="btn-ghost close-btn" aria-label="Close modal">
+          <app-icon name="x" size="md"></app-icon>
+        </button>
+      </div>
+
+      <ng-content></ng-content>
+    </div>
+  </div>
+}
