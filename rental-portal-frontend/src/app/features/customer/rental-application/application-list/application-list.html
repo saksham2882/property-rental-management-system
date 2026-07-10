@@ -1,0 +1,51 @@
+<div class="container animate-fadeIn">
+
+  <div class="page-header">
+    <div class="page-title-block">
+      <h1>My Applications</h1>
+      <p>Track the review status of your rental home applications.</p>
+    </div>
+  </div>
+
+  @if (loading$ | async) {
+    <app-loading-spinner></app-loading-spinner>
+  } 
+  @else {
+    <div class="apps-list">
+      @for (app of myApplications; track app.id) {
+        <app-application-card
+          [application]="app"
+          [propertyTitle]="getPropertyTitle(app.propertyId)"
+          [propertyDetails]="getPropertyDetails(app.propertyId)"
+          (cancel)="openCancelModal(app.id)">
+        </app-application-card>
+      }
+
+      @if (myApplications.length === 0) {
+        <app-empty-state icon="file-text" title="No applications submitted" description="Explore our property catalog and submit an application for your next rental space." 
+          actionText="Find Homes" actionLink="/customer/properties"></app-empty-state>
+      }
+    </div>
+  }
+
+  <app-modal [isOpen]="isCancelModalOpen" title="Cancel Application" size="sm" (close)="closeCancelModal()">
+    <div class="confirm-modal">
+      <div class="confirm-icon avatar">
+        <app-icon name="alert-triangle" size="lg" class="warn-icon"></app-icon>
+      </div>
+
+      <h3 class="modal-title">Are you sure?</h3>
+      <p class="modal-text">Do you really want to cancel this application? This action cannot be undone.</p>
+
+      <div class="modal-actions">
+        <button (click)="closeCancelModal()" class="btn btn-secondary">
+          No, Keep It
+        </button>
+        <button (click)="confirmCancel()" class="btn btn-danger">
+          Yes, Cancel
+        </button>
+      </div>
+    </div>
+  </app-modal>
+
+</div>
