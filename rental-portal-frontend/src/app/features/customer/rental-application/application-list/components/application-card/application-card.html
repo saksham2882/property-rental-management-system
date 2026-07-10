@@ -1,0 +1,104 @@
+<div class="card animate-fadeIn">
+  
+  <div class="property-img">
+    @if (propertyDetails?.images; as imgs) {
+      @if (imgs.length > 0) {
+        <img [src]="imgs[0]" alt="Property Img" />
+      } 
+      @else {
+        <div class="no-image-placeholder text-xs">No Image Available</div>
+      }
+    }
+  </div>
+
+  <div class="card-content">
+    
+    <div class="header">
+      @if(propertyDetails) {
+        <div class="flex items-center gap-2">
+          <span class="property-badge">{{ propertyDetails.type }}</span>
+          <span class="rent-tag">{{ propertyDetails.rent | priceFormat:"mo" }}</span>
+        </div>
+      }
+      
+      <div>
+        <span class="badge"
+          [class.badge-warning]="application.status === 'under_review'"
+          [class.badge-success]="application.status === 'approved'"
+          [class.badge-danger]="application.status === 'rejected'"
+          [class.badge-info]="application.status === 'waitlisted'">
+          
+          @if (application.status === 'under_review') {
+            <app-icon name="clock" size="sm" class="badge-icon"></app-icon>
+          } 
+          @else if (application.status === 'approved') {
+            <app-icon name="check-circle" size="sm" class="badge-icon"></app-icon>
+          } 
+          @else if (application.status === 'rejected') {
+            <app-icon name="x" size="sm" class="badge-icon"></app-icon>
+          } 
+          @else if (application.status === 'waitlisted') {
+            <app-icon name="info" size="sm" class="badge-icon"></app-icon>
+          }
+          
+          <span>{{ application.status.replace('_', ' ') }}</span>
+        </span>
+      </div>
+    </div>
+
+
+    <div class="details">
+      <h3 class="title">{{ propertyTitle }}</h3>
+      
+      <p class="address" *ngIf="propertyDetails">
+        <app-icon name="map-pin" size="sm" class="location-icon"></app-icon>
+        <span>{{ propertyDetails.locality }}, {{ propertyDetails.city }}</span>
+      </p>
+      
+      <div class="divider"></div>
+      
+      <div class="info-header">
+        <div class="info">
+          <app-icon name="calendar" size="md" class="icon"></app-icon>
+          <div class="flex flex-col">
+            <span class="label">Applied Date</span>
+            <span class="value">{{ application.appliedAt | date }}</span>
+          </div>
+        </div>
+        
+        <div class="info">
+          <app-icon name="clock" size="md" class="icon"></app-icon>
+          <div class="flex flex-col">
+            <span class="label">Expected Move-in</span>
+            <span class="value">{{ application.moveInDate | date }}</span>
+          </div>
+        </div>
+        
+        <div class="info">
+          <app-icon name="users" size="md" class="icon"></app-icon>
+          <div class="flex flex-col">
+            <span class="label">Occupants Count</span>
+            <span class="value">{{ application.occupants }} occupants</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="flex gap-3">
+        @if (application.status === 'approved') {
+          <a routerLink="/customer/lease" class="btn btn-primary btn-sm">
+            <app-icon name="file-text" size="md" class="btn-icon"></app-icon>
+            <span>Sign Lease</span>
+          </a>
+        }
+        <button (click)="onCancelClick()" class="btn btn-danger btn-sm">
+          <app-icon name="trash-2" size="md" class="btn-icon"></app-icon>
+          <span>Cancel</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
