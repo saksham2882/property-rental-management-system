@@ -1,0 +1,72 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.card {
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.avatar {
+  width: 84px;
+  height: 84px;
+  font-size: 2.25rem;
+  font-weight: 850;
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.25);
+  margin-bottom: 18px;
+  border: 4px solid var(--surface-2);
+  user-select: none;
+}
+
+.name {
+  font-size: 1.3rem;
+  font-weight: 850;
+  color: var(--text-2);
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+  text-align: center;
+  word-break: break-word;
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 24px;
+  width: 100%;
+  border-top: 1px solid var(--border-light);
+  padding-top: 20px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.84rem;
+  color: var(--text-2);
+}
+
+.row app-icon {
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 575px) {
+  .card {
+    padding: 24px 16px;
+  }
+}

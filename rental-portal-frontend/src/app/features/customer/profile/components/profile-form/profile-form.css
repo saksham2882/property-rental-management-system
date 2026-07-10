@@ -1,0 +1,79 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.card {
+  box-shadow: var(--shadow-md);
+}
+
+.sec-title {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  color: #845ae6;
+  letter-spacing: 0.06em;
+}
+
+.readonly {
+  background: var(--bg-2);
+  color: var(--muted);
+  cursor: not-allowed;
+  border-style: dashed;
+}
+
+.form-checkbox-label {
+  align-items: flex-start;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  user-select: none;
+  padding: 14px 16px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.form-checkbox-label:hover {
+  border-color: #a37dfb;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+}
+
+.form-checkbox {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.checkbox-text {
+  line-height: 1.45;
+}
+
+
+.form-actions {
+  justify-content: center;
+  border-top: 1px solid var(--border);
+  margin-top: var(--space-4);
+}
+
+.submit-btn {
+  min-width: 160px;
+  height: 44px;
+  font-weight: 750;
+  font-size: 0.9rem;
+}
+
+.spinner-ring {
+  margin-right: var(--space-2);
+}
+
+.divider {
+  margin: var(--space-4) 0;
+}
+
+@media (max-width: 575px) {
+  .card {
+    padding: 20px 16px;
+  }
+}

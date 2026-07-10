@@ -1,0 +1,251 @@
+<div class="container animate-fadeIn">
+
+  @if (loading$ | async) {
+    <app-loading-spinner></app-loading-spinner>
+  } 
+  @else {
+    @if (property) {
+      <div class="grid">
+
+        <div class="detail-main">
+          <div class="card">
+
+            <div class="step flex items-center justify-between">
+              <div class="item">
+                <span class="avatar number" [class.active]="activeStep >= 1">1</span>
+                <span class="label" [class.active]="activeStep === 1">Personal</span>
+              </div>
+              <div class="step-line"></div>
+              <div class="item">
+                <span class="avatar number" [class.active]="activeStep >= 2">2</span>
+                <span class="label" [class.active]="activeStep === 2">Tenancy</span>
+              </div>
+              <div class="step-line"></div>
+              <div class="item">
+                <span class="avatar number" [class.active]="activeStep >= 3">3</span>
+                <span class="label" [class.active]="activeStep === 3">Documents</span>
+              </div>
+              <div class="step-line"></div>
+              <div class="item">
+                <span class="avatar number" [class.active]="activeStep >= 4">4</span>
+                <span class="label" [class.active]="activeStep === 4">Confirm</span>
+              </div>
+            </div>
+
+            <form [formGroup]="applyForm" (submit)="onSubmit(); $event.preventDefault();" class="form-layout">
+
+              @if (activeStep === 1) {
+                <div class="form-group animate-fadeIn step-1">
+                  <h3 class="text-title">Applicant Contact Information</h3>
+                  <p class="desc">Provide your phone and email to coordinate move-in details.</p>
+
+                  <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" formControlName="applicantName" placeholder="Full Name" class="form-input" 
+                      [class.is-error]="applyForm.get('applicantName')?.touched && applyForm.get('applicantName')?.invalid" />
+                    
+                    @if (applyForm.get('applicantName')?.touched && applyForm.get('applicantName')?.invalid) {
+                      <span class="form-error">Name is required.</span>
+                    }
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label">Email Address</label>
+                      <input type="email" formControlName="applicantEmail" placeholder="name@example.com" class="form-input" 
+                        [class.is-error]="applyForm.get('applicantEmail')?.touched && applyForm.get('applicantEmail')?.invalid" />
+                      
+                      @if (applyForm.get('applicantEmail')?.touched && applyForm.get('applicantEmail')?.invalid) {
+                        <span class="form-error">Please enter a valid email.</span>
+                      }
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Phone Number</label>
+                      <input type="text" formControlName="applicantPhone" placeholder="9876543210" class="form-input" 
+                        [class.is-error]="applyForm.get('applicantPhone')?.touched && applyForm.get('applicantPhone')?.invalid" />
+                      
+                      @if (applyForm.get('applicantPhone')?.touched && applyForm.get('applicantPhone')?.invalid) {
+                        <span class="form-error">
+                          @if (applyForm.get('applicantPhone')?.hasError('invalidPhone')) {
+                            {{ applyForm.get('applicantPhone')?.getError('invalidPhone') }}
+                          } @else {
+                            Phone number is required.
+                          }
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+
+              @if (activeStep === 2) {
+                <div class="form-group animate-fadeIn step-1">
+                  <h3 class="text-title">Tenancy Parameters</h3>
+                  <p class="desc">These details help verify application parameters.</p>
+
+                  <div class="form-group">
+                    <label class="form-label">Expected Move-in Date</label>
+                    <input type="date" formControlName="moveInDate" class="form-input" 
+                      [class.is-error]="applyForm.get('moveInDate')?.touched && applyForm.get('moveInDate')?.invalid" />
+                    
+                    @if (applyForm.get('moveInDate')?.touched && applyForm.get('moveInDate')?.invalid) {
+                      <span class="form-error">
+                        @if (applyForm.get('moveInDate')?.hasError('moveInTooSoon')) {
+                          {{ applyForm.get('moveInDate')?.getError('moveInTooSoon') }}
+                        } @else {
+                          Expected move-in date is required.
+                        }
+                      </span>
+                    }
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label">Monthly Net Income (₹)</label>
+                      <input type="number" formControlName="monthlyIncome" placeholder="e.g. 60000" min="0" class="form-input" 
+                        [class.is-error]="applyForm.get('monthlyIncome')?.touched && applyForm.get('monthlyIncome')?.invalid" />
+                      
+                      @if (applyForm.get('monthlyIncome')?.touched && applyForm.get('monthlyIncome')?.invalid) {
+                        <span class="form-error">
+                          @if (applyForm.get('monthlyIncome')?.hasError('incomeTooLow')) {
+                            {{ applyForm.get('monthlyIncome')?.getError('incomeTooLow') }}
+                          } @else {
+                            Monthly income is required.
+                          }
+                        </span>
+                      }
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Total Occupants</label>
+                      <input type="number" formControlName="occupants" placeholder="e.g. 2" min="0" class="form-input" 
+                        [class.is-error]="applyForm.get('occupants')?.touched && applyForm.get('occupants')?.invalid" />
+                      
+                      @if (applyForm.get('occupants')?.touched && applyForm.get('occupants')?.invalid) {
+                        <span class="form-error">
+                          @if (applyForm.get('occupants')?.hasError('occupancyExceeded')) {
+                            {{ applyForm.get('occupants')?.getError('occupancyExceeded') }}
+                          } @else {
+                            Valid occupant count is required.
+                          }
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+
+              @if (activeStep === 3) {
+                <div class="form-group animate-fadeIn step-1">
+                  <h3 class="text-title">Identity Verification</h3>
+                  <p class="desc">Upload photocopies of government IDs (Aadhaar/PAN) or pay slips.</p>
+
+                  <div class="dropbox-upload">
+                    <input type="file" (change)="onFileChange($event)" class="dropbox-input" [disabled]="uploadingFile" />
+                    <div class="upload-icon" [class.uploading]="uploadingFile">
+                      @if (uploadingFile) {
+                        <app-icon name="refresh-cw" size="md" class="animate-spin"></app-icon>
+                      } @else {
+                        <app-icon name="upload" size="md"></app-icon>
+                      }
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <span class="dropbox-title">Click to upload files</span>
+                      <p class="dropbox-sub">PDF, PNG, or JPG formats accepted (Max 10MB)</p>
+                    </div>
+                  </div>
+
+                  @if (applyForm.get('documents')?.touched && applyForm.get('documents')?.invalid) {
+                    <div class="validation-alert animate-fadeIn">
+                      <app-icon name="alert-triangle" size="sm"></app-icon>
+                      <span>{{ applyForm.get('documents')?.getError('noDocuments') }}</span>
+                    </div>
+                  }
+
+                  <div class="docs-list" *ngIf="uploadedDocuments.length > 0">
+                    <span class="form-label docs-title">Uploaded Documents ({{ uploadedDocuments.length }})</span>
+                    
+                    @for (doc of uploadedDocuments; track doc; let idx = $index) {
+                      <div class="doc-item">
+                        <span class="doc-title">
+                          <app-icon name="file-text" size="md"></app-icon>
+                          Document #{{ idx + 1 }}
+                        </span>
+                        <button type="button" (click)="removeDocument(idx)" class="btn-ghost doc-delete">
+                          <app-icon name="trash-2" size="md"></app-icon>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+
+              @if (activeStep === 4) {
+                <div class="form-group step-1 animate-fadeIn">
+                  <h3 class="text-title">Cover Note & Summary</h3>
+                  <p class="desc">Include a brief note for the property owner and confirm the details.</p>
+
+                  <div class="form-group">
+                    <label class="form-label">Message (Optional)</label>
+                    <textarea formControlName="message" placeholder="Say hello to the landlord..." rows="4" class="form-textarea"></textarea>
+                  </div>
+
+                  <div class="summary-box">
+                    <h4 class="summary-title">Application Summary</h4>
+                    <div class="summary-grid">
+                      <span class="summary-label">Name:</span> 
+                      <span class="summary-value">{{ applyForm.get('applicantName')?.value }}</span>
+                      
+                      <span class="summary-label">Email:</span> 
+                      <span class="summary-value">{{ applyForm.get('applicantEmail')?.value }}</span>
+                      
+                      <span class="summary-label">Phone:</span> 
+                      <span class="summary-value">{{ applyForm.get('applicantPhone')?.value }}</span>
+                      
+                      <span class="summary-label">Move-in Date:</span> 
+                      <span class="summary-value">{{ applyForm.get('moveInDate')?.value | date }}</span>
+                      
+                      <span class="summary-label">Monthly Income:</span> 
+                      <span class="summary-value">{{ applyForm.get('monthlyIncome')?.value | priceFormat }}</span>
+                      
+                      <span class="summary-label">Occupants:</span> 
+                      <span class="summary-value">{{ applyForm.get('occupants')?.value }}</span>
+                      
+                      <span class="summary-label">Documents:</span> 
+                      <span class="summary-value">{{ uploadedDocuments.length }} file(s) uploaded</span>
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <div class="buttons-row">
+                <button type="button" (click)="prevStep()" [disabled]="activeStep === 1" class="btn btn-secondary">
+                  <app-icon name="arrow-left" size="md"></app-icon>
+                  Previous
+                </button>
+                @if (activeStep < 4) {
+                  <button type="button" (click)="nextStep()" class="btn btn-primary">
+                    <app-icon name="arrow-right" size="md"></app-icon>
+                    Next Step
+                  </button>
+                } @else {
+                  <button type="submit" [disabled]="applyForm.invalid" class="btn btn-primary">
+                    <app-icon name="check-circle" size="sm"></app-icon>
+                    Submit Application
+                  </button>
+                }
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <div class="detail-sidebar">
+          <app-apply-property-preview [property]="property"></app-apply-property-preview>
+        </div>
+
+      </div>
+    }
+  }
+</div>
