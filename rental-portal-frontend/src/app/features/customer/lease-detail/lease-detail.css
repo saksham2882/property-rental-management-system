@@ -1,0 +1,163 @@
+.container {
+  padding: 40px 24px 80px;
+}
+
+.page-header {
+  margin-bottom: 36px;
+}
+
+.text-headline {
+  font-weight: 850;
+  color: var(--text-2);
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.leases-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.apps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.back {
+  margin-bottom: 24px;
+}
+
+
+.lease-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .lease-layout {
+    grid-template-columns: 1.85fr 1fr;
+  }
+}
+
+.lease-main, .timeline-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 1024px) {
+  .timeline-sidebar {
+    position: sticky;
+    top: 100px;
+  }
+}
+
+
+.welcome-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.celebration-badge {
+  width: 72px;
+  height: 72px;
+  background: rgba(167, 127, 26, 0.08);
+  color: #fbbf24;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(251, 191, 36, 0.15);
+}
+
+.sparkles-icon {
+  color: inherit;
+}
+
+.text-title {
+  font-weight: 850;
+  color: var(--text-2);
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  font-weight: 750;
+  color: var(--primary);
+  margin: 0 0 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.welcome-text {
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 0 0 28px;
+  max-width: 420px;
+}
+
+.welcome-benefits {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--text-2);
+}
+
+.benefit-item app-icon {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.welcome-actions {
+  width: 100%;
+  max-width: 440px;
+}
+
+.welcome-btn {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 10px;
+}
+
+.btn-sm {
+  flex: 1;
+}
+
+@media (min-width: 1024px) {
+  .btn-sm {
+    flex: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 24px 16px 64px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 20px 10px 60px;
+  }
+}

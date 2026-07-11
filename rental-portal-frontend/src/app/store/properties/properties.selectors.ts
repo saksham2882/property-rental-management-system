@@ -5,7 +5,14 @@ export const selectPropertiesState = createFeatureSelector<PropertiesState>('pro
 
 export const selectAllProperties = createSelector(
   selectPropertiesState,
-  (state) => state.properties
+  (state) => {
+    if (!state.properties) return [];
+    return [...state.properties].sort((a, b) => {
+      const dateA = a.postedAt || '';
+      const dateB = b.postedAt || '';
+      return dateB.localeCompare(dateA);
+    });
+  }
 );
 
 export const selectSelectedProperty = createSelector(
