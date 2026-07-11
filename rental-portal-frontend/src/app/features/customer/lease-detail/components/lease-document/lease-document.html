@@ -1,0 +1,73 @@
+<div class="card">
+  
+  <div class="banner">
+    <app-icon name="alert-triangle" size="sm" class="warning-icon"></app-icon>
+    <div class="banner-content">
+      <span class="banner-title">Demo Agreement Only</span>
+      <span class="banner-subtitle">This document is generated for workflow demonstration purposes. It does not constitute a legally binding contract.</span>
+    </div>
+  </div>
+
+  <div class="doc-header">
+    <div class="doc-status-badge">
+      <span class="badge"
+        [class.badge-warning]="lease.status === 'pending_signature'"
+        [class.badge-success]="lease.status === 'active'"
+        [class.badge-danger]="lease.status === 'terminated'">
+        
+        @if (lease.status === 'pending_signature') {
+          <app-icon name="clock" size="sm" class="badge-icon"></app-icon>
+        } 
+        @else if (lease.status === 'active') {
+          <app-icon name="check-circle" size="sm" class="badge-icon"></app-icon>
+        } 
+        @else if (lease.status === 'terminated') {
+          <app-icon name="x" size="sm" class="badge-icon"></app-icon>
+        }
+        
+        <span>{{ lease.status.replace('_', ' ') }}</span>
+      </span>
+    </div>
+
+    <h2 class="doc-title">Residential Lease Agreement</h2>
+    <div class="doc-subtitle">Official Digital Lease Document</div>
+  </div>
+  
+  <div class="doc-body">
+    <div [innerHTML]="lease.contractText"></div>
+
+    <div class="clause-section">
+      <h4 class="clause-title">Execution of Digital Signatures</h4>
+      
+      <div class="signature">
+
+        <div class="sign-col">
+          <span class="label">For Landlord (RentEase):</span>
+          <div class="sign-box landlord-sign">
+            RentEase Admin
+          </div>
+          <span class="sign-label">Authorized Signatory</span>
+        </div>
+        
+        <div class="sign-col">
+          <span class="label">For Tenant ({{ currentUser?.name || 'Verified Tenant' }}):</span>
+          
+          @if (lease.status === 'pending_signature') {
+            <app-lease-signature-pad (sign)="onSignSubmit($event)"></app-lease-signature-pad>
+          } 
+          @else {
+            <div class="sign-box">
+              @if (lease.signatureImage) {
+                <img [src]="lease.signatureImage" class="sign-img" alt="Tenant Signature" />
+              } @else {
+                <span class="no-sign-text">Signed Digitally</span>
+              }
+            </div>
+            <span class="sign-label">Tenant Digital Signature</span>
+          }
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
