@@ -1,0 +1,90 @@
+<div class="card animate-fadeIn" [class.pending-sig]="lease.status === 'pending_signature'">
+  
+  <div class="property-img">
+    @if (propertyDetails?.images; as imgs) {
+      @if (imgs.length > 0) {
+        <img [src]="imgs[0]" alt="Property Thumbnail" />
+      } 
+      @else {
+        <div class="no-image-placeholder text-xs">No Image Available</div>
+      }
+    }
+  </div>
+
+  <div class="card-content">
+    
+    <div class="header">
+      @if (propertyDetails) {
+        <div class="flex items-center gap-2">
+          <span class="property-badge">{{ propertyDetails.type }}</span>
+          <span class="rent-tag">{{ propertyDetails.rent | priceFormat:"mo" }}</span>
+        </div>
+      }
+      
+      <div>
+        <span class="badge"
+          [class.badge-warning]="lease.status === 'pending_signature'"
+          [class.badge-success]="lease.status === 'active'"
+          [class.badge-danger]="lease.status === 'terminated'">
+          
+          @if (lease.status === 'pending_signature') {
+            <app-icon name="clock" size="sm" class="badge-icon"></app-icon>
+          } 
+          @else if (lease.status === 'active') {
+            <app-icon name="check-circle" size="sm" class="badge-icon"></app-icon>
+          } 
+          @else if (lease.status === 'terminated') {
+            <app-icon name="x" size="sm" class="badge-icon"></app-icon>
+          }
+          
+          <span>{{ lease.status.replace('_', ' ') }}</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="details">
+      <h3 class="title">{{ lease.propertyTitle }}</h3>
+      
+      <p class="address" *ngIf="propertyDetails">
+        <app-icon name="map-pin" size="sm" class="location-icon"></app-icon>
+        <span>{{ propertyDetails.locality }}, {{ propertyDetails.city }}</span>
+      </p>
+      
+      <div class="divider"></div>
+      
+      <div class="info-header">
+        <div class="info">
+          <app-icon name="calendar" size="md" class="icon"></app-icon>
+          <div class="flex flex-col">
+            <span class="label">Lease Term</span>
+            <span class="value">{{ lease.startDate | date }} - {{ lease.endDate | date }}</span>
+          </div>
+        </div>
+        
+        <div class="info">
+          <app-icon name="dollar-sign" size="md" class="icon"></app-icon>
+          <div class="flex flex-col">
+            <span class="label">Security Deposit</span>
+            <span class="value">{{ lease.deposit | priceFormat }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <div class="flex gap-3">
+        <a [routerLink]="['/customer/lease', lease.id]" class="btn btn-primary btn-sm">
+          @if (lease.status === 'pending_signature') {
+            <app-icon name="pen" size="sm" class="btn-icon"></app-icon>
+            <span>Sign Agreement</span>
+          } 
+          @else {
+            <app-icon name="eye" size="sm" class="btn-icon"></app-icon>
+            <span>View Agreement</span>
+          }
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>

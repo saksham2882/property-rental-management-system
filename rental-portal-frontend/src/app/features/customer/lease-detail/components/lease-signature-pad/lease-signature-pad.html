@@ -1,0 +1,17 @@
+<div class="canvas-container animate-fadeIn">
+  <canvas #sigCanvas
+    (mousedown)="startDrawing($event)" (mousemove)="draw($event)"
+    (mouseup)="stopDrawing()" (mouseleave)="stopDrawing()"
+    (touchstart)="startDrawing($event)" (touchmove)="draw($event)"
+    (touchend)="stopDrawing()" class="sig-canvas">
+  </canvas>
+</div>
+
+<div class="sig-actions">
+  <button type="button" (click)="clearCanvas()" class="btn btn-secondary">
+    Clear Pad
+  </button>
+  <button type="button" (click)="submitSignature()" class="btn btn-primary">
+    Sign Agreement
+  </button>
+</div>
