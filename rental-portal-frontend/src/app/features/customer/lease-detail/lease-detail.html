@@ -1,0 +1,102 @@
+<div class="container animate-fadeIn">
+  <div class="page-header">
+    <div class="page-title-block">
+      <h1 class="text-headline">
+        {{ showLeaseList ? 'My Lease Agreements' : 'Lease Agreement Details' }}
+      </h1>
+      <p class="text-muted text-sm">
+        {{ showLeaseList ? 'Manage and track all your active and pending signature tenancy contracts.' : 'Review your residential rental clauses and complete digital signatures.' }}
+      </p>
+    </div>
+  </div>
+
+  @if (loading$ | async) {
+    <app-loading-spinner></app-loading-spinner>
+  } 
+  @else {
+    @if (showLeaseList) {
+      <div class="leases-container">
+        <div class="apps-list">
+          @for (lease of allLeases; track lease.id) {
+            <app-lease-card
+              [lease]="lease"
+              [propertyDetails]="getPropertyDetails(lease.propertyId)">
+            </app-lease-card>
+          }
+
+          @if (allLeases.length === 0) {
+            <app-empty-state icon="file-text" title="No Lease Agreements" description="There are no active or pending lease agreements generated for you yet. Check your application status or search properties." actionText="Explore Catalog" actionLink="/customer/properties"></app-empty-state>
+          }
+        </div>
+      </div>
+    }
+    @else {
+      @if (activeLease) {
+        <div class="back">
+          <a routerLink="/customer/lease" class="btn btn-secondary btn-sm">
+            <app-icon name="arrow-left" size="sm"></app-icon>
+            <span>Back to Leases</span>
+          </a>
+        </div>
+
+        <div class="lease-layout">
+
+          <div class="lease-main">
+            <app-lease-document
+              [lease]="activeLease"
+              [currentUser]="currentUser"
+              (sign)="submitSignature($event)">
+            </app-lease-document>
+          </div>
+
+          <div class="timeline-sidebar">
+            <app-lease-timeline [status]="activeLease.status"></app-lease-timeline>
+          </div>
+
+        </div>
+      } 
+      @else {
+        <app-empty-state icon="file-text" title="Lease Not Found" description="The requested lease agreement does not exist or has been deleted." actionText="My Leases" actionLink="/customer/lease"></app-empty-state>
+      }
+    }
+  }
+</div>
+
+
+
+<app-modal [isOpen]="isWelcomeModalOpen" title="Agreement Finalized" size="md" (close)="closeWelcomeModal()">
+  <div class="welcome-modal">
+    <div class="avatar celebration-badge">
+      <app-icon name="sparkles" size="lg" class="sparkles-icon"></app-icon>
+    </div>
+      
+    <h2 class="text-title">Congratulations! 🎉</h2>
+    <h3 class="subtitle">Lease Signed & Active</h3>
+      
+    <p class="welcome-text">
+      Thank you, <strong>{{ currentUser?.name }}</strong>! Your residential lease agreement for 
+      <strong>{{ activeLease?.propertyTitle }}</strong> is now fully signed and active.
+    </p>
+      
+    <div class="welcome-benefits">
+      <div class="benefit-item">
+        <app-icon name="check-circle" size="sm"></app-icon>
+        <span>Lease Document officially activated</span>
+      </div>
+      <div class="benefit-item">
+        <app-icon name="check-circle" size="sm"></app-icon>
+        <span>Rent tracking and monthly bills enabled</span>
+      </div>
+      <div class="benefit-item">
+        <app-icon name="check-circle" size="sm"></app-icon>
+        <span>Maintenance request board unlocked</span>
+      </div>
+    </div>
+      
+    <div class="welcome-actions">
+      <button (click)="closeWelcomeModal()" class="btn btn-primary welcome-btn">
+        Great, Thank You!
+      </button>
+    </div>
+  </div>
+</app-modal>
