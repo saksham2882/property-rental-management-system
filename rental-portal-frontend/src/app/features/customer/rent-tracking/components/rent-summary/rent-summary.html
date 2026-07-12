@@ -1,0 +1,41 @@
+<div class="summary-grid">
+
+  <div class="card">
+    <div class="card-icon bg-danger">
+      <app-icon name="credit-card" size="md" class="text-danger"></app-icon>
+    </div>
+    <div class="card-info">
+      <span class="card-label">Total Outstanding</span>
+      <h2 class="card-value text-danger">{{ totalPendingAmount | priceFormat }}</h2>
+      <p class="card-desc">{{ pendingBillsCount }} bills pending payment</p>
+    </div>
+  </div>
+
+
+  <div class="card">
+    <div class="card-icon bg-warning">
+      <app-icon name="calendar" size="md" class="text-warning"></app-icon>
+    </div>
+    <div class="card-info">
+      <span class="card-label">Next Due Date</span>
+      <h2 class="card-value text-warning">
+        {{ nextDueDate ? (nextDueDate | date:'mediumDate') : 'No Due Bills' }}
+      </h2>
+      <p class="card-desc">
+        {{ nextDueDate ? 'Please settle before due date' : 'All monthly rents cleared' }}
+      </p>
+    </div>
+  </div>
+
+
+  <div class="card">
+    <div class="card-icon bg-success">
+      <app-icon name="shield" size="md" class="text-success"></app-icon>
+    </div>
+    <div class="card-info">
+      <span class="card-label">Security Protocol</span>
+      <h2 class="card-value text-success">Razorpay Secured</h2>
+      <p class="card-desc">Instant digital verification & receipting</p>
+    </div>
+  </div>
+</div>
