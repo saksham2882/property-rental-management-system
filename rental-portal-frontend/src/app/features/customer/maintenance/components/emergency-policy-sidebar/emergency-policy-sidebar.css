@@ -1,0 +1,143 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.card {
+  padding: 20px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.text-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.contact-item:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+.icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-wrapper.electric {
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border: 1px solid rgba(234, 179, 8, 0.1);
+}
+
+.icon-wrapper.plumbing {
+  background: var(--info-bg);
+  color: var(--info-text);
+  border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.icon-wrapper.security {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border: 1px solid rgba(239, 68, 68, 0.1);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+}
+
+.label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.value {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--text-2);
+}
+
+.action-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  opacity: 0.9;
+}
+
+.contact-item:hover .action-btn {
+  opacity: 1;
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+.divider {
+  margin: 4px 0;
+}
+
+.policy-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.point {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.bullet-icon {
+  color: var(--primary);
+}
+
+.text {
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.45;
+}

@@ -1,0 +1,68 @@
+<div class="card" 
+     [class.pending]="request.status === 'pending'"
+     [class.in-progress]="request.status === 'in_progress'"
+     [class.resolved]="request.status === 'resolved'">
+  
+  <div class="timeline">
+    <div class="avatar {{ request.status }}">
+      <app-icon [name]="getCategoryIcon(request.category)" size="md"></app-icon>
+    </div>
+    <div class="line"></div>
+    <span class="date">{{ request.raisedAt | relativeTime }}</span>
+  </div>
+
+  <div class="ticket-content">
+
+    <div class="ticket-header">
+      <div class="main">
+        <h4 class="text-title">{{ request.category }}</h4>
+        <span class="urgency urgency-{{ request.urgency }}">
+          {{ request.urgency }}
+        </span>
+      </div>
+      
+      <span class="badge status-{{ request.status }}">
+        {{ request.status === 'in_progress' ? 'In Progress' : request.status }}
+      </span>
+    </div>
+
+    <p class="description"> {{ request.description }}</p>
+
+    @if (request.images && request.images.length > 0) {
+      <div class="flex flex-col gap-2">
+        <span class="subtitle">Attachments</span>
+        
+        <div class="photos">
+          @for (img of request.images; track img) {
+            <div class="item">
+              <img [src]="img" (error)="onImageError($event)" alt="Issue Attachment" />
+              <div class="photo-overlay">
+                <app-icon name="plus" size="sm"></app-icon>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (request.adminNote) {
+      <div class="admin-reply animate-fadeIn">
+        <div class="reply-header">
+          <div class="avatar">
+            <app-icon name="shield" size="sm" class="avatar-icon"></app-icon>
+          </div>
+
+          <div class="reply-info">
+            <span class="reply-author">Administrator Reply</span>
+            @if (request.resolvedAt) {
+              <span class="reply-meta">• Resolved {{ request.resolvedAt | relativeTime }}</span>
+            }
+          </div>
+        </div>
+
+        <p class="reply-content">{{ request.adminNote }}</p>
+      </div>
+    }
+  </div>
+
+</div>

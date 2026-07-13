@@ -1,0 +1,116 @@
+:host {
+  display: block;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0;
+  overflow-y: auto;
+  max-height: 82vh;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.modal-form::-webkit-scrollbar {
+  display: none;
+}
+
+.form-group {
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.form-textarea {
+  font-size: 0.85rem;
+  height: 44px;
+  resize: none;
+}
+
+textarea.form-textarea {
+  height: auto;
+  max-height: 100px;
+}
+
+.form-error {
+  margin-top: -6px;
+}
+
+.attachment-upload {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.upload-box {
+  width: 72px;
+  height: 72px;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--bg-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.2s ease;
+}
+
+.upload-box:hover {
+  border-color: var(--primary);
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.hidden-file {
+  display: none;
+}
+
+.upload-label {
+  font-size: 0.65rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.image-preview-remove {
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+}
+
+.image-preview-remove:hover {
+  background: var(--danger);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.flex-1-btn {
+  flex: 1;
+}
+
+.flex-2-btn {
+  flex: 2;
+}
+
+.btn {
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  gap: 6px;
+}

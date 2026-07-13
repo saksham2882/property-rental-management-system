@@ -1,0 +1,70 @@
+<div class="card" (click)="onClick()">
+
+  <div class="property-img">
+    @if (property?.images; as imgs) {
+      @if (imgs.length > 0) {
+        <img [src]="imgs[0]" alt="Property" />
+      } 
+      @else {
+        <div class="no-image">No Image</div>
+      }
+    } 
+    @else {
+      <div class="no-image">No Image</div>
+    }
+  </div>
+
+  <div class="card-body">
+    <div class="flex justify-between items-center gap-2">
+      <span class="badge">{{ property?.type || 'Rental' }}</span>
+      
+      @if (unpaidCount > 0) {
+        <span class="badge badge-warning">
+          <app-icon name="alert-triangle" size="sm"></app-icon>
+          <span>{{ unpaidCount }} Pending</span>
+        </span>
+      } 
+      @else {
+        <span class="badge badge-success">
+          <app-icon name="check-circle" size="sm"></app-icon>
+          <span>All Paid</span>
+        </span>
+      }
+    </div>
+
+    <h3 class="lease-title">{{ lease.propertyTitle }}</h3>
+    
+    @if(property){
+      <p class="address">
+        <app-icon name="map-pin" size="sm" class="icon-pin"></app-icon>
+        <span>{{ property.locality }}, {{ property.city }}</span>
+      </p>
+    }
+
+    <div class="divider"></div>
+
+    <div class="flex justify-between gap-3">
+      <div class="item">
+        <span class="label">Monthly Rent</span>
+        <span class="value">{{ lease.monthlyRent | priceFormat:"mo" }}</span>
+      </div>
+      <div class="item">
+        <span class="label">Total Due</span>
+        <span class="value" [class.unpaid-amount]="unpaidAmount > 0">{{ unpaidAmount | priceFormat }}</span>
+      </div>
+    </div>
+
+    @if (dueDate) {
+      <div class="alert alert-warning">
+        <app-icon name="calendar" size="sm"></app-icon>
+        <span>Next Due: {{ dueDate | date }}</span>
+      </div>
+    } 
+    @else {
+      <div class="alert alert-success">
+        <app-icon name="check-circle" size="sm"></app-icon>
+        <span>Account fully settled</span>
+      </div>
+    }
+  </div>
+</div>
