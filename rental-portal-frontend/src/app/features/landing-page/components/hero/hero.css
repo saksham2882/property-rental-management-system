@@ -26,6 +26,7 @@
   letter-spacing: -0.03em;
   max-width: 880px;
   margin-bottom: var(--space-3);
+  color: var(--text);
 }
 
 .subtitle {
