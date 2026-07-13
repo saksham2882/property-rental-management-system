@@ -1,4 +1,4 @@
-<nav class="nav">
+<nav class="nav" [class.menu-open]="mobileMenuOpen">
   <div class="wrapper">
     <div class="row flex items-center justify-between">
       <a routerLink="/" class="logo flex items-center gap-2" (click)="closeDropdowns()">
@@ -56,7 +56,7 @@
             }
           </a>
 
-          <div class="menu" clickOutside (clickOutside)="userDropdownOpen = false">
+          <div class="menu hide-mobile" clickOutside (clickOutside)="userDropdownOpen = false">
             <button class="user flex items-center gap-2" (click)="toggleUserDropdown()">
               <span class="avatar flex items-center justify-center">
                 {{ ((currentUser$ | async)?.name || 'U').substring(0,1).toUpperCase() }}
@@ -95,7 +95,8 @@
   </div>
 
   @if (mobileMenuOpen) {
-    <div class="drawer" clickOutside (clickOutside)="mobileMenuOpen = false">
+    <div class="drawer-backdrop" (click)="closeDropdowns()"></div>
+    <div class="drawer" clickOutside clickOutsideExclude=".hamburger" (clickOutside)="mobileMenuOpen = false">
       <div class="mobile-links flex flex-col gap-1">
         @if (isLoggedIn$ | async) {
           @if (isAdmin$ | async) {
@@ -116,7 +117,10 @@
             <a routerLink="/customer/profile" (click)="closeDropdowns()" class="link">My Profile</a>
           }
           <div class="divider"></div>
-          <button (click)="onLogout()" class="link danger">Sign Out</button>
+          <button (click)="onLogout()" class="link danger flex items-center gap-3">
+            <app-icon name="log-out" size="sm"></app-icon>
+            <span>Sign Out</span>
+          </button>
         } @else {
           <a routerLink="/" (click)="closeDropdowns()" class="link">Home</a>
           <a href="#features" (click)="closeDropdowns()" class="link">Features</a>

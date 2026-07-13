@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Output, EventEmitter, inject, OnInit, OnDestroy } from '@angular/core';
+import { Directive, ElementRef, Output, EventEmitter, Input, inject, OnInit, OnDestroy } from '@angular/core';
 
 @Directive({
   selector: '[clickOutside]',
@@ -7,6 +7,7 @@ export class ClickOutsideDirective implements OnInit, OnDestroy {
 
   private elementRef = inject(ElementRef);
 
+  @Input() clickOutsideExclude: string = '';
   @Output() clickOutside = new EventEmitter<void>();
 
   private documentClickListener: any;
@@ -14,6 +15,9 @@ export class ClickOutsideDirective implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.documentClickListener = (event: MouseEvent) => {
       if (!event.target) return;
+      if (this.clickOutsideExclude && (event.target as HTMLElement).closest(this.clickOutsideExclude)) {
+        return;
+      }
 
       const clickedInside = this.elementRef.nativeElement.contains(event.target);
       if (!clickedInside) {
