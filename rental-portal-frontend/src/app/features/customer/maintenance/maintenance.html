@@ -1,0 +1,94 @@
+<div class="container animate-fadeIn">
+
+  <div class="page-header">
+    <div class="page-title-block">
+      <h1 class="text-headline">
+        {{ showPropertiesList ? 'Maintenance Board' : 'Tickets & Issue Logs' }}
+      </h1>
+      <p class="text-muted text-sm">
+        {{ showPropertiesList ? 'Select a property to view maintenance logs, track status, or submit new tickets.' : 'Track the history, resolution stages, and status of your maintenance requests.' }}
+      </p>
+    </div>
+  </div>
+
+  @if (loading$ | async) {
+    <app-loading-spinner></app-loading-spinner>
+  } 
+  @else {
+    <div class="maintenance-container">
+
+      @if (showPropertiesList) {
+        <div class="properties-section">
+
+          <div class="flex justify-between items-center">
+            <h3 class="text-title">Your Tenanted Units</h3>
+            <span class="badge badge-info">{{ rentedProperties.length }} Units Active</span>
+          </div>
+
+          <div class="properties-grid">
+            @for (property of rentedProperties; track property.id) {
+              <app-rented-property-card
+                [property]="property"
+                [totalTickets]="getTicketCount(property.id)"
+                [openTickets]="getOpenTicketCount(property.id)">
+              </app-rented-property-card>
+            }
+
+            @if (rentedProperties.length === 0) {
+              <div class="no-leases-alert animate-fadeIn">
+                <app-icon name="alert-triangle" size="md" class="alert-icon"></app-icon>
+                <span>You do not have any active, fully-signed lease agreement registered in our system. You must sign a lease before raising maintenance requests.</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+      @else {
+        
+        <div class="back">
+          <a routerLink="/customer/maintenance" class="btn btn-secondary btn-sm">
+            <app-icon name="arrow-left" size="sm"></app-icon>
+            <span>Back to Properties</span>
+          </a>
+        </div>
+
+        @if (selectedProperty) {
+          <app-property-banner
+            [property]="selectedProperty"
+            (raiseTicket)="openRequestModal()">
+          </app-property-banner>
+
+          <div class="tickets-layout">
+            
+            <div class="main">
+              <h3 class="section-title">Submitted Maintenance Tickets</h3>
+
+              <div class="tickets-list">
+                @for (req of filteredRequests; track req.id) {
+                  <app-maintenance-ticket [request]="req"></app-maintenance-ticket>
+                }
+                @if (filteredRequests.length === 0) {
+                  <app-empty-state icon="wrench" title="No Maintenance Requests" description="There are no tickets raised for this property yet. If you have any repair needs, click Raise New Ticket." actionText="Submit First Request" (action)="openRequestModal()"></app-empty-state>
+                }
+              </div>
+            </div>
+
+            <div class="sidebar">
+              <app-emergency-policy-sidebar></app-emergency-policy-sidebar>
+            </div>
+
+          </div>
+        }
+      }
+    </div>
+  }
+</div>
+
+
+<app-raise-ticket-modal
+  [isOpen]="isModalOpen"
+  [propertyId]="selectedPropertyId"
+  [userId]="userId"
+  (close)="closeRequestModal()"
+  (submitRequest)="onSubmit($event)">
+</app-raise-ticket-modal>

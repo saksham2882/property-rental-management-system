@@ -1,0 +1,27 @@
+<div class="card">
+  <div class="banner-left">
+    @if (property.images && property.images.length > 0) {
+      <div class="banner-img">
+        <img [src]="property.images[0]" alt="Property" />
+      </div>
+    }
+
+    <div class="banner-info">
+      <div class="flex">
+        <span class="badge">{{ property.type }}</span>
+      </div>
+      <h3 class="text-title">{{ property.title }}</h3>
+      <p class="address">
+        <app-icon name="map-pin" size="sm" class="address-icon"></app-icon>
+        <span>{{ property.locality }}, {{ property.city }}</span>
+      </p>
+    </div>
+  </div>
+  
+  <div class="banner-right">
+    <button (click)="raiseTicket.emit()" class="btn btn-raise">
+      <app-icon name="plus" size="sm" class="plus-icon"></app-icon>
+      <span>Raise New Ticket</span>
+    </button>
+  </div>
+</div>

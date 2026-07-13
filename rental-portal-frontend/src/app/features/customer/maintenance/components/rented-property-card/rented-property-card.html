@@ -1,0 +1,68 @@
+<div class="card" [routerLink]="['/customer/maintenance', property.id]">
+  
+  <div class="property-thumb">
+    @if (property.images && property.images.length > 0) {
+      <img [src]="property.images[0]" alt="{{ property.title }}" />
+    } 
+    @else {
+      <div class="no-image-placeholder">
+        <app-icon name="image" size="lg"></app-icon>
+        <span>No Image Available</span>
+      </div>
+    }
+    <div class="thumb-overlay"></div>
+
+    <span class="badge">{{ property.type }}</span>
+    
+    @if (openTickets > 0) {
+      <span class="alert-badge badge-danger">
+        <app-icon name="alert-triangle" size="sm"></app-icon>
+        <span>{{ openTickets }} Open Issues</span>
+      </span>
+    } 
+    @else if (totalTickets > 0) {
+      <span class="alert-badge badge-success">
+        <app-icon name="check-circle" size="sm"></app-icon>
+        <span>All Resolved</span>
+      </span>
+    } 
+    @else {
+      <span class="alert-badge badge-info">
+        <app-icon name="shield" size="sm"></app-icon>
+        <span>No Issues</span>
+      </span>
+    }
+  </div>
+
+  <div class="property-details">
+
+    <div class="flex flex-col gap-1">
+      <h4 class="title-text">{{ property.title }}</h4>
+      <p class="address-text">
+        <app-icon name="map-pin" size="sm" class="icon"></app-icon>
+        <span>{{ property.locality }}, {{ property.city }}</span>
+      </p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="property-stats">
+
+      <div class="stats-summary">
+        <div class="indicator">
+          <span class="count">{{ totalTickets }}</span>
+          <span class="label">Total Logged</span>
+        </div>
+        <div class="indicator border-left">
+          <span class="count" [class.text-danger]="openTickets > 0">{{ openTickets }}</span>
+          <span class="label">Open Tickets</span>
+        </div>
+      </div>
+      
+      <button class="action-btn">
+        <span>Manage Board</span>
+        <app-icon name="arrow-right" size="sm"></app-icon>
+      </button>
+    </div>
+  </div>
+</div>

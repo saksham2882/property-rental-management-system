@@ -1,0 +1,69 @@
+<app-modal [isOpen]="isOpen" title="Raise Maintenance Ticket" size="md" (close)="closeModal()">
+  <form [formGroup]="maintenanceForm" (ngSubmit)="onSubmit()" class="modal-form">
+    
+    <div class="form-group">
+      <label class="form-label">Category</label>
+      <app-dropdown
+        [options]="categoryOptions"
+        [value]="maintenanceForm.get('category')?.value"
+        (valueChange)="maintenanceForm.get('category')?.setValue($event)"
+        placeholder="Select Category">
+      </app-dropdown>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Urgency Level</label>
+      <app-dropdown
+        [options]="urgencyOptions"
+        [value]="maintenanceForm.get('urgency')?.value"
+        (valueChange)="maintenanceForm.get('urgency')?.setValue($event)"
+        placeholder="Select Urgency Level">
+      </app-dropdown>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Describe the Issue</label>
+      <textarea formControlName="description" rows="4" placeholder="Describe what needs repair, location of the issue, and details..." class="form-textarea"></textarea>
+      @if (maintenanceForm.get('description')?.touched && maintenanceForm.get('description')?.invalid) {
+        <span class="form-error">Explanation must be at least 10 characters long.</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Attach Pictures (Optional)</label>
+      
+      <div class="attachment-upload">
+
+        <label class="upload-box">
+          <input type="file" (change)="onFileChange($event)" accept="image/*" class="hidden-file" />
+          @if(!uploadingFile){
+            <app-icon name="plus" size="md"></app-icon>
+          }
+          @if(uploadingFile){
+            <span class="spinner-ring"></span>
+          }
+          <span class="upload-label">Add Photo</span>
+        </label>
+        
+        @for (url of uploadedImages; track url; let idx = $index) {
+          <div class="image-preview-item">
+            <img [src]="url" alt="Uploaded attachment preview" />
+            <button type="button" (click)="removeImage(idx)" class="image-preview-remove">
+              <app-icon name="x" size="sm"></app-icon>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" (click)="closeModal()" class="btn btn-secondary flex-1-btn">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="maintenanceForm.invalid || uploadingFile" class="btn btn-primary flex-2-btn">
+        Submit Ticket
+      </button>
+    </div>
+
+  </form>
+</app-modal>

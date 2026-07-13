@@ -1,0 +1,104 @@
+<div class="container animate-fadeIn">
+
+  <div class="page-header">
+    <div class="page-title-block">
+      <h1 class="text-headline">Rent Ledger & Payments</h1>
+      <p class="text-muted text-sm">Review your monthly rent invoices, download secure PDF receipts, and make online payments.</p>
+    </div>
+  </div>
+
+  @if (loading$ | async) {
+    <app-loading-spinner></app-loading-spinner>
+  } 
+  @else {
+    <div class="rent-container">
+      
+      @if (!selectedLeaseId) {
+        <div class="leases-section animate-fadeIn">
+          <div class="flex justify-between items-center">
+            <h3 class="section-title">Active Tenancies</h3>
+            <span class="badge badge-info">{{ activeLeases.length }} Leases</span>
+          </div>
+
+          <div class="leases-grid">
+            @for (lease of activeLeases; track lease.id) {
+              @let property = getPropertyDetails(lease.propertyId);
+              @let unpaidCount = getUnpaidCount(lease.id);
+              @let unpaidAmount = getUnpaidAmount(lease.id);
+              @let dueDate = getNextDueDateForLease(lease.id);
+
+              <app-rent-lease-card
+                [lease]="lease"
+                [property]="property"
+                [unpaidCount]="unpaidCount"
+                [unpaidAmount]="unpaidAmount"
+                [dueDate]="dueDate"
+                (selectLease)="selectLease($event)">
+              </app-rent-lease-card>
+            }
+
+            @if (activeLeases.length === 0) {
+              <div class="empty-state-card">
+                <app-empty-state icon="info" title="No Active Leases" description="You must have an active signed lease agreement to track monthly rent bills."></app-empty-state>
+              </div>
+            }
+          </div>
+        </div>
+      }
+      @else {
+
+        @if(selectedLease){
+          <div class="billing-detail animate-fadeIn">
+            
+            <button class="btn btn-secondary back-btn" (click)="deselectLease()">
+              <app-icon name="arrow-left" size="sm"></app-icon>
+              <span>Back to Active Leases</span>
+            </button>
+  
+            <div class="card flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <span class="badge badge-info">Lease ID: {{ selectedLease.id }}</span>
+                <h2 class="text-title">{{ selectedLease.propertyTitle }}</h2>
+                <p class="text-muted text-sm">Lease Term: {{ selectedLease.startDate | date }} - {{ selectedLease.endDate | date }}</p>
+              </div>
+              <div class="rent-tag">
+                <span class="label">Monthly Rate</span>
+                <span class="value">{{ selectedLease.monthlyRent | priceFormat:"month" }}</span>
+              </div>
+            </div>
+  
+            <app-rent-summary
+              [totalPendingAmount]="totalPendingAmount"
+              [pendingBillsCount]="pendingBillsCount"
+              [nextDueDate]="nextDueDate">
+            </app-rent-summary>
+  
+            <div class="leases-section">
+              <div class="flex justify-between items-center">
+                <h3 class="section-title">Billing Ledger & Invoices</h3>
+                <span class="badge badge-info">{{ selectedLeaseRents.length }} Invoices</span>
+              </div>
+  
+              <div class="rents-list">
+                @for (rent of selectedLeaseRents; track rent.id) {
+                  <app-rent-card
+                    [rent]="rent"
+                    [payingRentId]="payingRentId"
+                    (pay)="payRent($event)"
+                    (download)="downloadReceipt($event)">
+                  </app-rent-card>
+                }
+  
+                @if (selectedLeaseRents.length === 0) {
+                  <div class="empty-state-card">
+                    <app-empty-state icon="info" title="No Invoice Logs" description="No monthly rent invoices have been generated for this lease contract yet."></app-empty-state>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+  }
+</div>
