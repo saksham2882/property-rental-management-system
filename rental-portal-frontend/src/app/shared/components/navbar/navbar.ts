@@ -1,12 +1,15 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { IconComponent } from '../icon/icon';
 import { ClickOutsideDirective } from '../../directives/click-outside-directive';
 import { selectCurrentUser, selectIsLoggedIn, selectIsAdmin } from '../../../store/auth/auth.selectors';
 import { selectUnreadCount } from '../../../store/notifications/notifications.selectors';
 import { logout } from '../../../store/auth/auth.actions';
+import { loadNotifications } from '../../../store/notifications/notifications.actions';
 
 @Component({
   selector: 'app-navbar',
@@ -14,9 +17,10 @@ import { logout } from '../../../store/auth/auth.actions';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'
 })
-export class Navbar {
+export class Navbar implements OnInit, OnDestroy {
   
   private store = inject(Store);
+  private destroy$ = new Subject<void>();
 
   isLoggedIn$ = this.store.select(selectIsLoggedIn);
   currentUser$ = this.store.select(selectCurrentUser);
@@ -32,8 +36,30 @@ export class Navbar {
     this.isDarkMode.set(theme === 'dark');
   }
 
+  ngOnInit(): void {
+    this.currentUser$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        if (user) {
+          if (user.role === 'admin') {
+            this.store.dispatch(loadNotifications({}));
+          } 
+          else {
+            this.store.dispatch(loadNotifications({ userId: user.id }));
+          }
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    document.body.classList.remove('no-scroll');
+  }
+
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;
+    this.updateBodyScroll();
   }
 
   toggleUserDropdown(): void { 
@@ -43,6 +69,16 @@ export class Navbar {
   closeDropdowns(): void {
     this.userDropdownOpen = false;
     this.mobileMenuOpen = false;
+    this.updateBodyScroll();
+  }
+
+  private updateBodyScroll(): void {
+    if (this.mobileMenuOpen) {
+      document.body.classList.add('no-scroll');
+    } 
+    else {
+      document.body.classList.remove('no-scroll');
+    }
   }
 
   toggleTheme(): void {
