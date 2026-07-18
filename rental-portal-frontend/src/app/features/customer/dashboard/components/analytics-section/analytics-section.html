@@ -1,0 +1,106 @@
+<div class="grid">
+
+  <div class="chart-card">
+    <h3 class="text-title title">Rent Payment Trends</h3>
+    <p class="desc">Interactive curved line graph of monthly bills. Hover points to view lease references.</p>
+
+    <div class="chart-container">
+      <div class="y-axis">
+        <div class="y-row" style="bottom: 80%;"><span>100k</span></div>
+        <div class="y-row" style="bottom: 60%;"><span>75k</span></div>
+        <div class="y-row" style="bottom: 40%;"><span>50k</span></div>
+        <div class="y-row" style="bottom: 20%;"><span>25k</span></div>
+        <div class="y-row" style="bottom: 0%;"><span>0</span></div>
+      </div>
+
+      <svg class="svg-canvas" viewBox="0 0 500 150" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="chart-fill-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.25" />
+            <stop offset="100%" stop-color="var(--primary)" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <path [attr.d]="chartAreaPath" fill="url(#chart-fill-grad)"></path>
+        <path [attr.d]="chartLinePath" fill="none" stroke="var(--primary)" stroke-width="3.5" stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+
+      <div class="nodes-overlay">
+        @for (item of chartPayments; track item.month; let i = $index) {
+        <div class="node-point" [style.left.%]="i * 20 + 10" [style.bottom.%]="item.percent">
+          <div class="bullet"></div>
+          <div class="pulse"></div>
+
+          <div class="tooltip">
+            <div class="tooltip-header">
+              <span class="status">Paid</span>
+              <span class="month">{{ item.month }}</span>
+            </div>
+            <h4 class="val">₹{{ item.amount | number:'1.0-0' }}</h4>
+            <p class="lease">{{ item.leaseName }}</p>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="x-axis">
+      @for (item of chartPayments; track item.month) {
+      <span>{{ item.month }}</span>
+      }
+    </div>
+  </div>
+
+  <div class="billing-card">
+    <div class="ambient-light"></div>
+    <div class="billing-main">
+      <div class="info-panel">
+        <div class="header">
+          <span class="badge">Billing Station</span>
+        </div>
+        <h3 class="billing-title text-title">Next Outstanding Bill</h3>
+        <p class="subtitle">Make digital payments instantly with 0% gateway charges via UPI, Card, or NetBanking.</p>
+
+        <div class="amount-box">
+          <span class="amount-lbl">Pending Balance</span>
+          <h2 class="amount-val">{{ (nextRentAmount > 0 ? nextRentAmount : 0) | priceFormat }}</h2>
+        </div>
+      </div>
+
+      @if (nextRentAmount > 0) {
+      <div class="countdown-radial">
+        <div class="radial-ring">
+          <svg class="radial-svg" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" class="ring-bg"></circle>
+            <circle cx="50" cy="50" r="40" class="ring-fill"
+              [style.strokeDashoffset]="251.2 - (251.2 * paymentCountdownPercent / 100)"></circle>
+          </svg>
+          <div class="radial-text">
+            <span class="days-val">{{ daysRemaining }}</span>
+            <span class="days-lbl">Days left</span>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="actions">
+      @if (nextRentAmount > 0) {
+      <a routerLink="/customer/rent" class="btn btn-pay">
+        <app-icon name="credit-card" size="md"></app-icon>
+        <span>Pay Rent Instantly</span>
+      </a>
+      }
+      @if (nextRentAmount === 0) {
+      <a routerLink="/customer/properties" class="btn btn-search">
+        <app-icon name="search" size="md"></app-icon>
+        <span>Find New Properties</span>
+      </a>
+      }
+      <a routerLink="/customer/maintenance" class="btn btn-flat">
+        <span>Maintenance Center</span>
+      </a>
+    </div>
+  </div>
+
+</div>
