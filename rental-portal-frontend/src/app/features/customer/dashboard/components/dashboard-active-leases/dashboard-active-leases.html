@@ -6,7 +6,7 @@
   </div>
 
   <div class="lease-list">
-    @for (lease of leases?.slice(0, 2); track lease.id) {
+    @for (lease of sortedLeases.slice(0, 2); track lease.id) {
       <div class="lease-card">
         <div class="lease-info">
           <div class="lease-meta">

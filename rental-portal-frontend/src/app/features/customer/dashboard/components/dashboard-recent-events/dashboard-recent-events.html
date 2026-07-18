@@ -1,0 +1,23 @@
+<div class="panel">
+  <div class="panel-header">
+    <h3 class="panel-title">Recent Portal Events</h3>
+    <a routerLink="/customer/notifications" class="link-view-all">View All</a>
+  </div>
+  
+  <div class="timeline">
+    @for (act of activities.slice(0, 3); track act.title) {
+      <div class="event-item animate-fadeIn">
+        <div class="event-marker marker-{{ act.type }}">
+          <app-icon [name]="act.icon" size="sm"></app-icon>
+        </div>
+        <div class="event-body">
+          <div class="event-header">
+            <h4 class="event-title">{{ act.title }}</h4>
+            <span class="event-time">{{ act.time }}</span>
+          </div>
+          <p class="event-desc">{{ act.desc }}</p>
+        </div>
+      </div>
+    }
+  </div>
+</div>
