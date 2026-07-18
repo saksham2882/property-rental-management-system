@@ -7,10 +7,13 @@ import { takeUntil } from 'rxjs/operators';
 import { selectAllApplications, selectApplicationsLoading } from '../../../../store/applications/applications.selectors';
 import { selectCurrentUser } from '../../../../store/auth/auth.selectors';
 import { selectAllProperties } from '../../../../store/properties/properties.selectors';
+import { selectAllLeases } from '../../../../store/leases/leases.selectors';
 import { loadApplications, deleteApplication } from '../../../../store/applications/applications.actions';
 import { loadProperties } from '../../../../store/properties/properties.actions';
+import { loadLeases } from '../../../../store/leases/leases.actions';
 import { RentalApplication } from '../../../../core/models/application-model';
 import { Property } from '../../../../core/models/property-model';
+import { Lease } from '../../../../core/models/lease-model';
 import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state';
 import { ModalComponent } from '../../../../shared/components/modal/modal';
@@ -29,11 +32,13 @@ export class ApplicationListComponent implements OnInit {
 
   applications$ = this.store.select(selectAllApplications);
   properties$ = this.store.select(selectAllProperties);
+  leases$ = this.store.select(selectAllLeases);
   loading$ = this.store.select(selectApplicationsLoading);
   currentUser$ = this.store.select(selectCurrentUser);
 
   propertiesMap = new Map<string, Property>();
   myApplications: RentalApplication[] = [];
+  myLeases: Lease[] = [];
 
   isCancelModalOpen = false;
   appIdToCancel: string | null = null;
@@ -50,18 +55,28 @@ export class ApplicationListComponent implements OnInit {
     this.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
       if (user) {
         this.store.dispatch(loadApplications({ customerId: user.id }));
+        this.store.dispatch(loadLeases({ tenantId: user.id }));
       }
     });
 
-    combineLatest([this.applications$, this.currentUser$])
+    combineLatest([this.applications$, this.leases$, this.currentUser$])
       .pipe(takeUntil(this.destroy$))
-      .subscribe(([apps, user]) => {
+      .subscribe(([apps, leases, user]) => {
+        if (leases) {
+          this.myLeases = leases;
+        }
         if (apps && user) {
           this.myApplications = apps.filter(a => a.customerId === user.id);
         } else {
           this.myApplications = [];
         }
       });
+  }
+
+  isLeaseSignedForApp(appId: string | undefined): boolean {
+    if (!appId) return false;
+    const lease = this.myLeases.find(l => l.applicationId === appId);
+    return !!lease && lease.status === 'active';
   }
 
 

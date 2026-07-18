@@ -204,6 +204,11 @@ export class RentTracking implements OnInit, OnDestroy {
       if (aUnpaid && !bUnpaid) return -1;
       if (!aUnpaid && bUnpaid) return 1;
 
+      const aIsDeposit = a.month?.toLowerCase().includes('deposit');
+      const bIsDeposit = b.month?.toLowerCase().includes('deposit');
+      if (aIsDeposit && !bIsDeposit) return -1;
+      if (!aIsDeposit && bIsDeposit) return 1;
+
       const dateA = a.dueDate ? new Date(a.dueDate).getTime() : 0;
       const dateB = b.dueDate ? new Date(b.dueDate).getTime() : 0;
       return dateB - dateA;
