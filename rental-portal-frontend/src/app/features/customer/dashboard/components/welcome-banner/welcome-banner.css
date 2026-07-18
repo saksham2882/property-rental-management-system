@@ -1,0 +1,238 @@
+.banner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  background: linear-gradient(135deg, #020617 0%, #1e1b4b 50%, #311042 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-xl);
+  padding: var(--space-10);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+@media (min-width: 1024px) {
+  .banner {
+    grid-template-columns: 1.25fr 1fr;
+    align-items: center;
+    padding: var(--space-12) 52px;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  z-index: 1;
+}
+
+.badge {
+  align-self: flex-start;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: #c084fc;
+  background: rgba(192, 132, 252, 0.1);
+  padding: 5px var(--space-3);
+  border-radius: var(--radius-full);
+  border: 1.5px solid rgba(192, 132, 252, 0.2);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.user {
+  background: linear-gradient(90deg, #c084fc 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+
+.desc {
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  line-height: 1.65;
+}
+
+.card-box {
+  z-index: 1;
+  width: 100%;
+}
+
+.lease {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lease-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: var(--space-1) 0 0;
+}
+
+.days-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-md);
+}
+
+.days {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #c084fc;
+}
+
+.days-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+}
+
+.track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #10b981);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+}
+
+.lease-foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+
+.profile {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.profile-details {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.role {
+  font-size: 0.78rem;
+  color: #f59e0b;
+  font-weight: 600;
+  display: block;
+  margin-top: 1px;
+}
+
+.verify {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  padding: 6px var(--space-3);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+@media (max-width: 767px) {
+  .banner {
+    padding: var(--space-6);
+    gap: var(--space-6);
+  }
+  .title {
+    font-size: 1.85rem;
+  }
+  .desc {
+    font-size: 0.95rem;
+  }
+  .profile {
+    padding: var(--space-4) var(--space-5);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .verify {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .banner {
+    padding: var(--space-5) var(--space-4);
+    gap: var(--space-5);
+    border-radius: 16px;
+  }
+  .title {
+    font-size: 1.6rem;
+  }
+  .lease {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+  .days-badge {
+    padding: var(--space-1) var(--space-2);
+  }
+  .days {
+    font-size: 1.1rem;
+  }
+}
