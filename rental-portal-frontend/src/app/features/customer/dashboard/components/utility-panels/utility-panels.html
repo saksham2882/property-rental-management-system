@@ -1,0 +1,173 @@
+<div class="grid">
+
+  <div class="calculator-card">
+    <div class="card-header">
+      <div class="card-icon-title">
+        <div class="header-icon-box calculator-icon">
+          <app-icon name="trending-up" size="md"></app-icon>
+        </div>
+        <div>
+          <h3 class="title">Roommate Split Calculator</h3>
+          <p class="desc">Quickly divide lease monthly rent among flatmates based on property beds/bedrooms.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="calculator-body">
+      @if (leaseOptions.length > 0) {
+        <div class="select-group">
+          <label class="dropdown-label">Select Active Lease Unit</label>
+          <app-dropdown [options]="leaseOptions" [value]="selectedLeaseId" (valueChange)="onLeaseSelect($event)"
+            placeholder="Select Unit">
+          </app-dropdown>
+        </div>
+      }
+
+      @if (selectedLeaseId) {
+        <div class="summary-row">
+          <span class="badge badge-primary">
+            <app-icon name="credit-card" size="sm"></app-icon>
+            Rent: ₹{{ selectedLeaseRent | number }}
+          </span>
+          <span class="badge badge-accent">
+            <app-icon name="home" size="sm"></app-icon>
+            Beds: {{ selectedLeaseBedrooms }}
+          </span>
+        </div>
+      }
+
+      <div class="slider-inputs">
+        <div class="slider-header">
+          <span class="slider-lbl">Split Among Roommates</span>
+          <span class="slider-val">{{ roommateCount }} Persons</span>
+        </div>
+        <div class="slider-container" [class.disabled]="!selectedLeaseId">
+          <input type="range" min="1" max="10" [value]="roommateCount" (input)="onRoommatesSliderChange($event)"
+            class="range-slider" [disabled]="!selectedLeaseId" />
+          <div class="slider-ticks">
+            @for (tick of [1,2,3,4,5,6,7,8,9,10]; track tick) {
+              <span [class.active]="selectedLeaseId && tick <= roommateCount"></span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="result-box">
+        <div class="result-icon-wrapper">
+          <app-icon name="users" size="lg"></app-icon>
+        </div>
+        <div class="result-content">
+          <span class="result-lbl">Rent Share Per Person</span>
+          <h3 class="result-val">₹{{ calculatedShare | number:'1.0-0' }} <span class="result-unit">/head</span></h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tracker-card">
+    <div class="card-header">
+      <div class="card-icon-title">
+        <div class="header-icon-box tracker-icon">
+          <app-icon name="wrench" size="md"></app-icon>
+        </div>
+        <div>
+          <h3 class="title">Complaint Status Tracker</h3>
+          <p class="desc">Most recent maintenance request ticket: <strong>{{ latestRequestTitle }}</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tracker-body">
+      @if (latestRequestStage > 0) {
+        <div class="stepper">
+          <div class="line">
+            <div class="line-fill" [style.width.%]="(latestRequestStage - 1) * 33.3"></div>
+          </div>
+
+          <div class="node" [class.completed]="latestRequestStage >= 1" [class.active]="latestRequestStage === 1">
+            <div class="bullet">
+              @if (latestRequestStage === 1) {
+                <app-icon name="plus" size="sm"></app-icon>
+              } @else {
+                <app-icon name="check" size="sm"></app-icon>
+              }
+            </div>
+            <span class="node-lbl">Raised</span>
+          </div>
+
+          <div class="node" [class.completed]="latestRequestStage >= 2" [class.active]="latestRequestStage === 2">
+            <div class="bullet">
+              <app-icon name="check" size="sm"></app-icon>
+            </div>
+            <span class="node-lbl">Assigned</span>
+          </div>
+
+          <div class="node" [class.completed]="latestRequestStage >= 3" [class.active]="latestRequestStage === 3">
+            <div class="bullet">
+              @if (latestRequestStage <= 3) {
+                <app-icon name="clock" size="sm"></app-icon>
+              } @else {
+                <app-icon name="check" size="sm"></app-icon>
+              }
+            </div>
+            <span class="node-lbl">Processing</span>
+          </div>
+
+          <div class="node" [class.completed]="latestRequestStage >= 4" [class.active]="latestRequestStage === 4">
+            <div class="bullet">
+              <app-icon name="check-circle" size="sm"></app-icon>
+            </div>
+            <span class="node-lbl">Resolved</span>
+          </div>
+        </div>
+      }
+
+      @if (latestRequestStage === 0) {
+
+        <div class="empty-state">
+          <div class="empty-header">
+            <div class="success-icon-wrapper">
+              <div class="success-pulse"></div>
+              <app-icon name="check-circle" size="lg" class="success-icon"></app-icon>
+            </div>
+            <div class="empty-header-text">
+              <h4 class="empty-title">All Systems Operational</h4>
+              <p class="empty-desc">No pending maintenance tickets raised for your unit.</p>
+            </div>
+          </div>
+
+          <div class="checklist">
+            <div class="checklist-item">
+              <div class="checklist-check">
+                <app-icon name="check" size="sm"></app-icon>
+              </div>
+              <span>Water Supply & Piping Checked</span>
+            </div>
+
+            <div class="checklist-item">
+              <div class="checklist-check">
+                <app-icon name="check" size="sm"></app-icon>
+              </div>
+              <span>Electrical Connections Secure</span>
+            </div>
+
+            <div class="checklist-item">
+              <div class="checklist-check">
+                <app-icon name="check" size="sm"></app-icon>
+              </div>
+              <span>Fire & Safety Alarms Calibrated</span>
+            </div>
+          </div>
+
+          <a routerLink="/customer/maintenance" class="btn-ticket">
+            <span>Raise Maintenance Ticket</span>
+            <span class="btn-ticket-icon-box">
+              <app-icon name="wrench" size="sm"></app-icon>
+            </span>
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+  
+</div>

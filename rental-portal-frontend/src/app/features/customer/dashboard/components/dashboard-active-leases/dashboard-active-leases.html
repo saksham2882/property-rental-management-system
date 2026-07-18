@@ -1,0 +1,36 @@
+<div class="panel">
+
+  <div class="panel-header">
+    <h3 class="panel-title">Active Lease Agreements</h3>
+    <a routerLink="/customer/lease" class="link-view-all">View All</a>
+  </div>
+
+  <div class="lease-list">
+    @for (lease of sortedLeases.slice(0, 2); track lease.id) {
+      <div class="lease-card">
+        <div class="lease-info">
+          <div class="lease-meta">
+            <span class="status-badge">{{ lease.status }}</span>
+            <h4 class="lease-title">{{ lease.propertyTitle || 'Residential Agreement' }}</h4>
+          </div>
+          <p class="lease-period">Period: {{ lease.startDate | date }} → {{ lease.endDate | date }}</p>
+        </div>
+        <div class="lease-actions">
+          <span class="lease-rent">{{ lease.monthlyRent | priceFormat:'mo' }}</span>
+          <a routerLink="/customer/lease" class="btn-view">View Details</a>
+        </div>
+      </div>
+    }
+
+    @if (!leases || leases.length === 0) {
+      <app-empty-state
+        icon="info"
+        title="No active leases"
+        description="You do not have any active lease agreements."
+        actionText="Find Properties"
+        actionLink="/customer/properties">
+      </app-empty-state>
+    }
+  </div>
+
+</div>
