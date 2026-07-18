@@ -86,16 +86,18 @@
 
     <div class="actions">
       <div class="flex gap-3">
-        @if (application.status === 'approved') {
+        @if (application.status === 'approved' && !leaseSigned) {
           <a routerLink="/customer/lease" class="btn btn-primary btn-sm">
             <app-icon name="file-text" size="md" class="btn-icon"></app-icon>
             <span>Sign Lease</span>
           </a>
         }
-        <button (click)="onCancelClick()" class="btn btn-danger btn-sm">
-          <app-icon name="trash-2" size="md" class="btn-icon"></app-icon>
-          <span>Cancel</span>
-        </button>
+        @if (!leaseSigned) {
+          <button (click)="onCancelClick()" class="btn btn-danger btn-sm">
+            <app-icon name="trash-2" size="md" class="btn-icon"></app-icon>
+            <span>Cancel</span>
+          </button>
+        }
       </div>
     </div>
 

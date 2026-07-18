@@ -17,6 +17,7 @@
           [application]="app"
           [propertyTitle]="getPropertyTitle(app.propertyId)"
           [propertyDetails]="getPropertyDetails(app.propertyId)"
+          [leaseSigned]="isLeaseSignedForApp(app.id)"
           (cancel)="openCancelModal(app.id)">
         </app-application-card>
       }

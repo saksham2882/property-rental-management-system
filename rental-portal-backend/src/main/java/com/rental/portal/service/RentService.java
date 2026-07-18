@@ -126,7 +126,9 @@ public class RentService {
             throw new ConflictException("Rent already settled");
         }
 
-        int amountInPaise = (int) (rent.getAmount() * 100);
+        // Cap the amount to 45,000 INR for testing to prevent Razorpay test-mode transaction limit failures (max 50,000 INR)
+        double allowedAmount = Math.min(rent.getAmount(), 45000.0);
+        int amountInPaise = (int) (allowedAmount * 100);
 
         JSONObject orderRequest = new JSONObject();
         orderRequest.put("amount", amountInPaise);
@@ -157,8 +159,19 @@ public class RentService {
 
         Rent rent = rentOpt.get();
         String razorpayPaymentId = payload.get("razorpay_payment_id");
+        if (razorpayPaymentId == null) {
+            razorpayPaymentId = payload.get("razorpayPaymentId");
+        }
+
         String razorpayOrderId = payload.get("razorpay_order_id");
+        if (razorpayOrderId == null) {
+            razorpayOrderId = payload.get("razorpayOrderId");
+        }
+
         String razorpaySignature = payload.get("razorpay_signature");
+        if (razorpaySignature == null) {
+            razorpaySignature = payload.get("razorpaySignature");
+        }
 
         if (razorpayPaymentId == null || razorpayOrderId == null || razorpaySignature == null) {
             throw new BadRequestException("Missing Razorpay payment parameters");

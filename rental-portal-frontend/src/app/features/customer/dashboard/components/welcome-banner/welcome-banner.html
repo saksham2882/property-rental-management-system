@@ -1,0 +1,47 @@
+<div class="banner">
+  <div class="content">
+    <span class="badge">Tenant Workspace</span>
+    <h1 class="title">Welcome back, <span class="user">{{ currentUser?.name || 'Tenant' }}</span>! 👋</h1>
+    <p class="desc">Manage rent, sign agreements, check properties, or request portal maintenance support instantly.</p>
+  </div>
+
+  <div class="card-box">
+    @if (leaseProgress > 0) {
+      <div class="lease">
+        <div class="lease-head">
+          <div>
+            <span class="label">Lease Timeline Status</span>
+            <h4 class="name">{{ activeLeaseTitle }}</h4>
+          </div>
+          <div class="days-badge">
+            <span class="days">{{ daysRemaining }}</span>
+            <span class="days-label">Days left</span>
+          </div>
+        </div>
+        <div class="track">
+          <div class="fill" [style.width.%]="leaseProgress"></div>
+        </div>
+        <div class="lease-foot">
+          <span>Elapsed: {{ leaseProgress }}%</span>
+          <span>Expires soon</span>
+        </div>
+      </div>
+    }
+
+    @if (leaseProgress === 0) {
+      <div class="profile">
+        <div class="profile-details">
+          <span class="avatar"><app-icon name="user" size="lg"></app-icon></span>
+          <div>
+            <h4 class="name">{{ currentUser?.name || 'Tenant Member' }}</h4>
+            <span class="role">RentEase Gold Member</span>
+          </div>
+        </div>
+        <div class="verify">
+          <app-icon name="check-circle" size="sm"></app-icon>
+          <span>Verified</span>
+        </div>
+      </div>
+    }
+  </div>
+</div>

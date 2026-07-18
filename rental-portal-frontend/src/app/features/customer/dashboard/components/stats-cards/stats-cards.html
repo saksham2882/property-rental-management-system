@@ -1,0 +1,77 @@
+<div class="grid-4">
+  
+  <div class="card flex flex-col justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="icon-box icon-purple">
+        <app-icon name="file-text" size="lg"></app-icon>
+      </div>
+      <div class="flex flex-col gap-1">
+        <span class="value">{{ stats.activeLeasesCount }}</span>
+        <span class="label">Active Leases</span>
+      </div>
+    </div>
+    <div class="card-footer flex flex-col gap-1">
+      <span class="text-xs text-muted">All agreements are legally binding.</span>
+      <a routerLink="/customer/lease" class="link">View agreements →</a>
+    </div>
+  </div>
+
+  <div class="card flex flex-col justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="icon-box icon-teal">
+        <app-icon name="credit-card" size="lg"></app-icon>
+      </div>
+      <div class="flex flex-col gap-1">
+        @if (stats.pendingRentAmount > 0) {
+          <span class="value">{{ stats.pendingRentAmount | priceFormat }}</span>
+        } 
+        @else {
+          <span class="value-success">All Clear</span>
+        }
+        <span class="label">Outstanding Rent</span>
+      </div>
+    </div>
+    <div class="card-footer flex flex-col gap-1">
+      @if (stats.pendingRentAmount > 0) {
+        <span class="text-xs text-muted">Pay bills with 0% gateway charges.</span>
+      } 
+      @else {
+        <span class="text-xs text-muted">All active rent bills have been fully paid.</span>
+      }
+      <a routerLink="/customer/rent" class="link">Track payments →</a>
+    </div>
+  </div>
+
+  <div class="card flex flex-col justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="icon-box icon-yellow">
+        <app-icon name="wrench" size="lg"></app-icon>
+      </div>
+      <div class="flex flex-col gap-1">
+        <span class="value">{{ stats.pendingRequestsCount }}</span>
+        <span class="label">Pending Issues</span>
+      </div>
+    </div>
+    <div class="card-footer flex flex-col gap-1">
+      <span class="text-xs text-muted">Average resolution time is 24 hrs.</span>
+      <a routerLink="/customer/maintenance" class="link">Report an issue →</a>
+    </div>
+  </div>
+
+  <div class="card flex flex-col justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="icon-box icon-red">
+        <app-icon name="home" size="lg"></app-icon>
+      </div>
+      <div class="flex flex-col gap-1">
+        <span class="value">{{ stats.activeApplicationsCount }}</span>
+        <span class="label">Applications</span>
+      </div>
+    </div>
+    <div class="card-footer flex flex-col gap-1">
+      <span class="text-xs text-muted">Check real-time landlord feedback.</span>
+      <a routerLink="/customer/applications" class="link">Check status →</a>
+    </div>
+  </div>
+
+</div>

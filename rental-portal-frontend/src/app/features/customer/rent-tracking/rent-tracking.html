@@ -7,6 +7,13 @@
     </div>
   </div>
 
+  <div class="alert alert-danger animate-fadeIn gap-8">
+    <app-icon name="alert-circle" size="md"></app-icon>
+    <div>
+      <strong>Testing Mode Notice:</strong> The portal is currently in payment testing mode. Invoices exceeding ₹45,000 (such as large security deposits) will be capped to ₹45,000 during checkout, but will be marked as fully paid once verified.
+    </div>
+  </div>
+
   @if (loading$ | async) {
     <app-loading-spinner></app-loading-spinner>
   } 

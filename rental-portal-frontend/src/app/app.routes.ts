@@ -7,12 +7,14 @@ import { confirmLeaveGuard } from './core/guards/unsaved-changes-guard';
 export const routes: Routes = [
     {
         path: '',
+        canActivate: [redirectIfLoggedInGuard],
         loadComponent: () => import('./features/landing-page/landing-page').then(m => m.LandingPageComponent),
         pathMatch: 'full'
     },
     {
         path: 'auth',
         canActivate: [redirectIfLoggedInGuard],
+        loadComponent: () => import('./features/auth/auth-layout/auth-layout').then(m => m.AuthLayoutComponent),
         children: [
             {
                 path: '',
@@ -57,20 +59,27 @@ export const routes: Routes = [
             },
             {
                 path: 'applications',
-                loadComponent: () => import('./features/customer/rental-application/application-list').then(a => a.ApplicationListComponent)
+                loadComponent: () => import('./features/customer/rental-application/application-list/application-list').then(a => a.ApplicationListComponent)
             },
             {
                 path: 'apply/:propertyId',
-                loadComponent: () => import('./features/customer/rental-application/apply-component').then(r => r.ApplyComponent),
+                loadComponent: () => import('./features/customer/rental-application/application-apply/application-apply').then(r => r.ApplyComponent),
                 canDeactivate: [confirmLeaveGuard]
             },
             {
                 path: 'lease',
-                loadComponent: () =>
-                    import('./features/customer/lease-detail/lease-detail').then(m => m.LeaseDetailComponent)
+                loadComponent: () => import('./features/customer/lease-detail/lease-detail').then(m => m.LeaseDetailComponent)
+            },
+            {
+                path: 'lease/:leaseId',
+                loadComponent: () => import('./features/customer/lease-detail/lease-detail').then(m => m.LeaseDetailComponent)
             },
             {
                 path: 'maintenance',
+                loadComponent: () => import('./features/customer/maintenance/maintenance').then(m => m.MaintenanceComponent)
+            },
+            {
+                path: 'maintenance/:propertyId',
                 loadComponent: () => import('./features/customer/maintenance/maintenance').then(m => m.MaintenanceComponent)
             },
             {
@@ -78,8 +87,16 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/customer/rent-tracking/rent-tracking').then(r => r.RentTracking)
             },
             {
+                path: 'rent/:leaseId',
+                loadComponent: () => import('./features/customer/rent-tracking/rent-tracking').then(r => r.RentTracking)
+            },
+            {
                 path: 'notifications',
                 loadComponent: () => import('./features/customer/notifications/notifications').then(n => n.NotificationsComponent)
+            },
+            {
+                path: '**',
+                redirectTo: 'dashboard'
             }
         ]
     },
@@ -121,6 +138,10 @@ export const routes: Routes = [
             {
                 path: 'notifications',
                 loadComponent: () => import('./features/admin/notifications/admin-notifications').then(n => n.AdminNotificationsComponent)
+            },
+            {
+                path: '**',
+                redirectTo: 'dashboard'
             }
         ]
     },

@@ -17,6 +17,7 @@ export class ApplicationCardComponent {
   @Input({ required: true }) application!: RentalApplication;
   @Input() propertyTitle = 'Rental Space';
   @Input() propertyDetails: Property | undefined;
+  @Input() leaseSigned = false;
 
   @Output() cancel = new EventEmitter<void>();
 

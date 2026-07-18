@@ -28,4 +28,6 @@ public class Lease {
     private String conditions;
     private String propertyTitle;
     private String signatureImage;
+    private String contractText;
+    private String createdAt;
 }
