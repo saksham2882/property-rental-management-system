@@ -1,0 +1,74 @@
+<div class="saved-panel">
+  <div class="panel-header">
+    <div class="panel-title-group">
+      <div class="panel-icon-badge">
+        <app-icon name="heart" size="sm"></app-icon>
+      </div>
+      <div>
+        <h3 class="panel-title">Saved Properties</h3>
+        <p class="panel-subtitle">{{ properties.length }} in your wishlist</p>
+      </div>
+    </div>
+    <a routerLink="/customer/properties" class="btn-view-all">
+      View All
+      <app-icon name="arrow-right" size="sm"></app-icon>
+    </a>
+  </div>
+
+  @if (properties.length === 0) {
+    <div class="empty-state-wrap">
+      <app-empty-state
+        icon="heart"
+        title="Your wishlist is empty"
+        description="Browse properties and save your favorites to see them here."
+        actionText="Browse Properties"
+        actionLink="/customer/properties">
+      </app-empty-state>
+    </div>
+  } 
+  @else {
+    <div class="properties-list">
+      @for (item of properties.slice(0, 3); track item.id) {
+        <div class="property-card">
+          <div class="property-img-wrap">
+            <img
+              [src]="item.images && item.images.length > 0 ? item.images[0] : '/assets/no-property.jpg'"
+              alt="{{ item.title }}"
+              class="property-img"
+            />
+            <div class="img-overlay"></div>
+            <span class="rent-badge">{{ item.rent | priceFormat:'mo' }}</span>
+            @if (item.available) {
+              <span class="avail-pill">
+                <span class="avail-dot"></span>
+                Available
+              </span>
+            }
+          </div>
+
+          <div class="property-body">
+            <div class="property-meta">
+              <h4 class="property-title">{{ item.title }}</h4>
+              <p class="property-location">
+                <app-icon name="map-pin" size="sm"></app-icon>
+                {{ item.locality }}, {{ item.city }}
+              </p>
+            </div>
+
+            <div class="property-footer">
+              <div class="property-tags">
+                <span class="p-tag p-tag-type">{{ item.type }}</span>
+                <span class="p-tag">{{ item.bedrooms }} BHK</span>
+                <span class="p-tag">{{ item.furnishing }}</span>
+              </div>
+              <a [routerLink]="['/customer/properties', item.id]" class="btn-apply">
+                Apply
+                <app-icon name="arrow-right" size="sm"></app-icon>
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

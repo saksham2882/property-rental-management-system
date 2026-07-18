@@ -1,0 +1,51 @@
+<div class="dashboard-wrapper page animate-fadeIn">
+
+  <dashboard-welcome-banner
+    [currentUser]="currentUser"
+    [leaseProgress]="leaseProgress()"
+    [activeLeaseTitle]="activeLeaseTitle()"
+    [daysRemaining]="daysRemaining()">
+  </dashboard-welcome-banner>
+
+  <dashboard-stats-cards
+    [stats]="stats()">
+  </dashboard-stats-cards>
+
+  <dashboard-analytics-section
+    [chartPayments]="chartPayments()"
+    [chartLinePath]="chartLinePath()"
+    [chartAreaPath]="chartAreaPath()"
+    [nextRentAmount]="nextRentAmount()"
+    [nextDueDate]="nextDueDate()"
+    [daysRemaining]="daysRemaining()"
+    [paymentCountdownPercent]="paymentCountdownPercent()">
+  </dashboard-analytics-section>
+
+  <dashboard-utility-panels
+    [activeLeasesList]="activeLeasesList()"
+    [selectedLeaseId]="selectedLeaseId()"
+    [selectedLeaseRent]="selectedLeaseRent()"
+    [selectedLeaseBedrooms]="selectedLeaseBedrooms()"
+    [roommateCount]="roommateCount()"
+    [calculatedShare]="calculatedShare()"
+    [latestRequestTitle]="latestRequestTitle()"
+    [latestRequestStage]="latestRequestStage()"
+    (leaseChange)="onLeaseChange($event)"
+    (roommateCountChange)="onRoommatesChange($event)">
+  </dashboard-utility-panels>
+
+  <dashboard-emergency-contacts></dashboard-emergency-contacts>
+
+  <div class="dashboard-columns-grid">
+    <div class="feed-column">
+      <dashboard-active-leases [leases]="leases$ | async"></dashboard-active-leases>
+
+      <dashboard-recent-events [activities]="recentActivities()"></dashboard-recent-events>
+    </div>
+
+    <div class="wishlist-column">
+      <dashboard-saved-properties [properties]="wishlistedProperties"></dashboard-saved-properties>
+    </div>
+  </div>
+
+</div>
