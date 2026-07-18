@@ -49,6 +49,7 @@ public class LeaseService {
         if (updateData.getConditions() != null) lease.setConditions(updateData.getConditions());
         if (updateData.getStartDate() != null) lease.setStartDate(updateData.getStartDate());
         if (updateData.getEndDate() != null) lease.setEndDate(updateData.getEndDate());
+        if (updateData.getContractText() != null) lease.setContractText(updateData.getContractText());
 
         return Optional.of(leaseRepository.save(lease));
     }
