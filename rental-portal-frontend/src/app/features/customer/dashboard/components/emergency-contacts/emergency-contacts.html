@@ -1,0 +1,25 @@
+<div class="emergency-section">
+  <h3 class="section-title">Emergency Utility Directory</h3>
+
+  <div class="contacts-grid">
+    @for(contact of emergencyList; track $index) {
+      <div class="contact-card">
+      
+        <div class="contact-left">
+          <div class="contact-icon-box">
+            <app-icon [name]="contact.icon" size="md"></app-icon>
+          </div>
+          <div>
+            <h4 class="contact-name">{{ contact.name }}</h4>
+            <span class="contact-role">{{ contact.role }}</span>
+          </div>
+        </div>
+      
+        <a href="tel:{{ contact.phone }}" class="btn-call">
+          <app-icon name="phone" size="sm"></app-icon>
+          <span>Call Support</span>
+        </a>
+      </div>
+    }
+  </div>
+</div>
