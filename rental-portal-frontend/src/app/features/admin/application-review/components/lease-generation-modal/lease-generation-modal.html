@@ -1,0 +1,76 @@
+<app-modal [isOpen]="isOpen" title="Generate Lease Agreement" size="md" (close)="close.emit()">
+  <div class="intro">
+    <p>Configure lease terms for applicant <strong class="text-primary">{{ applicantName }}</strong>. Approving this application will generate a signature request for the tenant.</p>
+  </div>
+
+  <form [formGroup]="leaseForm" (submit)="submitLease.emit(); $event.preventDefault();" class="form">
+    
+    <div class="grid-2">
+      <div class="group">
+        <label class="label">Lease Start Date</label>
+        <input type="date" formControlName="startDate" class="control"
+          [class.invalid]="leaseForm.get('startDate')?.touched && leaseForm.get('startDate')?.invalid" />
+
+        @if (leaseForm.get('startDate')?.touched && leaseForm.get('startDate')?.invalid) {
+          <span class="error">Start date is required.</span>
+        }
+      </div>
+
+      <div class="group">
+        <label class="label">Lease End Date</label>
+        <input type="date" formControlName="endDate" class="control"
+          [class.invalid]="leaseForm.get('endDate')?.touched && leaseForm.get('endDate')?.invalid" />
+        
+        @if (leaseForm.get('endDate')?.touched && leaseForm.get('endDate')?.invalid) {
+          <span class="error">End date is required.</span>
+        }
+      </div>
+    </div>
+
+
+    <div class="grid-2">
+      <div class="group">
+        <label class="label">Monthly Rent Rate (₹)</label>
+        <input type="number" formControlName="monthlyRent" class="control" placeholder="e.g. 22000"
+          [class.invalid]="leaseForm.get('monthlyRent')?.touched && leaseForm.get('monthlyRent')?.invalid" />
+        
+        @if (leaseForm.get('monthlyRent')?.touched && leaseForm.get('monthlyRent')?.invalid) {
+          <span class="error">Rent is required.</span>
+        }
+      </div>
+
+      <div class="group">
+        <label class="label">Security Deposit (₹)</label>
+        <input type="number" formControlName="deposit" class="control" placeholder="e.g. 66000"
+          [class.invalid]="leaseForm.get('deposit')?.touched && leaseForm.get('deposit')?.invalid" />
+        
+        @if (leaseForm.get('deposit')?.touched && leaseForm.get('deposit')?.invalid) {
+          <span class="error">Deposit is required.</span>
+        }
+      </div>
+    </div>
+
+
+    <div class="group">
+      <label class="label">Special Terms & Conditions</label>
+      <textarea formControlName="conditions" class="control textarea" rows="5"
+        placeholder="Specify lease policies, eviction rules, maintenance liabilities..."
+        [class.invalid]="leaseForm.get('conditions')?.touched && leaseForm.get('conditions')?.invalid">
+      </textarea>
+      
+      @if (leaseForm.get('conditions')?.touched && leaseForm.get('conditions')?.invalid) {
+        <span class="error">Lease conditions are required.</span>
+      }
+    </div>
+
+    <div class="actions">
+      <button type="button" (click)="close.emit()" class="btn btn-secondary btn-cancel">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="leaseForm.invalid" class="btn btn-primary btn-submit">
+        Approve & Send Request
+      </button>
+    </div>
+
+  </form>
+</app-modal>
