@@ -1,0 +1,162 @@
+<div class="list-container">
+
+  <div class="page-header">
+    <div class="page-title-block">
+      <h1>Application Review</h1>
+      <p>Assess candidate tenant income details, verification credentials, expected move-in dates, and draft final lease agreements.</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-wrap">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  } 
+  @else {
+    <div class="hide-mobile w-full">
+      <div class="table-wrap w-full">
+        <div class="table-scroll">
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Applicant Details</th>
+                <th>Target Property</th>
+                <th>Monthly Income</th>
+                <th>Occupants</th>
+                <th>Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (app of applications; track app.id) {
+                <tr>
+                  <td>
+                    <div class="applicant">
+                      <span class="name">{{ app.applicantName }}</span>
+                      <span class="meta">{{ app.applicantEmail }} · {{ app.applicantPhone }}</span>
+                      @if (app.message) {
+                        <p class="msg">"{{ app.message }}"</p>
+                      }
+                    </div>
+                  </td>
+
+                  <td>
+                    <span class="property">{{ getPropertyTitle(app.propertyId) }}</span>
+                  </td>
+
+                  <td class="income">{{ app.monthlyIncome | priceFormat }}</td>
+
+                  <td>
+                    <span class="occupants">{{ app.occupants }} {{ app.occupants === 1 ? 'person' : 'people' }}</span>
+                  </td>
+
+                  <td>
+                    <span class="badge" [class.badge-review]="app.status === 'under_review'" [class.badge-approved]="app.status === 'approved'" [class.badge-rejected]="app.status === 'rejected'" [class.badge-waitlist]="app.status === 'waitlisted'">
+                      {{ app.status | uppercase }}
+                    </span>
+                  </td>
+
+                  <td class="text-right">
+                    <div class="dropdown-wrap">
+                      <app-dropdown
+                        [options]="getActionOptions(app)"
+                        [value]="''"
+                        [placeholder]="'Actions'"
+                        (valueChange)="onActionSelected($event, app)">
+                      </app-dropdown>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+
+          </table>
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="hide-desktop">
+      <div class="mobile-list">
+        @for (app of applications; track app.id) {
+          <div class="mobile-card card elevated-card">
+
+            <div class="card-header">
+              <div class="profile">
+                <span class="name">{{ app.applicantName }}</span>
+                <span class="contact text-muted">{{ app.applicantEmail }}</span>
+                <span class="contact text-muted">{{ app.applicantPhone }}</span>
+              </div>
+              <span class="badge" [class.badge-review]="app.status === 'under_review'" [class.badge-approved]="app.status === 'approved'" [class.badge-rejected]="app.status === 'rejected'" [class.badge-waitlist]="app.status === 'waitlisted'">
+                {{ app.status | uppercase }}
+              </span>
+            </div>
+
+            <div class="card-body">
+              <div class="card-row">
+                <span class="label">Target Property:</span>
+                <span class="val font-semibold truncate">{{ getPropertyTitle(app.propertyId) }}</span>
+              </div>
+              <div class="card-row">
+                <span class="label">Monthly Income:</span>
+                <span class="val income">{{ app.monthlyIncome | priceFormat }}</span>
+              </div>
+              <div class="card-row">
+                <span class="label">Occupants:</span>
+                <span class="val">{{ app.occupants }} {{ app.occupants === 1 ? 'person' : 'people' }}</span>
+              </div>
+              <div class="card-row">
+                <span class="label">Expected Move-in:</span>
+                <span class="val font-semibold text-primary">{{ app.moveInDate || 'Not specified' }}</span>
+              </div>
+
+              @if (app.message) {
+                <div class="message mt-2">
+                  <span class="label">Cover Statement:</span>
+                  <p class="msg">"{{ app.message }}"</p>
+                </div>
+              }
+            </div>
+
+
+            <div class="card-actions">
+              <button (click)="viewDetails.emit(app)" class="btn btn-secondary btn-sm btn-block">
+                <app-icon name="eye" size="sm"></app-icon>
+                <span>View Details</span>
+              </button>
+              
+              @if (app.status === 'under_review' || app.status === 'waitlisted') {
+                <div class="btn-group">
+                  <button (click)="reject.emit(app.id!)" class="btn btn-danger btn-sm flex-1">
+                    <app-icon name="x" size="sm"></app-icon>
+                    <span>Reject</span>
+                  </button>
+                  <button (click)="waitlist.emit(app.id!)" class="btn btn-outline btn-sm flex-1">
+                    <app-icon name="clock" size="sm"></app-icon>
+                    <span>Waitlist</span>
+                  </button>
+                  <button (click)="approve.emit(app)" class="btn btn-primary btn-sm flex-1">
+                    <app-icon name="check" size="sm"></app-icon>
+                    <span>Approve</span>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+
+    @if (applications.length === 0) {
+      <app-empty-state 
+        icon="file-text" 
+        title="No Tenancy Applications" 
+        description="There are currently no rental applications pending evaluation. Check back soon!">
+      </app-empty-state>
+    }
+  }
+</div>
