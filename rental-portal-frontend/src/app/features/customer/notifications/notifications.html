@@ -1,0 +1,126 @@
+<div class="notif-container page animate-fadeIn">
+  <div class="notif-split">
+    
+    <div class="flex flex-col gap-5 sidebar">
+      <div class="card">
+        <div class="flex items-center gap-4">
+          <div class="icon-box">
+            <app-icon name="bell" size="lg"></app-icon>
+            @if (getUnreadCount() > 0) {
+              <span class="dot-badge"></span>
+            }
+          </div>
+          
+          <div>
+            <h1 class="text-title font-bold m-0">Notifications</h1>
+            <p class="text-xs text-muted font-medium m-0">Manage your portal updates</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-wrap">
+        <app-icon name="search" size="sm" class="search-icon"></app-icon>
+        <input 
+          type="text" 
+          [value]="searchQuery" 
+          (input)="onSearchChange($event)" 
+          placeholder="Search alerts..." 
+          class="search-input"
+        />
+      </div>
+
+      <div class="card flex flex-col gap-4 filter-menu">
+        <h3 class="text-xs uppercase font-bold text-muted m-0">Filter by Category</h3>
+        <div class="flex flex-col gap-1 filter-tabs">
+          
+          <button (click)="setTab('all')" [class.active]="activeTab === 'all'" class="tab">
+            <span>All Alerts</span>
+            <span class="badge">{{ myNotifications.length }}</span>
+          </button>
+          
+          <button (click)="setTab('unread')" [class.active]="activeTab === 'unread'" class="tab">
+            <span>Unread Alerts</span>
+            @if (getUnreadCount() > 0) {
+              <span class="badge badge-unread">{{ getUnreadCount() }}</span>
+            }
+          </button>
+
+          <button (click)="setTab('success')" [class.active]="activeTab === 'success'" class="tab">
+            <span>System Updates</span>
+          </button>
+          
+          <button (click)="setTab('warning')" [class.active]="activeTab === 'warning'" class="tab">
+            <span>Important Alerts</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4 feed">
+      @if (getUnreadCount() > 0) {
+        <div class="flex items-center justify-between gap-3 action-bar">
+          <span class="text-xs text-muted font-medium">You have {{ getUnreadCount() }} unread notifications</span>
+          <button (click)="onMarkAllRead()" class="btn-mark">
+            <app-icon name="check-square" size="sm"></app-icon>
+            <span>Mark all as read</span>
+          </button>
+        </div>
+      }
+
+      @if (loading$ | async) {
+        <div class="flex items-center justify-center spinner-container">
+          <app-loading-spinner></app-loading-spinner>
+        </div>
+      } 
+      @else {
+        <div class="flex flex-col gap-3 notif-list">
+          @for (item of filteredNotifications; track item.id) {
+            <div class="notif-card flex items-center justify-between gap-4" [class.unread]="!item.isRead">
+              <div class="flex items-start card-body">
+                
+                <div class="icon-badge flex items-center justify-center" [class]="item.type || 'info'">
+                  <app-icon [name]="getNotificationIcon(item.type)" size="md"></app-icon>
+                </div>
+                
+                <div class="flex flex-col card-info">
+                  <div class="flex items-center flex-wrap gap-2 card-meta">
+                    <h3 class="notif-title">{{ item.title || 'System Update' }}</h3>
+                    @if (!item.isRead) {
+                      <span class="pill-new">New</span>
+                    }
+                  </div>
+
+                  <p class="notif-msg">{{ item.message }}</p>
+
+                  <div class="notif-time">
+                    <app-icon name="clock" size="sm" class="icon-time"></app-icon>
+                    <span>{{ item.createdAt | relativeTime }}</span>
+                  </div>
+                </div>
+              </div>
+
+              @if (!item.isRead) {
+                <div class="flex items-center flex-shrink-0 card-actions">
+                  <button (click)="onMarkRead(item.id!)" class="btn btn-secondary btn-read" aria-label="Mark as read">
+                    <app-icon name="check" size="sm"></app-icon>
+                    <span>Mark Read</span>
+                  </button>
+                </div>
+              }
+            </div>
+          } 
+          @empty {
+            <div class="flex justify-center empty-state-wrap">
+              <app-empty-state 
+                icon="bell" 
+                title="All caught up!" 
+                description="No notifications found matching your selection.">
+              </app-empty-state>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+  </div>
+</div>

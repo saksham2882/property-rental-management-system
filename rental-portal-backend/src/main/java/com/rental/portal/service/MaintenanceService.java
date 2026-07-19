@@ -1,8 +1,13 @@
 package com.rental.portal.service;
 
 import com.rental.portal.model.MaintenanceRequest;
+import com.rental.portal.model.Notification;
+import com.rental.portal.model.Property;
 import com.rental.portal.model.User;
 import com.rental.portal.repository.MaintenanceRequestRepository;
+import com.rental.portal.repository.NotificationRepository;
+import com.rental.portal.repository.PropertyRepository;
+import com.rental.portal.repository.UserRepository;
 import com.rental.portal.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,6 +26,15 @@ public class MaintenanceService {
 
     @Autowired
     private MaintenanceRequestRepository maintenanceRequestRepo;
+
+    @Autowired
+    private NotificationRepository notificationRepo;
+
+    @Autowired
+    private PropertyRepository propertyRepo;
+
+    @Autowired
+    private UserRepository userRepo;
 
 
     public List<MaintenanceRequest> getRequests(String tenantId) {
@@ -58,7 +72,55 @@ public class MaintenanceService {
         request.setRaisedAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         request.setStatus("pending");
         request.setResolvedAt(null);
-        return maintenanceRequestRepo.save(request);
+        MaintenanceRequest savedRequest = maintenanceRequestRepo.save(request);
+
+        try {
+            String propertyTitle = "Property";
+            Optional<Property> propOpt = propertyRepo.findById(request.getPropertyId());
+            if (propOpt.isPresent()) {
+                propertyTitle = propOpt.get().getTitle();
+            }
+
+            String tenantName = "Tenant";
+            Optional<User> userOpt = userRepo.findById(request.getTenantId());
+            if (userOpt.isPresent()) {
+                tenantName = userOpt.get().getName();
+            }
+
+            String urgencyLabel = request.getUrgency();
+            String notificationType = "info";
+            if ("high".equalsIgnoreCase(request.getUrgency()) || "emergency".equalsIgnoreCase(request.getUrgency())) {
+                notificationType = "warning";
+            }
+
+            // Customer notification
+            Notification tenantNotif = Notification.builder()
+                    .id(UUID.randomUUID().toString().substring(0, 8))
+                    .userId(request.getTenantId())
+                    .title("Support Request Raised")
+                    .message("Your support request #" + request.getId() + " (" + request.getCategory() + ") was successfully raised. Urgency: " + urgencyLabel)
+                    .type(notificationType)
+                    .isRead(false)
+                    .createdAt(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date()))
+                    .build();
+            notificationRepo.save(tenantNotif);
+
+            // Admin notification
+            Notification adminNotif = Notification.builder()
+                    .id(UUID.randomUUID().toString().substring(0, 8))
+                    .userId("1")
+                    .title("New Support Request")
+                    .message("A new support request #" + request.getId() + " (" + request.getCategory() + ") has been raised by " + tenantName + " for unit \"" + propertyTitle + "\".")
+                    .type("warning")
+                    .isRead(false)
+                    .createdAt(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date()))
+                    .build();
+            notificationRepo.save(adminNotif);
+        } catch (Exception ex) {
+            // do not throw error here cause its just a notification
+        }
+
+        return savedRequest;
     }
 
 
@@ -80,6 +142,47 @@ public class MaintenanceService {
         if (updateData.getAdminNote() != null) request.setAdminNote(updateData.getAdminNote());
         if (updateData.getUrgency() != null) request.setUrgency(updateData.getUrgency());
 
-        return Optional.of(maintenanceRequestRepo.save(request));
+        MaintenanceRequest updatedRequest = maintenanceRequestRepo.save(request);
+
+        try {
+            String statusLabel = request.getStatus();
+            String notificationType = "info";
+            String title = "Support Request Updated";
+            String msg = "Your support request #" + request.getId() + " (" + request.getCategory() + ") has been updated to: " + statusLabel;
+
+            if ("resolved".equalsIgnoreCase(request.getStatus())) {
+                notificationType = "success";
+                title = "Support Request Resolved!";
+                msg = "Your support request #" + request.getId() + " (" + request.getCategory() + ") has been marked as Resolved. Admin note: " + (request.getAdminNote() != null ? request.getAdminNote() : "No note provided.");
+            }
+
+            // Customer notification
+            Notification tenantNotif = Notification.builder()
+                    .id(UUID.randomUUID().toString().substring(0, 8))
+                    .userId(request.getTenantId())
+                    .title(title)
+                    .message(msg)
+                    .type(notificationType)
+                    .isRead(false)
+                    .createdAt(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date()))
+                    .build();
+            notificationRepo.save(tenantNotif);
+
+            // Admin notification
+            Notification adminNotif = Notification.builder()
+                    .id(UUID.randomUUID().toString().substring(0, 8))
+                    .userId("1")
+                    .title("Support Request Updated")
+                    .message("Support request #" + request.getId() + " (" + request.getCategory() + ") status updated to: " + statusLabel + ".")
+                    .type("info")
+                    .isRead(false)
+                    .createdAt(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date()))
+                    .build();
+            notificationRepo.save(adminNotif);
+        } catch (Exception ex) {
+            // do not throw error here cause its just a notification
+        }
+
+        return Optional.of(updatedRequest);
     }
 }

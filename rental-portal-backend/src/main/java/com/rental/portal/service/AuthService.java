@@ -4,7 +4,9 @@ import com.rental.portal.dto.AuthResponse;
 import com.rental.portal.dto.LoginRequest;
 import com.rental.portal.exception.ConflictException;
 import com.rental.portal.model.User;
+import com.rental.portal.model.Notification;
 import com.rental.portal.repository.UserRepository;
+import com.rental.portal.repository.NotificationRepository;
 import com.rental.portal.security.JwtTokenProvider;
 import com.rental.portal.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class AuthService {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
+    @Autowired
+    private NotificationRepository notificationRepo;
+
 
     public AuthResponse authenticateUser(LoginRequest loginRequest) {
 
@@ -62,6 +67,21 @@ public class AuthService {
         user.setCreatedAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
         User result = userRepository.save(user);
+
+        try {
+            Notification welcomeNotif = Notification.builder()
+                    .id(UUID.randomUUID().toString().substring(0, 8))
+                    .userId(result.getId())
+                    .title("Welcome to RentEase!")
+                    .message("Hi " + result.getName() + ", welcome to RentEase! Your account has been successfully created. Explore properties and manage your rental services seamlessly.")
+                    .type("success")
+                    .isRead(false)
+                    .createdAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()))
+                    .build();
+            notificationRepo.save(welcomeNotif);
+        } catch (Exception ex) {
+            // do not throw error here cause its just a notification
+        }
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 new UserPrincipal(result), null, new UserPrincipal(result).getAuthorities());

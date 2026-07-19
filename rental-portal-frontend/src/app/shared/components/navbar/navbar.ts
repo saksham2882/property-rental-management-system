@@ -2,8 +2,8 @@ import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, timer } from 'rxjs';
+import { takeUntil, switchMap, take } from 'rxjs/operators';
 import { IconComponent } from '../icon/icon';
 import { ClickOutsideDirective } from '../../directives/click-outside-directive';
 import { selectCurrentUser, selectIsLoggedIn, selectIsAdmin } from '../../../store/auth/auth.selectors';
@@ -37,16 +37,14 @@ export class Navbar implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.currentUser$
-      .pipe(takeUntil(this.destroy$))
+    timer(0, 60000)
+      .pipe(
+        switchMap(() => this.currentUser$.pipe(take(1))),
+        takeUntil(this.destroy$)
+      )
       .subscribe(user => {
         if (user) {
-          if (user.role === 'admin') {
-            this.store.dispatch(loadNotifications({}));
-          } 
-          else {
-            this.store.dispatch(loadNotifications({ userId: user.id }));
-          }
+          this.store.dispatch(loadNotifications({ userId: user.id }));
         }
       });
   }
