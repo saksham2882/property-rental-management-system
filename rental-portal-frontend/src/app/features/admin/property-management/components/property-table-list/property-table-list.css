@@ -1,0 +1,399 @@
+.page-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-6);
+  gap: 28px;
+}
+
+.stat-card {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.3s ease,
+    background-color 0.3s ease;
+  border: 2px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  background-color: var(--surface);
+}
+
+.stat-card.primary:hover {
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.08);
+}
+
+.stat-card.success:hover {
+  box-shadow: 0 10px 20px rgba(20, 184, 166, 0.08);
+}
+
+.stat-card.danger:hover {
+  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.08);
+}
+
+.stat-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bg-primary-fade {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.text-primary {
+  color: var(--primary) !important;
+}
+
+.bg-success-fade {
+  background: rgba(20, 184, 166, 0.08);
+}
+
+.text-success {
+  color: var(--accent-dark) !important;
+}
+
+.bg-danger-fade {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.text-danger {
+  color: var(--danger-text) !important;
+}
+
+.grid-3 {
+  gap: var(--space-4);
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.stat-value {
+  font-size: 1.45rem;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.filter-panel {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.search-box {
+  position: relative;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 16px 10px 42px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-box input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.dropdown-control {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .filter-panel {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  .search-box {
+    flex: 1;
+  }
+
+  .filter-panel>div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: auto;
+  }
+
+  .dropdown-control {
+    width: 210px;
+  }
+}
+
+.loader {
+  padding: 60px 0;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  color: var(--muted-light);
+}
+
+.loc {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.loc-icon {
+  color: var(--danger);
+  flex-shrink: 0;
+}
+
+.table td.rent-value {
+  font-size: 0.85rem;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.badge-icon {
+  flex-shrink: 0;
+}
+
+.table-wrap {
+  border-radius: var(--radius-md) !important;
+}
+
+.mobile-card-list {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .table-desktop {
+    display: none !important;
+  }
+
+  .property-list-wrap {
+    gap: var(--space-4) !important;
+  }
+
+  .mobile-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .stat-card {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+  }
+
+  .stat-value {
+    font-size: 1.2rem;
+  }
+
+  .stat-label {
+    font-size: 0.68rem;
+  }
+
+  .property-card-mobile {
+    padding: var(--space-4);
+    gap: 12px;
+    border: 1px solid var(--border);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .property-card-mobile:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .mobile-card-header {
+    gap: 10px;
+  }
+
+  .mobile-card-header .prop-cell-img {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .mobile-card-header h3.prop-cell-name {
+    font-size: 0.88rem;
+    font-weight: 800;
+    margin-top: 2px;
+    line-height: 1.35;
+    color: var(--text);
+  }
+
+  .mobile-card-header .badge {
+    font-size: 0.65rem !important;
+    padding: 3px 8px !important;
+    gap: 2px !important;
+  }
+
+  .mobile-card-header .badge-icon {
+    transform: scale(0.85);
+  }
+
+  .mobile-card-body {
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    padding: 12px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mobile-card-value {
+    color: var(--text-2);
+    font-size: 0.78rem !important;
+    font-weight: 600;
+  }
+
+  .mobile-card-price {
+    background: var(--surface-2);
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    margin-top: 2px;
+    border: 1px solid var(--border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .mobile-card-price .stat-label {
+    font-size: 0.65rem;
+  }
+
+  .mobile-card-price .stat-value {
+    font-size: 0.88rem;
+  }
+
+  .mobile-card-price .rent-value {
+    color: var(--primary);
+    font-weight: 900;
+    font-size: 0.95rem;
+  }
+
+  .btn-full-width {
+    flex: 1;
+    padding: 8px 14px !important;
+    font-size: 0.78rem !important;
+    height: auto !important;
+    border-radius: var(--radius-md) !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .property-list-wrap {
+    gap: var(--space-3) !important;
+  }
+
+  .mobile-card-list {
+    gap: 16px;
+  }
+
+  .stat-card {
+    padding: 10px 12px;
+  }
+
+  .stat-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .stat-value {
+    font-size: 1.05rem;
+  }
+
+  .stat-label {
+    font-size: 0.62rem;
+  }
+
+  .dropdown-control {
+    margin-top: 10px;
+  }
+
+  .property-card-mobile {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .mobile-card-header .prop-cell-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mobile-card-header h3.prop-cell-name {
+    font-size: 0.8rem;
+  }
+
+  .mobile-card-header .badge {
+    font-size: 0.6rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .mobile-card-body {
+    padding: 10px 0;
+    gap: 6px;
+  }
+
+  .mobile-card-value {
+    font-size: 0.72rem !important;
+  }
+
+  .mobile-card-price {
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+  }
+
+  .mobile-card-price .rent-value {
+    font-size: 0.88rem;
+  }
+
+  .mobile-card-price .stat-value {
+    font-size: 0.8rem;
+  }
+
+  .btn-full-width {
+    padding: 6px 10px !important;
+    font-size: 0.72rem !important;
+  }
+}
