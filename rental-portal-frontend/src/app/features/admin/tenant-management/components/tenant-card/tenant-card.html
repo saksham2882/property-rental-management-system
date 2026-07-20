@@ -1,0 +1,57 @@
+<div class="card tenant-card" (click)="onCardClick()">
+
+  <div class="card-header">
+    <div class="profile-group">
+      <div class="avatar">
+        {{ tenant.name.substring(0, 2) | uppercase }}
+      </div>
+      <div class="profile-info">
+        <h3 class="name">{{ tenant.name }}</h3>
+        <span class="contact">{{ tenant.email }}</span>
+        @if (tenant.phone) {
+          <span class="contact">{{ tenant.phone }}</span>
+        }
+      </div>
+    </div>
+
+    <span class="badge" [class.badge-active]="activeLease" [class.badge-inactive]="!activeLease">
+      {{ activeLease ? 'ACTIVE LEASE' : 'NO ACTIVE LEASE' }}
+    </span>
+  </div>
+
+  <div class="card-body">
+    @if (activeLease) {
+      <div class="info-row">
+        <span class="label">Target Property:</span>
+        <span class="val font-semibold truncate" [title]="activeLease.propertyTitle">{{ activeLease.propertyTitle }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Monthly Rent:</span>
+        <span class="val rent">{{ activeLease.monthlyRent | priceFormat }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Lease Term:</span>
+        <span class="val">{{ activeLease.startDate }} to {{ activeLease.endDate }}</span>
+      </div>
+    } 
+    @else if (leasesCount > 0) {
+      <div class="info-row">
+        <span class="label">History:</span>
+        <span class="val text-muted">Past Occupant · {{ leasesCount }} previous {{ leasesCount === 1 ? 'lease' : 'leases' }}</span>
+      </div>
+    } 
+    @else {
+      <div class="info-row">
+        <span class="label">History:</span>
+        <span class="val text-muted">Registered Customer · No leases signed</span>
+      </div>
+    }
+  </div>
+
+  <div class="card-actions">
+    <button class="btn btn-outline btn-sm btn-block" (click)="$event.stopPropagation(); onCardClick()">
+      <app-icon name="file-text" size="sm"></app-icon>
+      <span>View Leases ({{ leasesCount }})</span>
+    </button>
+  </div>
+</div>

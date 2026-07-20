@@ -1,0 +1,9 @@
+<div class="container animate-fadeIn">
+
+  <app-tenant-table-list
+    [tenants]="tenants"
+    [leases]="leases"
+    [loading]="(loading$ | async) || false">
+  </app-tenant-table-list>
+
+</div>

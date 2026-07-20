@@ -1,0 +1,45 @@
+<div class="list-container">
+
+  <div class="page-header">
+    <div class="page-title-block">
+      <h1>Tenants Registry</h1>
+      <p>View registered customer accounts, active occupancy agreements, and complete lease histories.</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loading-wrap">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  } 
+  @else {
+    @if (!selectedTenant) {
+
+      <div class="grid-3">
+        @for (tenant of sortedTenants; track tenant.id) {
+          <app-tenant-card
+            [tenant]="tenant"
+            [activeLease]="getActiveLease(tenant.id)"
+            [leasesCount]="getTenantLeases(tenant.id).length"
+            (select)="selectTenant($event)">
+          </app-tenant-card>
+        }
+      </div>
+
+      @if (sortedTenants.length === 0) {
+        <app-empty-state 
+          icon="users" 
+          title="No Tenants Logged" 
+          description="There are currently no registered customer accounts logged in the tenancy workspace.">
+        </app-empty-state>
+      }
+    } 
+    @else {
+      <app-tenant-detail
+        [tenant]="selectedTenant"
+        [leases]="getTenantLeases(selectedTenant.id)"
+        (back)="clearSelectedTenant()">
+      </app-tenant-detail>
+    }
+  }
+</div>
