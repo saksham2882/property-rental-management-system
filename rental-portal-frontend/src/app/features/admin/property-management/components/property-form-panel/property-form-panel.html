@@ -1,0 +1,294 @@
+<div class="form-panel-card animate-fadeIn">
+
+  <div class="form-header">
+    <div class="header-title">
+      <h1>{{ isEditMode ? 'Edit Listed Property' : 'List New Rental Property' }}</h1>
+      <p>Provide complete specifications, pricing, and media details for the unit</p>
+    </div>
+    <button (click)="close.emit()" type="button" class="btn btn-secondary btn-sm back-btn">
+      <app-icon name="arrow-left" size="sm"></app-icon>
+      <span>Back to Listings</span>
+    </button>
+  </div>
+
+  <form [formGroup]="propertyForm" (submit)="submitForm.emit(); $event.preventDefault()">
+
+    <div class="form-section">
+      <div class="section-title">
+        <div class="icon-box icon-box-sm icon-primary">
+          <app-icon name="info" size="sm"></app-icon>
+        </div>
+        <div>
+          <h3>1. Basic Information</h3>
+          <p class="text-xs text-muted">Core details identifying this property listing</p>
+        </div>
+      </div>
+      
+      <div class="section-body">
+        <div class="form-group full-width">
+          <label class="form-label">Property Title</label>
+          <input type="text" formControlName="title" placeholder="Spacious 2 BHK Apartment in Indiranagar" class="form-input"
+            [class.is-error]="propertyForm.get('title')?.touched && propertyForm.get('title')?.invalid" />
+
+          @if (propertyForm.get('title')?.touched && propertyForm.get('title')?.invalid) {
+            <span class="form-error">
+              <span>Title is required.</span>
+            </span>
+          }
+        </div>
+
+        <div class="grid-3 mt-4">
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <app-dropdown
+              [options]="cityOptions"
+              [value]="propertyForm.get('city')?.value"
+              placeholder="Select City"
+              (valueChange)="propertyForm.get('city')?.setValue($event); propertyForm.get('city')?.markAsTouched()"
+              iconName="map-pin">
+            </app-dropdown>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Locality / Sector</label>
+            <input type="text" formControlName="locality" placeholder="Sector 4, HSR Layout" class="form-input"
+              [class.is-error]="propertyForm.get('locality')?.touched && propertyForm.get('locality')?.invalid" />
+
+            @if (propertyForm.get('locality')?.touched && propertyForm.get('locality')?.invalid) {
+              <span class="form-error">
+                <span>Locality is required.</span>
+              </span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Property Type</label>
+            <app-dropdown
+              [options]="typeOptions"
+              [value]="propertyForm.get('type')?.value"
+              placeholder="Select Type"
+              (valueChange)="propertyForm.get('type')?.setValue($event); propertyForm.get('type')?.markAsTouched()"
+              iconName="home">
+            </app-dropdown>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="form-section">
+
+      <div class="section-title">
+        <div class="icon-box icon-box-sm icon-primary">
+          <app-icon name="building" size="sm"></app-icon>
+        </div>
+        <div>
+          <h3>2. Specifications</h3>
+          <p class="text-xs text-muted">Dimensions, bedrooms, and furnishing details</p>
+        </div>
+      </div>
+
+      <div class="section-body grid-4">
+        <div class="form-group">
+          <label class="form-label">Bedrooms (BHK)</label>
+          <input type="number" formControlName="bedrooms" min="1" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Bathrooms</label>
+          <input type="number" formControlName="bathrooms" min="1" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Area (sqft)</label>
+          <div class="input-with-suffix">
+            <input type="number" formControlName="area" placeholder="e.g. 1200" class="form-input"
+              [class.is-error]="propertyForm.get('area')?.touched && propertyForm.get('area')?.invalid" />
+            <span class="input-suffix">sqft</span>
+          </div>
+
+          @if (propertyForm.get('area')?.touched && propertyForm.get('area')?.invalid) {
+            <span class="form-error">
+              <span>Must be at least 10 sqft.</span>
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Furnishing State</label>
+          <app-dropdown
+            [options]="furnishingOptions"
+            [value]="propertyForm.get('furnishing')?.value"
+            placeholder="Select Furnishing"
+            (valueChange)="propertyForm.get('furnishing')?.setValue($event); propertyForm.get('furnishing')?.markAsTouched()"
+            iconName="grid">
+          </app-dropdown>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="form-section">
+      <div class="section-title">
+        <div class="icon-box icon-box-sm icon-primary">
+          <app-icon name="credit-card" size="sm"></app-icon>
+        </div>
+        <div>
+          <h3>3. Pricing & Terms</h3>
+          <p class="text-xs text-muted">Define monthly lease and security deposit values</p>
+        </div>
+      </div>
+
+      <div class="section-body grid-3">
+        <div class="form-group">
+          <label class="form-label">Monthly Rent</label>
+          <div class="input-with-prefix">
+            <span class="input-prefix">₹</span>
+            <input type="number" formControlName="rent" placeholder="25000" class="form-input"
+              [class.is-error]="propertyForm.get('rent')?.touched && propertyForm.get('rent')?.invalid" />
+          </div>
+
+          @if (propertyForm.get('rent')?.touched && propertyForm.get('rent')?.invalid) {
+            <span class="form-error">
+              <span>Rent is required.</span>
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Safety Deposit</label>
+          <div class="input-with-prefix">
+            <span class="input-prefix">₹</span>
+            <input type="number" formControlName="deposit" placeholder="75000" class="form-input"
+              [class.is-error]="propertyForm.get('deposit')?.touched && propertyForm.get('deposit')?.invalid" />
+          </div>
+
+          @if (propertyForm.get('deposit')?.touched && propertyForm.get('deposit')?.invalid) {
+            <span class="form-error">
+              <span>Deposit is required.</span>
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Availability Status</label>
+          <div class="checkbox-card" [class.checked]="propertyForm.get('available')?.value">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="available" class="sr-only" />
+              <div class="switch"></div>
+              
+              <div class="checkbox-text">
+                <span class="title">Available for Rent</span>
+                <span class="desc">Instantly visible in search portal</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="form-section">
+      <div class="section-title">
+        <div class="icon-box icon-box-sm icon-primary">
+          <app-icon name="file-text" size="sm"></app-icon>
+        </div>
+        <div>
+          <h3>4. Details & Amenities</h3>
+          <p class="text-xs text-muted">Elaborate on features, restrictions, or highlights</p>
+        </div>
+      </div>
+
+      <div class="section-body">
+        <div class="form-group">
+          <label class="form-label">Property Description</label>
+          <textarea formControlName="description"
+            class="form-textarea"
+            placeholder="Explain details about security deposit terms, highlights of the locality, maintenance details..."
+            rows="4"
+            [class.is-error]="propertyForm.get('description')?.touched && propertyForm.get('description')?.invalid"></textarea>
+          
+          @if (propertyForm.get('description')?.touched && propertyForm.get('description')?.invalid) {
+            <span class="form-error">
+              <span>Description is required (minimum 10 characters).</span>
+            </span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Amenities Offered (comma separated)</label>
+          <input type="text" formControlName="amenities"
+            class="form-input"
+            placeholder="e.g. WiFi, Lift, Security, Parking, AC, Power Backup" />
+          <span class="input-helper-text mt-1 block">List amenities separated by commas. E.g., WiFi, Lift, Security</span>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="form-section">
+      <div class="section-title">
+        <div class="icon-box icon-box-sm icon-primary">
+          <app-icon name="image" size="sm"></app-icon>
+        </div>
+        <div>
+          <h3>5. Property Gallery</h3>
+          <p class="text-xs text-muted">Upload high-resolution images of rooms, kitchen, and exterior</p>
+        </div>
+      </div>
+
+      <div class="section-body">
+        <div class="upload-container">
+          <div class="upload-dropzone">
+            <label class="dropzone-label" [class.disabled]="uploadingFile">
+              <input type="file" (change)="uploadPhoto.emit($event)" [disabled]="uploadingFile" accept="image/*" class="sr-only" />
+              <div class="dropzone-content">
+                @if (uploadingFile) {
+                  <div class="spinner-ring sm"></div>
+                  <span class="uploading-text font-semibold">Uploading photo...</span>
+                } 
+                @else {
+                  <app-icon name="plus" size="lg" class="upload-icon"></app-icon>
+                  <span class="main-text font-semibold">Add Property Photo</span>
+                  <span class="sub-text">Click to browse or drop files here (JPEG/PNG/WEBP)</span>
+                }
+              </div>
+            </label>
+          </div>
+
+          @if (uploadedImages.length > 0) {
+            <div class="gallery-preview-header">
+              <span class="text-xs font-bold uppercase text-muted tracking-wider">Attached Photos ({{ uploadedImages.length }})</span>
+            </div>
+
+            <div class="thumbnails-grid">
+              @for (img of uploadedImages; track img; let idx = $index) {
+                <div class="thumbnail-wrapper animate-scaleIn">
+                  <img [src]="img" alt="Property attachment thumbnail" />
+                  <button (click)="removePhoto.emit(idx)" type="button" class="remove-btn" title="Remove photo">
+                    <app-icon name="x" size="sm"></app-icon>
+                  </button>
+                </div>
+              }
+            </div>
+          } 
+          @else {
+            <div class="empty-gallery">
+              <p class="text-sm text-muted">No images attached yet. Add at least one photo to make the listing stand out.</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" (click)="close.emit()" class="btn btn-secondary btn-md">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="propertyForm.invalid || uploadingFile" class="btn btn-primary btn-md btn-submit">
+        {{ isEditMode ? 'Update Listing' : 'Publish Listing' }}
+      </button>
+    </div>
+  </form>
+</div>

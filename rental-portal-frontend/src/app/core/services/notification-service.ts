@@ -27,7 +27,7 @@ export class NotificationService {
     const payload = {
       ...notification,
       isRead: false,
-      createdAt: new Date().toISOString().split('T')[0]
+      createdAt: new Date().toISOString()
     };
     return this.api.post<Notification>(this.apiPath, payload);
   }

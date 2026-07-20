@@ -78,7 +78,23 @@ public class RentService {
         if (rent.getStatus() == null) {
             rent.setStatus("pending");
         }
-        return rentRepository.save(rent);
+        Rent savedRent = rentRepository.save(rent);
+        
+        try {
+            Notification customerNotif = Notification.builder()
+                                            .id(UUID.randomUUID().toString().substring(0, 8))
+                                            .userId(rent.getTenantId())
+                                            .title("New Rent Invoice Issued")
+                                            .message("A new rent invoice of INR " + rent.getAmount() + " has been issued for the month of " + rent.getMonth() + ". Due date: " + rent.getDueDate())
+                                            .type("info")
+                                            .isRead(false)
+                                            .createdAt(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date()))
+                                            .build();
+            notificationRepository.save(customerNotif);
+        } catch (Exception ex) { 
+            // do not throw error here cause its just a notification
+        }
+        return savedRent;
     }
 
 
@@ -204,10 +220,10 @@ public class RentService {
                                         .message("Your rent payment of INR " + rent.getAmount() + " for " + rent.getMonth() + " has been successfully processed via Razorpay. Transaction ID: " + razorpayPaymentId)
                                         .type("success")
                                         .isRead(false)
-                                        .createdAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()))
+                                        .createdAt(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date()))
                                         .build();
         notificationRepository.save(customerNotif);
-
+ 
         Notification adminNotif = Notification.builder()
                                     .id(UUID.randomUUID().toString().substring(0, 8))
                                     .userId("1")
@@ -215,7 +231,7 @@ public class RentService {
                                     .message("Tenant " + tenantName + " has paid rent of INR " + rent.getAmount() + " for " + rent.getMonth() + " via Razorpay. Txn ID: " + razorpayPaymentId)
                                     .type("success")
                                     .isRead(false)
-                                    .createdAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()))
+                                    .createdAt(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date()))
                                     .build();
         notificationRepository.save(adminNotif);
 

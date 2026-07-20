@@ -1,0 +1,125 @@
+<div class="tenant-detail-view animate-fadeIn">
+
+  <div class="detail-top-nav">
+    <button class="btn btn-secondary btn-sm" (click)="onBackClick()">
+      <app-icon name="arrow-left" size="sm"></app-icon>
+      <span>Back to All Tenants</span>
+    </button>
+  </div>
+
+  <div class="tenant-meta">
+    <div class="avatar">
+      {{ tenant.name.substring(0, 2) | uppercase }}
+    </div>
+    <div class="meta-info">
+      <h2 class="name">{{ tenant.name }}</h2>
+      <div class="contact">
+        <span>{{ tenant.email }}</span>
+        @if (tenant.phone) {
+          <span class="dot">·</span>
+          <span>{{ tenant.phone }}</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="leases-section">
+    <div class="section-title">
+      <app-icon name="file-text" size="md"></app-icon>
+      <h3>All Lease Agreements ({{ leases.length }})</h3>
+    </div>
+
+    @if (leases.length > 0) {
+      <div class="leases-list">
+
+        @for (lease of leases; track lease.id) {
+          <div class="lease-card card">
+
+            <div class="lease-header">
+              <div class="property">
+                <h4 class="title">{{ lease.propertyTitle }}</h4>
+                <span class="lease-id">Ref ID: #{{ lease.id }}</span>
+              </div>
+              <span class="badge" 
+                [class.badge-active]="lease.status === 'active'" 
+                [class.badge-expired]="lease.status === 'expired'"
+                [class.badge-terminated]="lease.status === 'terminated'"
+                [class.badge-pending]="lease.status === 'pending_signature'">
+                {{ lease.status | uppercase }}
+              </span>
+            </div>
+
+            <div class="duration-banner">
+              <div class="duration-step">
+                <span class="step-label">START DATE</span>
+                <span class="step-date">{{ lease.startDate }}</span>
+              </div>
+
+              <div class="duration-pill-group">
+                <div class="duration-line"></div>
+                @let dur = calculateDuration(lease.startDate, lease.endDate);
+                @if (dur) {
+                  <span class="dur-badge">{{ dur }}</span>
+                }
+              </div>
+
+              <div class="duration-step">
+                <span class="step-label">END DATE</span>
+                <span class="step-date">{{ lease.endDate }}</span>
+              </div>
+            </div>
+
+            <div class="lease-details">
+              <div class="detail-item">
+                <span class="label">Monthly Rent Rate</span>
+                <span class="value rent">{{ lease.monthlyRent | priceFormat }}</span>
+              </div>
+
+              <div class="detail-item">
+                <span class="label">Security Deposit</span>
+                <span class="value">{{ lease.deposit | priceFormat }}</span>
+              </div>
+
+              <div class="detail-item">
+                <span class="label">Digital Signature</span>
+                <span class="value text-muted">
+                  {{ lease.signatureImage ? 'Signed Digitally' : 'Pending Signature' }}
+                </span>
+              </div>
+            </div>
+
+            @if (lease.conditions) {
+              <div class="lease-conditions">
+                <span class="label">Special Terms & Policy Conditions:</span>
+                <p class="text">{{ lease.conditions }}</p>
+              </div>
+            }
+
+            @if (lease.contractText) {
+              <div class="contract-toggle-row">
+                <button type="button" class="btn btn-outline btn-sm" (click)="toggleContract(lease.id)">
+                  <app-icon [name]="isContractExpanded(lease.id) ? 'chevron-up' : 'file-text'" size="sm"></app-icon>
+                  <span>{{ isContractExpanded(lease.id) ? 'Hide Full Contract' : 'View Full Contract' }}</span>
+                </button>
+              </div>
+
+              @if (isContractExpanded(lease.id)) {
+                <div class="lease-conditions animate-fadeIn">
+                  <span class="label">Legal Contract Document Text:</span>
+                  <div class="contract-box" [innerHTML]="lease.contractText"></div>
+                </div>
+              }
+            }
+          </div>
+        }
+      </div>
+    } 
+    @else {
+      <div class="empty-leases">
+        <app-icon name="alert-circle" size="lg"></app-icon>
+        <h4>No Leases Found</h4>
+        <p>This customer does not have any active, past, or pending lease agreements registered.</p>
+      </div>
+    }
+  </div>
+</div>

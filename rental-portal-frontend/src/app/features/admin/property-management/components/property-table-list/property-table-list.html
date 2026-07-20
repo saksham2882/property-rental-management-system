@@ -1,0 +1,209 @@
+<div class="flex flex-col gap-6 property-list-wrap">
+
+  <div class="page-header">
+    <div class="page-title-block">
+      <h1>Listed Rental Properties</h1>
+      <p>Manage, edit, or create rental units listings below.</p>
+    </div>
+    <button (click)="add.emit()" class="btn btn-primary">
+      <app-icon name="plus" size="sm"></app-icon>
+      <span>Add New Property</span>
+    </button>
+  </div>
+
+  <div class="grid-3">
+    <div class="card flex items-center gap-4 stat-card primary">
+      <div class="stat-icon bg-primary-fade">
+        <app-icon name="home" size="md" class="text-primary"></app-icon>
+      </div>
+      <div>
+        <span class="stat-label">Total Listings</span>
+        <h2 class="stat-value">{{ totalListedCount }}</h2>
+      </div>
+    </div>
+
+    <div class="card flex items-center gap-4 stat-card success">
+      <div class="stat-icon bg-success-fade">
+        <app-icon name="check-circle" size="md" class="text-success"></app-icon>
+      </div>
+      <div>
+        <span class="stat-label">Available Units</span>
+        <h2 class="stat-value">{{ availableCount }}</h2>
+      </div>
+    </div>
+
+    <div class="card flex items-center gap-4 stat-card danger">
+      <div class="stat-icon bg-danger-fade">
+        <app-icon name="x-circle" size="md" class="text-danger"></app-icon>
+      </div>
+      <div>
+        <span class="stat-label">Rented Units</span>
+        <h2 class="stat-value">{{ rentedCount }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="card flex flex-col gap-4 filter-panel">
+    <div class="search-box">
+      <app-icon name="search" size="sm" class="search-icon"></app-icon>
+      <input type="text" [(ngModel)]="searchText" placeholder="Search by property title, locality, or city..." />
+    </div>
+
+    <div>
+      <label class="stat-label">Availability Filter</label>
+      <app-dropdown [options]="statusOptions" [value]="statusFilter" (valueChange)="statusFilter = $event"
+        placeholder="Select Status" class="dropdown-control">
+      </app-dropdown>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="loader flex justify-center items-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  }
+  @else {
+    @if (filteredProperties.length === 0) {
+      <app-empty-state icon="home" title="No Matching Listings"
+        description="No listings match your search criteria. Try modifying your filters or list a new unit."
+        actionText="Clear Filters" (action)="searchText = ''; statusFilter = 'all';">
+      </app-empty-state>
+    } 
+    @else {
+
+      <div class="table-desktop table-wrap">
+        <div class="table-scroll">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Property Details</th>
+                <th>Location</th>
+                <th>Specifications</th>
+                <th>Rent (Monthly)</th>
+                <th>Status</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (prop of filteredProperties; track prop.id) {
+              <tr>
+                <td>
+                  <div class="prop-cell">
+                    <div class="prop-cell-img">
+                      @if (prop.images && prop.images.length > 0) {
+                      <img [src]="prop.images[0]" alt="Property thumbnail" />
+                      }
+                      @else {
+                      <div class="image-placeholder flex items-center justify-center">
+                        <app-icon name="home" size="sm"></app-icon>
+                      </div>
+                      }
+                    </div>
+                    <span class="prop-cell-name">{{ prop.title }}</span>
+                  </div>
+                </td>
+      
+                <td>
+                  <div class="loc">
+                    <app-icon name="map-pin" size="sm" class="loc-icon"></app-icon>
+                    <span>{{ prop.locality }}, {{ prop.city }}</span>
+                  </div>
+                </td>
+      
+                <td>
+                  <span class="stat-label">{{ prop.bedrooms }} BHK · {{ prop.type }}</span>
+                </td>
+      
+                <td class="rent-value font-bold">{{ prop.rent | priceFormat:'mo' }}</td>
+      
+                <td>
+                  <span class="badge" [class.badge-success]="prop.available" [class.badge-danger]="!prop.available">
+                    <app-icon [name]="prop.available ? 'check-circle' : 'x-circle'" size="sm" class="badge-icon"></app-icon>
+                    <span>{{ prop.available ? 'Available' : 'Rented' }}</span>
+                  </span>
+                </td>
+      
+                <td class="text-right">
+                  <div class="flex gap-2 justify-end action-buttons">
+                    <button (click)="edit.emit(prop)" class="btn btn-secondary btn-sm" title="Edit details">
+                      <app-icon name="pen" size="sm"></app-icon>
+                      <span>Edit</span>
+                    </button>
+                    <button (click)="delete.emit(prop.id)" class="btn btn-danger btn-sm" title="Delete listing">
+                      <app-icon name="trash-2" size="sm"></app-icon>
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="mobile-card-list">
+        @for (prop of filteredProperties; track prop.id) {
+        <div class="card flex flex-col gap-4 property-card-mobile">
+          <div class="mobile-card-header flex gap-3 items-center">
+            <div class="prop-cell-img">
+              @if (prop.images && prop.images.length > 0) {
+              <img [src]="prop.images[0]" alt="Property image" />
+              }
+              @else {
+              <div class="image-placeholder flex items-center justify-center">
+                <app-icon name="home" size="sm"></app-icon>
+              </div>
+              }
+            </div>
+            <div>
+              <span class="badge" [class.badge-success]="prop.available" [class.badge-danger]="!prop.available">
+                <app-icon [name]="prop.available ? 'check-circle' : 'x-circle'" size="sm" class="badge-icon"></app-icon>
+                <span>{{ prop.available ? 'Available' : 'Rented' }}</span>
+              </span>
+              <h3 class="prop-cell-name">{{ prop.title }}</h3>
+            </div>
+          </div>
+      
+          <div class="mobile-card-body flex flex-col gap-2">
+            <div class="flex justify-between items-center">
+              <span class="stat-label">Specs</span>
+              <span class="mobile-card-value font-semibold text-sm">{{ prop.bedrooms }} BHK · {{ prop.type }} · {{ prop.area }}
+                sqft</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="stat-label">Location</span>
+              <span class="mobile-card-value font-semibold text-sm flex items-center gap-1 loc">
+                <app-icon name="map-pin" size="sm" class="loc-icon"></app-icon>
+                {{ prop.locality }}, {{ prop.city }}
+              </span>
+            </div>
+      
+            <div class="mobile-card-price">
+              <div>
+                <span class="stat-label">Monthly Rent</span>
+                <span class="rent-value block">{{ prop.rent | priceFormat:'mo' }}</span>
+              </div>
+              <div class="text-right">
+                <span class="stat-label">Deposit</span>
+                <span class="stat-value font-bold text-stone-700 block">{{ prop.deposit | priceFormat }}</span>
+              </div>
+            </div>
+          </div>
+      
+          <div class="flex gap-3">
+            <button (click)="edit.emit(prop)" class="btn btn-secondary btn-full-width" title="Edit details">
+              <app-icon name="pen" size="sm"></app-icon>
+              <span>Edit</span>
+            </button>
+            <button (click)="delete.emit(prop.id)" class="btn btn-danger btn-full-width" title="Delete listing">
+              <app-icon name="trash-2" size="sm"></app-icon>
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+    }
+  }
+</div>

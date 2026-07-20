@@ -1,0 +1,48 @@
+<div class="container">
+
+  <div class="animate-fadeIn">
+    <app-application-table-list
+      [applications]="applications"
+      [propertiesMap]="propertiesMap"
+      [loading]="(loading$ | async) || false"
+      (viewDetails)="openDetailsModal($event)"
+      (approve)="openApproveModal($event)"
+      (reject)="rejectApplication($event)"
+      (waitlist)="waitlistApplication($event)">
+    </app-application-table-list>
+  </div>
+
+  <app-application-details-modal
+    [isOpen]="isDetailsModalOpen"
+    [application]="selectedAppForDetails"
+    [propertyTitle]="selectedAppForDetails ? getPropertyTitle(selectedAppForDetails.propertyId) : ''"
+    (close)="closeDetailsModal()"
+    (approve)="openApproveModal($event)"
+    (reject)="rejectApplication($event); closeDetailsModal()"
+    (waitlist)="waitlistApplication($event); closeDetailsModal()">
+  </app-application-details-modal>
+
+  <app-lease-generation-modal
+    [isOpen]="isLeaseModalOpen"
+    [leaseForm]="leaseForm"
+    [applicantName]="selectedApp?.applicantName || ''"
+    (close)="closeLeaseModal()"
+    (submitLease)="submitLeaseApprove()">
+  </app-lease-generation-modal>
+
+  <app-modal 
+    [isOpen]="isRejectModalOpen" 
+    title="Reject Application" 
+    size="sm" 
+    (close)="closeRejectConfirm()">
+    
+    <div class="flex flex-col gap-4">
+      <p class="text-sm text-muted">Are you sure you want to reject this tenancy application? This action will notify the applicant, and they will not be able to sign a lease for this property.</p>
+      <div class="flex gap-3">
+        <button (click)="closeRejectConfirm()" class="btn btn-secondary flex-1">Cancel</button>
+        <button (click)="confirmReject()" class="btn btn-danger flex-1">Reject Application</button>
+      </div>
+    </div>
+  </app-modal>
+
+</div>
