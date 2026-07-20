@@ -1,0 +1,70 @@
+<app-modal [isOpen]="isOpen" title="Issue Rent Invoice" size="md" (close)="close.emit()">
+  <div class="modal-intro">
+    <p class="text-sm text-muted">
+      Generate a new monthly billing record. Selecting a tenant will automatically query their active lease terms and prefill rent values.
+    </p>
+  </div>
+
+  <form [formGroup]="rentForm" (submit)="submitRent.emit(); $event.preventDefault();" class="modal-form-grid">
+    <div class="form-group">
+      <label class="form-label">Select Tenant</label>
+      <app-dropdown
+        [options]="tenantOptions"
+        [value]="rentForm.get('tenantId')?.value"
+        placeholder="-- Choose Tenant --"
+        iconName="users"
+        (valueChange)="onTenantChange($event)">
+      </app-dropdown>
+      @if (rentForm.get('tenantId')?.touched && rentForm.get('tenantId')?.invalid) {
+        <span class="form-error">Please select a tenant.</span>
+      }
+    </div>
+
+    <div class="form-row-2">
+      <div class="form-group">
+        <label class="form-label">Billing Month</label>
+        <app-dropdown
+          [options]="monthOptions"
+          [value]="rentForm.get('month')?.value"
+          placeholder="Select Month"
+          iconName="calendar"
+          (valueChange)="onMonthChange($event)">
+        </app-dropdown>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Due Date</label>
+        <input 
+          type="date" 
+          formControlName="dueDate" 
+          class="form-input"
+          [class.is-error]="rentForm.get('dueDate')?.touched && rentForm.get('dueDate')?.invalid" />
+        @if (rentForm.get('dueDate')?.touched && rentForm.get('dueDate')?.invalid) {
+          <span class="form-error">Due date is required.</span>
+        }
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Amount (₹)</label>
+      <input 
+        type="number" 
+        formControlName="amount" 
+        class="form-input"
+        placeholder="Prefills from lease monthlyRent value"
+        [class.is-error]="rentForm.get('amount')?.touched && rentForm.get('amount')?.invalid" />
+      @if (rentForm.get('amount')?.touched && rentForm.get('amount')?.invalid) {
+        <span class="form-error">Amount is required (minimum 1).</span>
+      }
+    </div>
+
+    <div class="modal-actions font-sans">
+      <button type="button" (click)="close.emit()" class="btn btn-secondary flex-1">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="rentForm.invalid" class="btn btn-primary flex-1">
+        Issue Invoice
+      </button>
+    </div>
+  </form>
+</app-modal>
