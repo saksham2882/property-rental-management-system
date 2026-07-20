@@ -28,7 +28,7 @@ public class NotificationService {
 
     public Notification createNotification(Notification notification) {
         notification.setId(UUID.randomUUID().toString().substring(0, 8));
-        notification.setCreatedAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        notification.setCreatedAt(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date()));
         if (notification.getIsRead() == null) {
             notification.setIsRead(false);
         }

@@ -1,0 +1,115 @@
+<app-modal [isOpen]="isOpen" title="Application Review Details" size="lg" (close)="close.emit()">
+  @if (application) {
+    <div class="modal-body">
+
+      <div class="profile">
+        <div class="avatar">
+          {{ application.applicantName.substring(0, 2) | uppercase }}
+        </div>
+        <div class="info">
+          <div class="profile-header">
+            <h2 class="name">{{ application.applicantName }}</h2>
+            <span class="badge" [class.badge-review]="application.status === 'under_review'" [class.badge-approved]="application.status === 'approved'" [class.badge-rejected]="application.status === 'rejected'" [class.badge-waitlist]="application.status === 'waitlisted'">
+              {{ application.status | uppercase }}
+            </span>
+          </div>
+
+          <div class="contact">
+            <span>{{ application.applicantEmail }}</span>
+            <span class="dot">·</span>
+            <span>{{ application.applicantPhone }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="card">
+          <span class="label">Target Property</span>
+          <span class="value truncate" [title]="propertyTitle">{{ propertyTitle }}</span>
+        </div>
+
+        <div class="card">
+          <span class="label">Monthly Income</span>
+          <span class="value accent">{{ application.monthlyIncome | priceFormat }}</span>
+        </div>
+
+        <div class="card">
+          <span class="label">Total Occupants</span>
+          <span class="value">{{ application.occupants }} {{ application.occupants === 1 ? 'person' : 'people' }}</span>
+        </div>
+
+        <div class="card">
+          <span class="label">Expected Move-In</span>
+          <span class="value">{{ application.moveInDate || 'Not specified' }}</span>
+        </div>
+      </div>
+
+      <div class="statement">
+        <span class="label">Cover Statement</span>
+        <p class="text">
+          "{{ application.message || 'No additional statement or message was provided by the applicant.' }}"
+        </p>
+      </div>
+
+      <div class="docs">
+        <div class="title">
+          <app-icon name="shield" size="sm"></app-icon>
+          <h3>Verification Documents</h3>
+        </div>
+        
+        @if (application.documents && application.documents.length > 0) {
+          <div class="docs-list">
+            @for (doc of application.documents; track doc) {
+
+              <div class="doc-item">
+                <app-icon [name]="isImage(doc) ? 'image' : 'file-text'" size="md"></app-icon>
+                <div class="doc-info">
+                  <span class="doc-type">{{ isImage(doc) ? 'IMAGE' : 'PDF / DOC' }}</span>
+                  <span class="doc-name" [title]="getFileName(doc)">{{ getFileName(doc) }}</span>
+                </div>
+
+                <a [href]="doc" target="_blank" class="doc-btn btn btn-outline btn-sm">
+                  <app-icon name="external-link" size="sm"></app-icon>
+                  <span>View</span>
+                </a>
+              </div>
+            }
+          </div>
+        } 
+        @else {
+          <div class="empty-docs">
+            <app-icon name="alert-triangle" size="lg"></app-icon>
+            <h4>No Documents Attached</h4>
+            <p>The applicant has not uploaded any income payslips or ID verification credentials.</p>
+          </div>
+        }
+      </div>
+    </div>
+
+
+    <div class="footer">
+      <button class="btn btn-secondary" (click)="close.emit()">
+        Close Details
+      </button>
+
+      @if (application.status === 'under_review' || application.status === 'waitlisted') {
+        <div class="btn-group">
+          <button class="btn btn-danger" (click)="reject.emit(application.id!)">
+            <app-icon name="x" size="sm"></app-icon>
+            <span>Reject</span>
+          </button>
+          
+          <button class="btn btn-warning" (click)="waitlist.emit(application.id!)">
+            <app-icon name="clock" size="sm"></app-icon>
+            <span>Waitlist</span>
+          </button>
+
+          <button class="btn btn-primary" (click)="approve.emit(application)">
+            <app-icon name="check" size="sm"></app-icon>
+            <span>Approve</span>
+          </button>
+        </div>
+      }
+    </div>
+  }
+</app-modal>
