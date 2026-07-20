@@ -33,11 +33,15 @@ export class TenantManagementComponent implements OnInit, OnDestroy {
     this.store.dispatch(loadLeases({}));
 
     this.userService.getAllUsers('customer').pipe(takeUntil(this.destroy$)).subscribe(list => {
-      this.tenants = list;
+      setTimeout(() => {
+        this.tenants = [...list];
+      });
     });
 
     this.leases$.pipe(takeUntil(this.destroy$)).subscribe(leases => {
-      this.leases = leases;
+      setTimeout(() => {
+        this.leases = [...leases];
+      });
     });
   }
 
