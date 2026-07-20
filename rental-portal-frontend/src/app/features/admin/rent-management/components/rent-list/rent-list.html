@@ -1,0 +1,116 @@
+<div class="ledger-wrapper">
+
+  <div class="grid-3 stat-grid">
+    <div class="card stat-box">
+      <span class="stat-title">TOTAL PENDING</span>
+      <span class="stat-amount text-warning">{{ totalPending | priceFormat }}</span>
+    </div>
+    <div class="card stat-box">
+      <span class="stat-title">TOTAL COLLECTED</span>
+      <span class="stat-amount text-success">{{ totalCollected | priceFormat }}</span>
+    </div>
+    <div class="card stat-box">
+      <span class="stat-title">OVERDUE INVOICES</span>
+      <span class="stat-amount text-accent" [class.text-danger]="overdueCount > 0">{{ overdueCount | priceFormat}}</span>
+    </div>
+  </div>
+
+
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab === 'pending'" (click)="setTab('pending')">
+      <app-icon name="clock" size="sm"></app-icon>
+      <span>Pending</span>
+      <span class="badge badge-warning">{{ pendingRents.length }}</span>
+    </button>
+
+    <button class="tab-btn" [class.active]="activeTab === 'paid'" (click)="setTab('paid')">
+      <app-icon name="check-circle" size="sm"></app-icon>
+      <span>Paid</span>
+      <span class="badge badge-success">{{ paidRents.length }}</span>
+    </button>
+
+    <button class="tab-btn" [class.active]="activeTab === 'all'" (click)="setTab('all')">
+      <app-icon name="file-text" size="sm"></app-icon>
+      <span>All Invoices</span>
+      <span class="badge badge-muted">{{ filteredRents.length }}</span>
+    </button>
+  </div>
+
+
+  @if (loading) {
+    <div class="loading-box">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  } 
+  @else {
+    <div class="rent-cards-list">
+
+      @for (rent of displayRents; track rent.id) {
+        <div class="card rent-card" [class.is-overdue]="rent.status === 'overdue'">
+          
+          <div class="col-period">
+            <span class="badge"
+                  [class.badge-danger]="rent.status === 'overdue'"
+                  [class.badge-warning]="rent.status === 'pending'"
+                  [class.badge-success]="rent.status === 'paid'">
+              <app-icon name="calendar" size="sm"></app-icon>
+              <span>{{ rent.month }}</span>
+            </span>
+
+            <div class="date-text text-muted text-xs">
+              <span class="font-bold text-accent">{{ rent.status === 'paid' ? 'PAID ON ' : 'DUE ' }} : </span>
+              <span class="font-semibold" 
+                    [class.text-danger]="rent.status === 'overdue'"
+                    [class.text-warning]="rent.status === 'pending'"
+                    [class.text-success]="rent.status === 'paid'">
+                {{ rent.status === 'paid' ? (rent.paidDate || 'Paid') : rent.dueDate }}
+              </span>
+            </div>
+          </div>
+
+          <div class="col-tenant">
+            <div class="tenant-avatar">
+              {{ getTenantName(rent.tenantId).substring(0, 2) | uppercase }}
+            </div>
+            <div class="tenant-info">
+              <h4 class="name font-bold text-sm truncate">{{ getTenantName(rent.tenantId) }}</h4>
+              <span class="text-xs text-muted truncate">{{ getPropertyTitle(rent.leaseId) }}</span>
+            </div>
+          </div>
+
+          <div class="col-amount">
+            <span class="amount-val">{{ rent.amount | priceFormat }}</span>
+            <span class="badge"
+                  [class.badge-danger]="rent.status === 'overdue'"
+                  [class.badge-warning]="rent.status === 'pending'"
+                  [class.badge-success]="rent.status === 'paid'">
+              {{ rent.status | uppercase }}
+            </span>
+          </div>
+
+          <div class="col-action">
+            @if (rent.status !== 'paid') {
+              <button class="btn btn-primary btn-sm btn-block" (click)="onMarkPaidClick(rent.id)">
+                <app-icon name="check" size="sm"></app-icon>
+                <span>Mark Paid</span>
+              </button>
+            } 
+            @else {
+              <span class="badge badge-success badge-sm settled-badge">
+                <app-icon name="check-circle" size="sm"></app-icon>
+                <span>Settled</span>
+              </span>
+            }
+          </div>
+        </div>
+      } 
+      @empty {
+        <app-empty-state 
+          icon="credit-card" 
+          [title]="'No ' + (activeTab | uppercase) + ' Invoices'" 
+          description="There are currently no rent invoice records matching this category.">
+        </app-empty-state>
+      }
+    </div>
+  }
+</div>
