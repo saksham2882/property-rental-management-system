@@ -1,0 +1,80 @@
+<div class="row">
+
+  <div class="card revenue">
+    <div class="icon">
+      <app-icon name="indian-rupee" size="md"></app-icon>
+    </div>
+    <div class="info">
+      <span class="label">Total Revenue</span>
+      <span class="value">{{ stats.totalRevenue | priceFormat }}</span>
+      <span class="sub">All paid rents</span>
+    </div>
+  </div>
+
+  <div class="card properties">
+    <div class="icon">
+      <app-icon name="building" size="md"></app-icon>
+    </div>
+    <div class="info">
+      <span class="label">Total Properties</span>
+      <span class="value">{{ stats.totalProperties }}</span>
+      <span class="sub">Listed on platform</span>
+    </div>
+  </div>
+
+  <div class="card occupied">
+    <div class="icon">
+      <app-icon name="home" size="md"></app-icon>
+    </div>
+    <div class="info">
+      <span class="label">Occupied</span>
+      <span class="value">{{ stats.occupiedProperties }}</span>
+      <span class="sub">{{ stats.totalProperties > 0 ? ((stats.occupiedProperties / stats.totalProperties) * 100).toFixed(0) : 0 }}% occupancy rate</span>
+    </div>
+  </div>
+
+  <div class="card available">
+    <div class="icon">
+      <app-icon name="key" size="md"></app-icon>
+    </div>
+    <div class="info">
+      <span class="label">Available</span>
+      <span class="value">{{ stats.availableProperties }}</span>
+      <span class="sub">Ready to lease</span>
+    </div>
+  </div>
+
+  <div class="card tenants">
+    <div class="icon">
+      <app-icon name="users" size="md"></app-icon>
+    </div>
+    <div class="info">
+      <span class="label">Active Tenants</span>
+      <span class="value">{{ stats.activeTenants }}</span>
+      <span class="sub">Registered customers</span>
+    </div>
+  </div>
+
+  <div class="card applications">
+    <div class="icon">
+      <app-icon name="file-text" size="md"></app-icon>
+    </div>
+    <div class="info">
+      <span class="label">Pending Apps</span>
+      <span class="value">{{ stats.pendingApplications }}</span>
+      <span class="sub">Awaiting review</span>
+    </div>
+  </div>
+
+  <div class="card maintenance">
+    <div class="icon">
+      <app-icon name="wrench" size="md"></app-icon>
+    </div>
+    <div class="info">
+      <span class="label">Open Tickets</span>
+      <span class="value">{{ stats.maintenanceOpen }}</span>
+      <span class="sub">Pending maintenance</span>
+    </div>
+  </div>
+
+</div>

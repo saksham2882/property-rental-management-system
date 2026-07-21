@@ -1,0 +1,130 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .row {
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 20px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .row {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+.card {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--icon-bg, var(--primary-bg));
+  color: var(--stripe, var(--primary));
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.card:hover .icon {
+  transform: scale(1.1);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-top: var(--space-1);
+}
+
+.sub {
+  font-size: 0.7rem;
+  color: var(--muted-light);
+  margin-top: 3px;
+}
+
+.revenue {
+  --icon-bg: var(--accent-bg);
+}
+
+.properties {
+  --stripe: var(--primary);
+  --icon-bg: var(--primary-bg);
+}
+
+.occupied {
+  --stripe: rgb(34, 197, 94);
+  --icon-bg: rgba(34, 197, 94, 0.10);
+}
+
+.available {
+  --stripe: rgb(20, 184, 166);
+  --icon-bg: rgba(20, 184, 166, 0.10);
+}
+
+.tenants {
+  --stripe: rgb(168, 85, 247);
+  --icon-bg: rgba(168, 85, 247, 0.10);
+}
+
+.applications {
+  --stripe: rgb(234, 179, 8);
+  --icon-bg: rgba(234, 179, 8, 0.10);
+}
+
+.maintenance {
+  --stripe: rgb(239, 68, 68);
+  --icon-bg: rgba(239, 68, 68, 0.10);
+}
+
+@media (max-width: 480px) {
+  .value {
+    font-size: 1.25rem;
+  }
+
+  .card {
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+  }
+}
