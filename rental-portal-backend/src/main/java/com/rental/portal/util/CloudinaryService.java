@@ -26,7 +26,7 @@ public class CloudinaryService {
 
         try {
             String cloudName = cloudinary.config.cloudName;
-            if (cloudName == null || cloudName.isEmpty() || "dummy-cloud".equalsIgnoreCase(cloudName)) {
+            if (cloudName == null || cloudName.isEmpty() || cloudName.startsWith("${") || "dummy-cloud".equalsIgnoreCase(cloudName)) {
                 log.warn("Cloudinary is not configured or using dummy values. Falling back to mock URL.");
                 return getMockUrl();
             }
@@ -41,7 +41,7 @@ public class CloudinaryService {
             log.info("Successfully uploaded");
             return secureUrl;
 
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             log.error("Cloudinary upload failed. Falling back to mock URL. Error: {}", ex.getMessage());
             return getMockUrl();
         }
