@@ -1,0 +1,39 @@
+<div class="panel card">
+
+  <div class="head">
+    <div class="titles">
+      <h3 class="title">Monthly Revenue</h3>
+      <p class="desc">Paid rent collections by month</p>
+    </div>
+
+    @if(maxAmount>0){
+      <span class="peak">
+        {{maxAmount | priceFormat}}
+      </span>
+    }
+  </div>
+
+  @if(maxAmount===0){
+    <div class="empty">
+      No revenue data available.
+    </div>
+  }
+
+  <div class="chart">
+    @for(bar of bars; track bar.month){
+
+      <div class="column">
+        <div class="value">
+          @if(bar.amount>0){
+            {{bar.amount | priceFormat}}
+          }
+        </div>
+
+        <div class="bar" [style.height.%]="bar.pct"></div>
+
+        <div class="month">{{bar.month}}</div>
+      </div>
+    }
+  </div>
+
+</div>

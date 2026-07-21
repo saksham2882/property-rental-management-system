@@ -1,0 +1,53 @@
+<div class="panel card">
+
+  <div class="head">
+    <div class="titles">
+      <h3 class="title">Maintenance Tickets</h3>
+      <p class="desc">Current work order status breakdown</p>
+    </div>
+    <div class="total-badge">
+      <span class="total-num">{{ total }}</span>
+      <span class="total-label">Total</span>
+    </div>
+  </div>
+
+  <div class="track-bar">
+    @if (total > 0) {
+      <div class="segment open" [style.width.%]="openPct" [title]="'Open: ' + displayStatus.Open"></div>
+      <div class="segment progress" [style.width.%]="inProgressPct" [title]="'In Progress: ' + displayStatus['In Progress']"></div>
+      <div class="segment resolved" [style.width.%]="resolvedPct" [title]="'Resolved: ' + displayStatus.Resolved"></div>
+    } 
+    @else {
+      <div class="segment empty-bar"></div>
+    }
+  </div>
+
+  <div class="legend">
+    <div class="item">
+      <span class="dot open-dot"></span>
+      <div class="item-info">
+        <span class="item-label">Open</span>
+        <span class="item-count">{{ displayStatus.Open }}</span>
+      </div>
+      <span class="item-pct">{{ openPct }}%</span>
+    </div>
+
+    <div class="item">
+      <span class="dot progress-dot"></span>
+      <div class="item-info">
+        <span class="item-label">In Progress</span>
+        <span class="item-count">{{ displayStatus['In Progress'] }}</span>
+      </div>
+      <span class="item-pct">{{ inProgressPct }}%</span>
+    </div>
+    
+    <div class="item">
+      <span class="dot resolved-dot"></span>
+      <div class="item-info">
+        <span class="item-label">Resolved</span>
+        <span class="item-count">{{ displayStatus.Resolved }}</span>
+      </div>
+      <span class="item-pct">{{ resolvedPct }}%</span>
+    </div>
+  </div>
+</div>
