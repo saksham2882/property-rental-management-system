@@ -49,7 +49,6 @@ export class AdminDashboard implements OnInit, OnDestroy {
       )
       .subscribe(analytics => {
         if (!analytics) return;
-        console.log(analytics)
         const mStatus: Record<string, number> = analytics?.maintenanceStatus ?? {};
         const totalProps = analytics?.totalProperties ?? 0;
         const occupiedProps = analytics?.occupiedProperties ?? 0;
