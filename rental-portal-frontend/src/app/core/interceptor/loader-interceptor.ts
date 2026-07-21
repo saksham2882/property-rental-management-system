@@ -7,8 +7,8 @@ export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
 
   const loaderService = inject(LoaderService);
 
+  const isBackground = req.url.includes('/notifications?userId=');
   const isMutation = req.method !== 'GET';
-  const isBackground = req.url.includes('/messages/received') || req.url.includes('/notifications?userId=');
   const shouldShowLoader = isMutation && !isBackground;
 
   if (shouldShowLoader) {
