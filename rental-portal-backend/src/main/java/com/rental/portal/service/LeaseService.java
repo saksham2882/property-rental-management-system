@@ -6,6 +6,7 @@ import com.rental.portal.model.Notification;
 import com.rental.portal.repository.LeaseRepository;
 import com.rental.portal.repository.RentRepository;
 import com.rental.portal.repository.NotificationRepository;
+import com.rental.portal.repository.PropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,9 @@ public class LeaseService {
 
     @Autowired
     private NotificationRepository notificationRepository;
+
+    @Autowired
+    private PropertyRepository propertyRepository;
 
 
     public List<Lease> getLeases(String tenantId) {
@@ -92,6 +96,13 @@ public class LeaseService {
         lease.setSignatureImage(signatureBase64);
         lease.setStatus("active");
         Lease savedLease = leaseRepository.save(lease);
+
+        if (lease.getPropertyId() != null) {
+            propertyRepository.findById(lease.getPropertyId()).ifPresent(property -> {
+                property.setAvailable(false);
+                propertyRepository.save(property);
+            });
+        }
 
         try {
             String monthName = "First Month";

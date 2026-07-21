@@ -1,0 +1,19 @@
+<div class="container animate-fadeIn">
+
+  @if (currentUser$ | async; as user) {
+    <app-admin-welcome-banner [adminName]="user.name"></app-admin-welcome-banner>
+  }
+
+  <app-stats-row [stats]="stats()"></app-stats-row>
+
+  <app-admin-quick-actions></app-admin-quick-actions>
+  
+  <div class="row">
+    <app-maintenance-overview [status]="maintenanceStatus()"></app-maintenance-overview>
+
+    <app-revenue-chart 
+      [monthlyRevenue]="monthlyRevenue()">
+    </app-revenue-chart>
+  </div>
+
+</div>
