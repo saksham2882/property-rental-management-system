@@ -1,0 +1,105 @@
+<div class="card wrapper">
+
+  <div class="header">
+    <h3 class="title">Notification Record Logs</h3>
+    
+    <div class="filters">
+      <div class="search-box">
+        <app-icon name="search" size="sm" class="search-icon"></app-icon>
+        <input 
+          type="text" 
+          [value]="searchTerm" 
+          (input)="searchChange.emit($event)" 
+          placeholder="Search logs..." 
+          class="form-input search-input" />
+      </div>
+
+      <app-dropdown
+        [options]="typeOptions"
+        [value]="filterType"
+        placeholder="Filter Severity"
+        iconName="filter"
+        (valueChange)="onTypeChange($event)">
+      </app-dropdown>
+
+      <app-dropdown
+        [options]="readOptions"
+        [value]="filterRead"
+        placeholder="Filter Status"
+        iconName="check-circle"
+        (valueChange)="onReadChange($event)">
+      </app-dropdown>
+    </div>
+  </div>
+
+
+  @if (loading) {
+    <div class="loading">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  } 
+  @else {
+    <div class="list">
+      @for (item of displayedNotifications; track item.id) {
+
+        <div class="item" [class.unread]="!item.isRead">
+          
+          <div class="icon-box icon-{{ item.type }}">
+            @if (item.type === 'success') {
+              <app-icon name="check-circle" size="md"></app-icon>
+            } 
+            @else if (item.type === 'warning') {
+              <app-icon name="alert-triangle" size="md"></app-icon>
+            } 
+            @else if (item.type === 'error') {
+              <app-icon name="alert-circle" size="md"></app-icon>
+            } 
+            @else {
+              <app-icon name="info" size="md"></app-icon>
+            }
+          </div>
+
+          <div class="content">
+            <div class="item-header">
+              <span class="item-title">{{ item.title }}</span>
+              <span class="item-time">{{ item.createdAt | relativeTime }}</span>
+            </div>
+            
+            <p class="item-msg">{{ item.message }}</p>
+            
+            <div class="item-footer">
+              <span class="tag">Recipient: <strong>{{ getTenantName(item.userId) }}</strong></span>
+              
+              @if (!item.isRead) {
+                <button (click)="markRead.emit(item.id)" class="mark-btn" title="Mark as Read">
+                  <app-icon name="check" size="sm"></app-icon>
+                  <span>Mark Read</span>
+                </button>
+              }
+            </div>
+          </div>
+
+        </div>
+      }
+
+      @if (notifications.length === 0) {
+        <div class="empty">
+          <app-empty-state 
+            icon="bell" 
+            title="No Notification Logs" 
+            description="No logs matching your search terms or filter selections were found.">
+          </app-empty-state>
+        </div>
+      }
+    </div>
+
+    @if (hasMore) {
+      <div class="more-box">
+        <button class="btn btn-secondary btn-block" (click)="showMore()">
+          <app-icon name="chevron-down" size="sm"></app-icon>
+          <span>Show More ({{ notifications.length - visibleCount }} remaining)</span>
+        </button>
+      </div>
+    }
+  }
+</div>
