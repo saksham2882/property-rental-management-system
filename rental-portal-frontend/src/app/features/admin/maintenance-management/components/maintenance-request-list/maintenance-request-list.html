@@ -1,0 +1,178 @@
+<div class="wrapper">
+
+  <div class="grid-3">
+    <div class="card stat">
+      <span class="label">Pending Reviews</span>
+      <span class="val text-danger">{{ pendingCount }}</span>
+    </div>
+    <div class="card stat">
+      <span class="label">Work In Progress</span>
+      <span class="val text-warning">{{ inProgressCount }}</span>
+    </div>
+    <div class="card stat">
+      <span class="label">Resolved Tickets</span>
+      <span class="val text-success">{{ resolvedCount }}</span>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="tab" [class.active]="activeTab === 'pending'" (click)="setTab('pending')">
+      <app-icon name="clock" size="sm"></app-icon>
+      <span>Pending</span>
+      <span class="badge badge-danger">{{ pendingCount }}</span>
+    </button>
+
+    <button class="tab" [class.active]="activeTab === 'in_progress'" (click)="setTab('in_progress')">
+      <app-icon name="wrench" size="sm"></app-icon>
+      <span>In Progress</span>
+      <span class="badge badge-warning">{{ inProgressCount }}</span>
+    </button>
+
+    <button class="tab" [class.active]="activeTab === 'resolved'" (click)="setTab('resolved')">
+      <app-icon name="check-circle" size="sm"></app-icon>
+      <span>Resolved</span>
+      <span class="badge badge-success">{{ resolvedCount }}</span>
+    </button>
+
+    <button class="tab" [class.active]="activeTab === 'all'" (click)="setTab('all')">
+      <app-icon name="file-text" size="sm"></app-icon>
+      <span>All Tickets</span>
+      <span class="badge badge-muted">{{ filteredRequests.length }}</span>
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="loading">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  } 
+  @else {
+    <div class="list">
+      @for (req of displayRequests; track req.id) {
+        <div class="card ticket">
+
+          <div class="header">
+            <div class="meta">
+              <span class="badge badge-primary">
+                <app-icon name="tool" size="sm"></app-icon>
+                <span>{{ req.category }}</span>
+              </span>
+              <span class="badge badge-muted">
+                <app-icon name="clock" size="sm"></app-icon>
+                <span>{{ req.raisedAt || 'Recent' }}</span>
+              </span>
+            </div>
+
+            <div class="badges">
+              <span class="badge" [class.badge-danger]="(req.urgency || '').toLowerCase() === 'high'"
+                [class.badge-warning]="(req.urgency || '').toLowerCase() === 'medium'"
+                [class.badge-muted]="(req.urgency || '').toLowerCase() === 'low'">
+                  <app-icon name="alert-circle" size="sm"></app-icon>
+                  <span>{{ req.urgency | uppercase }} URGENCY</span>
+              </span>
+
+              <span class="badge" [class.badge-danger]="(req.status || '').toLowerCase() === 'pending'"
+                [class.badge-warning]="(req.status || '').toLowerCase() === 'in_progress'"
+                [class.badge-success]="(req.status || '').toLowerCase() === 'resolved'">
+                  {{ req.status.replace('_', ' ') | uppercase }}
+              </span>
+            </div>
+          </div>
+
+          <div class="content-grid">
+
+            <div class="tenant-box">
+              <div class="tenant">
+                <div class="avatar">
+                  {{ getTenantName(req.tenantId).substring(0, 2) | uppercase }}
+                </div>
+                <div class="info">
+                  <h4 class="name">{{ getTenantName(req.tenantId) }}</h4>
+                  <span class="property">{{ getPropertyTitle(req.tenantId) }}</span>
+                </div>
+              </div>
+
+              <div class="issue-box">
+                <div class="title">
+                  <app-icon name="message-square" size="sm"></app-icon>
+                  <span>Issue Description</span>
+                </div>
+                <p class="desc">{{ req.description }}</p>
+              </div>
+            </div>
+
+            <div class="details-box">
+              @if (req.images && req.images.length > 0) {
+                <div class="attach-box">
+                  <div class="title">
+                    <app-icon name="image" size="sm"></app-icon>
+                    <span>Attachments ({{ req.images.length }})</span>
+                  </div>
+
+                  <div class="photos">
+                    @for (img of req.images; track img) {
+                      <a [href]="img" target="_blank" class="photo-link" title="View Attachment">
+                        <img [src]="img" (error)="onImageError($event)" alt="Attachment" class="photo" />
+                      </a>
+                    }
+                  </div>
+                </div>
+              }
+
+              @if (req.adminNote) {
+                <div class="log-box">
+                  <div class="title">
+                    <app-icon name="file-text" size="sm"></app-icon>
+                    <span>Admin Action Log</span>
+                  </div>
+                  <p class="log-desc">{{ req.adminNote }}</p>
+                </div>
+              } 
+              @else if (!req.images || req.images.length === 0) {
+                <div class="empty-info">
+                  <app-icon name="info" size="md"></app-icon>
+                  <span>No attachments or admin action logs logged yet.</span>
+                </div>
+              }
+            </div>
+
+          </div>
+
+          <div class="footer">
+            <div class="stage">
+              @if (req.resolvedAt) {
+                <span>Resolved Date: <strong class="text-success">{{ req.resolvedAt }}</strong></span>
+              } 
+              @else {
+                <span>Current Stage: <strong class="text-accent">{{ req.status.replace('_', ' ') | uppercase }}</strong></span>
+              }
+            </div>
+
+            <div class="action">
+              @if ((req.status || '').toLowerCase() !== 'resolved') {
+                <button class="btn btn-primary btn-sm" (click)="resolve.emit(req)">
+                  <app-icon name="check-circle" size="sm"></app-icon>
+                  <span>Update Work Order</span>
+                </button>
+              } 
+              @else {
+                <span class="badge badge-success resolved-badge">
+                  <app-icon name="check" size="sm"></app-icon>
+                  <span>RESOLVED</span>
+                </span>
+              }
+            </div>
+          </div>
+
+        </div>
+      } 
+      @empty {
+        <app-empty-state 
+          icon="wrench" 
+          [title]="'No ' + (activeTab | uppercase) + ' Work Orders'"
+          description="There are currently no maintenance tickets matching this category.">
+        </app-empty-state>
+      }
+    </div>
+  }
+</div>

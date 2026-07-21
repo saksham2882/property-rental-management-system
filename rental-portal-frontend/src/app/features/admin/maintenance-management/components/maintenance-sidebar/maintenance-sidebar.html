@@ -1,0 +1,80 @@
+<div class="sidebar">
+
+  <div class="filter">
+    <div class="header">
+      <div class="flex items-center gap-2">
+        <app-icon name="alert-triangle" size="md"></app-icon>
+        <h3 class="title">Urgency Filter</h3>
+      </div>
+    </div>
+
+    <div class="list">
+      <button class="btn" [class.active]="selectedUrgency === null" (click)="onUrgencyClick(null)">
+        <span>All Urgencies</span>
+        <span class="badge badge-danger">{{ requests.length }}</span>
+      </button>
+
+      <button class="btn" [class.active]="selectedUrgency === 'high'" (click)="onUrgencyClick('high')">
+        <span>High</span>
+        <span class="font-bold text-xs">{{ getHighUrgencyCount() }}</span>
+      </button>
+
+      <button class="btn" [class.active]="selectedUrgency === 'medium'" (click)="onUrgencyClick('medium')">
+        <span>Medium</span>
+        <span class="font-bold text-xs">{{ getMediumUrgencyCount() }}</span>
+      </button>
+
+      <button class="btn" [class.active]="selectedUrgency === 'low'" (click)="onUrgencyClick('low')">
+        <span>Low</span>
+        <span class="font-bold text-xs">{{ getLowUrgencyCount() }}</span>
+      </button>
+    </div>
+  </div>
+
+
+  <div class="customer filter">
+
+    <div class="header">
+      <div class="flex items-center gap-2">
+        <app-icon name="users" size="md"></app-icon>
+        <h3 class="title">Filter by Customer</h3>
+      </div>
+      <span class="badge badge-primary text-sm">{{ activeTenants.length }}</span>
+    </div>
+
+    @if (selectedTenantId) {
+      <button class="btn btn-secondary btn-sm btn-block" (click)="onTenantClick(selectedTenantId)">
+        <app-icon name="x" size="sm"></app-icon>
+        <span>Clear Customer Filter</span>
+      </button>
+    }
+
+    <div class="list">
+      @for (tenant of activeTenants; track tenant.id) {
+
+        @let reqCount = getTenantRequestCount(tenant.id);
+
+        <div class="card item" [class.is-selected]="selectedTenantId === tenant.id" (click)="onTenantClick(tenant.id)">
+          <div class="avatar">
+            {{ tenant.name.substring(0, 2) | uppercase }}
+          </div>
+
+          <div class="flex flex-col flex-1">
+            <span class="font-bold text-sm truncate font-display">{{ tenant.name }}</span>
+            <span class="text-xs text-muted truncate">{{ getTenantPropertyTitle(tenant.id) }}</span>
+          </div>
+
+          @if (reqCount > 0) {
+            <span class="badge badge-primary">{{ reqCount }}</span>
+          }
+        </div>
+      } 
+      @empty {
+        <div class="text-center text-xs text-muted">
+          <p>No customer records found.</p>
+        </div>
+      }
+    </div>
+  </div>
+
+</div>

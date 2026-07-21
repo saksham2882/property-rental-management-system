@@ -1,0 +1,46 @@
+<div class="container animate-fadeIn">
+
+  <div class="page-header">
+    <div class="page-title-block">
+      <h1>Maintenance Management</h1>
+      <p>Monitor tenant repair tickets, track contractor assignments, and update issue stages.</p>
+    </div>
+  </div>
+
+  <div class="maintenance-split">
+    <div class="maintenance-split-left">
+      <app-maintenance-sidebar
+        [tenants]="tenants"
+        [leases]="leases"
+        [requests]="requests"
+        [selectedTenantId]="selectedTenantId"
+        [selectedUrgency]="selectedUrgency"
+        (selectTenantId)="onSelectTenantId($event)"
+        (selectUrgency)="onSelectUrgency($event)"
+      >
+      </app-maintenance-sidebar>
+    </div>
+
+    <div>
+      <app-maintenance-request-list
+        [requests]="requests"
+        [tenantsMap]="tenantsMap"
+        [leases]="leases"
+        [selectedTenantId]="selectedTenantId"
+        [selectedUrgency]="selectedUrgency"
+        [loading]="(loading$ | async) || false"
+        (resolve)="openResolveModal($event)"
+      >
+      </app-maintenance-request-list>
+    </div>
+  </div>
+
+  <app-maintenance-resolve-modal
+    [isOpen]="isModalOpen"
+    [resolveForm]="resolveForm"
+    [request]="selectedRequest"
+    (close)="closeResolveModal()"
+    (submitResolution)="submitResolution()"
+  >
+  </app-maintenance-resolve-modal>
+</div>
