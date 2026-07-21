@@ -7,7 +7,7 @@
 [![Razorpay](https://img.shields.io/badge/Razorpay-Payment-blue?style=for-the-badge&logo=razorpay)](https://razorpay.com/)
 [![Cloudinary](https://img.shields.io/badge/Cloudinary-Media%20CDN-cyan?style=for-the-badge&logo=cloudinary)](https://cloudinary.com/)
 
-RentEase Portal Backend is a robust Spring Boot 3 rest engine engineered to power property rental platforms. It seamlessly supports key real estate processes: tenant onboarding, landlord approvals, secure electronic lease signatures, automated rent billing cycles, live payment gateway integration (Razorpay), dynamic billing invoice rendering (PDF via OpenPDF), user-to-user chatting, and system notifications.
+RentEase Portal Backend is a robust Spring Boot 3 REST engine engineered to power property rental platforms. It seamlessly supports key real estate processes: tenant onboarding, landlord approvals, secure electronic lease signatures, automated rent billing cycles, live payment gateway integration (Razorpay), dynamic billing invoice rendering (PDF via OpenPDF), system notifications, and automated background reminders for pending payments.
 
 ---
 
@@ -27,20 +27,21 @@ RentEase Portal Backend is a robust Spring Boot 3 rest engine engineered to powe
    - [5. Leases (`/leases`)](#5-leases-leases)
    - [6. Rent Billing & Checkout (`/rents`)](#6-rent-billing--checkout-rents)
    - [7. Maintenance Logs (`/maintenanceRequests`)](#7-maintenance-logs-maintenancerequests)
-   - [8. Messaging Engine (`/messages`)](#8-messaging-engine-messages)
-   - [9. System Notifications (`/notifications`)](#9-system-notifications-notifications)
-   - [10. Media Upload Upload (`/upload`)](#10-media-upload-upload)
+   - [8. System Notifications (`/notifications`)](#8-system-notifications-notifications)
+   - [9. Media Upload (`/upload`)](#9-media-upload-upload)
+   - [10. Analytics & Insights (`/analytics`)](#10-analytics--insights-analytics)
 5. [Global Security, Validation & Exception Handling](#️-global-security-validation--exception-handling)
-6. [Local Setup & Installation](#-local-setup--installation)
+6. [Automated Background Schedulers](#⏰-automated-background-schedulers)
+7. [Local Setup & Installation](#-local-setup--installation)
    - [Environment Configuration](#environment-configuration)
    - [Running via Maven Wrapper](#running-via-maven-wrapper)
    - [Running via Docker Container](#running-via-docker-container)
-7. [Quick Redirection Links](#-quick-redirection-links)
-8. [Contact & Support](#-contact--support)
+8. [Quick Redirection Links](#-quick-redirection-links)
+9. [Contact & Support](#-contact--support)
 
 ---
 
-## 🔄 System Architecture & Flows
+## System Architecture & Flows
 
 ### Architectural Topology
 The application utilizes a classic Spring 3-Tier Layered Architecture (Controller -> Service -> Repository) coupled with custom Servlet security filters and third-party SaaS engines.
@@ -135,7 +136,7 @@ erDiagram
         string propertyId FK
         string customerId FK
         list documents
-        string status "pending | approved | rejected"
+        string status "under_review | approved | rejected"
         string appliedAt
     }
 
@@ -148,10 +149,12 @@ erDiagram
         string endDate
         double monthlyRent
         double deposit
-        string status "pending | active | terminated"
+        string status "pending_signature | active | terminated"
         string conditions
         string propertyTitle
         string signatureImage "base64"
+        string contractText
+        string createdAt
     }
 
     RENT {
@@ -162,7 +165,7 @@ erDiagram
         double amount
         string dueDate
         string paidDate
-        string status "pending | paid"
+        string status "pending | paid | overdue"
         string transactionId
         string razorpayOrderId
         string razorpayPaymentId
@@ -183,21 +186,12 @@ erDiagram
         list images
     }
 
-    MESSAGE {
-        string id PK
-        string senderId FK
-        string receiverId FK
-        string content
-        string timestamp
-        string propertyId FK
-    }
-
     NOTIFICATION {
         string id PK
         string userId FK
         string title
         string message
-        string type "success | info | warning | alert"
+        string type "success | info | warning | alert | error"
         boolean isRead
         string createdAt
     }
@@ -208,7 +202,6 @@ erDiagram
     USER ||--o{ LEASE : "enters"
     USER ||--o{ RENT : "settles"
     USER ||--o{ MAINTENANCE_REQUEST : "reports"
-    USER ||--o{ MESSAGE : "sends/receives"
     USER ||--o{ NOTIFICATION : "receives"
     PROPERTY ||--o{ REVIEW : "hosts"
     PROPERTY ||--o{ RENTAL_APPLICATION : "receives"
@@ -229,16 +222,16 @@ sequenceDiagram
     participant LeaseAPI as Lease Service
 
     Tenant->>AppAPI: POST /applications (Payload: Income, Move-in, Cloudinary documents)
-    Note over AppAPI: Status initialized to 'pending'
+    Note over AppAPI: Status initialized to 'under_review'
     Admin->>AppAPI: GET /applications (Audit list of requests)
     Admin->>AppAPI: PATCH /applications/{id} (payload: {status: 'approved'})
     
-    Admin->>LeaseAPI: POST /leases (payload: Lease periods, deposit, rent, conditions)
-    Note over LeaseAPI: Lease entry created (Status: pending)
+    Admin->>LeaseAPI: POST /leases (payload: Lease periods, deposit, rent, conditions, contractText)
+    Note over LeaseAPI: Lease entry created (Status: pending_signature)
     
     Tenant->>LeaseAPI: GET /leases?tenantId={id} (Check pending sign requests)
     Tenant->>LeaseAPI: POST /leases/{id}/sign (payload: signatureImage as base64 data URL)
-    Note over LeaseAPI: Signature updated & status becomes 'active'
+    Note over LeaseAPI: Signature updated, status becomes 'active', & auto-creates Rent invoices (Deposit & First Month)
     LeaseAPI-->>Tenant: Lease Active (Returns active lease object)
 ```
 
@@ -266,7 +259,7 @@ sequenceDiagram
     Tenant->>API: Verify transaction (POST /rents/{id}/verify)
     API->>API: Compute signature: SHA256(order_id + "|" + payment_id, secretKey)
     alt Signature Matches
-        API->>DB: Set Rent status = 'paid', transactionId = razorpay_payment_id
+        API->>DB: Set Rent status = 'paid', transactionId = razorpay_payment_id, paidDate = Current Date
         API->>DB: Dispatch System Notifications (User & Admin log logs)
         API-->>Tenant: Success Payload + Paid Rent Details (Status: 200 OK)
     else Signature Failed
@@ -276,7 +269,7 @@ sequenceDiagram
 
 ---
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```text
 rental-portal-backend
@@ -304,7 +297,6 @@ rental-portal-backend
 │   │   │               │   ├── AuthController.java           # Authentication login/registration
 │   │   │               │   ├── LeaseController.java          # Digital contracts & signatures
 │   │   │               │   ├── MaintenanceController.java    # Issue tracker controller
-│   │   │               │   ├── MessageController.java        # Direct user communication
 │   │   │               │   ├── NotificationController.java   # Event alerting endpoints
 │   │   │               │   ├── PropertyController.java       # Real estate listings & reviews
 │   │   │               │   ├── RentController.java           # Payments, Orders, Receipts & Invoices
@@ -325,7 +317,6 @@ rental-portal-backend
 │   │   │               ├── model
 │   │   │               │   ├── Lease.java                    # Legal lease agreement schema
 │   │   │               │   ├── MaintenanceRequest.java       # Tenant ticketing schema
-│   │   │               │   ├── Message.java                  # Communication chat schema
 │   │   │               │   ├── Notification.java             # System alerts schema
 │   │   │               │   ├── Property.java                 # Property posting schema
 │   │   │               │   ├── Rent.java                     # Transaction & payment cycle schema
@@ -335,7 +326,6 @@ rental-portal-backend
 │   │   │               ├── repository
 │   │   │               │   ├── LeaseRepository.java
 │   │   │               │   ├── MaintenanceRequestRepository.java
-│   │   │               │   ├── MessageRepository.java
 │   │   │               │   ├── NotificationRepository.java
 │   │   │               │   ├── PropertyRepository.java
 │   │   │               │   ├── RentRepository.java
@@ -352,14 +342,15 @@ rental-portal-backend
 │   │   │               │   ├── AuthService.java
 │   │   │               │   ├── LeaseService.java
 │   │   │               │   ├── MaintenanceService.java
-│   │   │               │   ├── MessageService.java
 │   │   │               │   ├── NotificationService.java
 │   │   │               │   ├── PropertyService.java
 │   │   │               │   ├── RentService.java
 │   │   │               │   ├── UploadService.java
 │   │   │               │   └── UserService.java
 │   │   │               └── util
-│   │   │                   └── PdfGenerationService.java     # PDF invoice layouts drawer (OpenPDF)
+│   │   │                   ├── CloudinaryService.java        # Cloudinary direct integration helper
+│   │   │                   ├── PdfGenerationService.java     # PDF invoice layouts drawer (OpenPDF)
+│   │   │                   └── RentReminderScheduler.java    # Automated background scheduling alert scan
 │   │   └── resources
 │   │       ├── application.properties                        # Variables and server bindings configs
 │   │       ├── static                                        # Static public resources
@@ -368,28 +359,31 @@ rental-portal-backend
 
 ---
 
-## 🛠️ Tech Stack & Rationales
+## Tech Stack & Rationales
+<div style="overflow-x: auto;">
 
 | Library/Framework | Version | Purpose | Rationale |
 | :--- | :--- | :--- | :--- |
-| **Java Platform** | `21` (LTS) |  Runtime Environment | Virtual threads support, modern features, high security. |
+| **Java Platform** | `21` (LTS) | Runtime Environment | Virtual threads support, modern features, high security. |
 | **Spring Boot** | `4.1.0` | Core Application Container | Bootstraps REST APIs, handles filters, data repositories and IoC container. |
-| **Spring Security**| Included | Auth & RBAC Security | Secures routes, enables CORS filters, validates JWT and secures actions. |
-| **MongoDB Driver**| Included | Document DB Store | Enables flexible document mapping for properties, reviews, and wishlists. |
-| **Spring Validation**| Included | Bean Data Sanitization | Checks payloads on REST entries (e.g., email forms) before processing. |
-| **JJWT (JJWT-API)**| `0.13.0` | JWT Generation & Verification | Generates secure digital claim tokens for state-free request control. |
+| **Spring Security** | Included | Auth & RBAC Security | Secures routes, enables CORS filters, validates JWT and secures actions. |
+| **MongoDB Driver** | Included | Document DB Store | Enables flexible document mapping for properties, reviews, and wishlists. |
+| **Spring Validation** | Included | Bean Data Sanitization | Checks payloads on REST entries (e.g., email forms) before processing. |
+| **JJWT (JJWT-API)** | `0.13.0` | JWT Generation & Verification | Generates secure digital claim tokens for state-free request control. |
 | **Razorpay Java SDK**| `1.4.8` | Payment checkout processes | Native Java client supporting online order creation and secure payment hashing. |
 | **Cloudinary SDK** | `2.4.0` | Image storage | Manages uploading, hosting, and optimizing image/document files in the cloud. |
 | **OpenPDF** | `3.0.5` | PDF Generator Engine | Creates PDF files (receipts/invoices) programmatically using customizable fonts. |
 | **Lombok** | Runtime | Boilerplate Eliminator | Generates getters, setters, builders, and constructors dynamically. |
 | **SpringDoc OpenApi**| `2.8.5` | Dynamic REST OpenAPI schema | Generates interactive OpenAPI specifications and provides Swagger UI. |
 
+</div>
+
 ---
 
-## 🔌 REST API Documentation
+## REST API Documentation
 
 ### 🔑 Authorization Note
-- **Public Routes:** `/auth/**`, `/error`, Swagger routes, and `GET /properties/**` are accessible anonymously.
+- **Public Routes:** `/auth/**`, `/error`, Swagger routes (`/swagger-ui/**`, `/v3/api-docs/**`), and `GET /properties/**` are accessible anonymously.
 - **Protected Routes:** All other requests require an `Authorization` header containing `Bearer <JWT_TOKEN>`.
 - **Role-based Actions:** Certain mappings require specific roles (e.g., `ADMIN`) checked via `@PreAuthorize`.
 
@@ -438,7 +432,7 @@ Handles registration of accounts and issuance of secure JWT tokens.
   }
   ```
 * **Failure Responses:**
-  - `409 Conflict`: If the email address is already registered (`Email address already in use.`).
+  - `400 Bad Request`: If the email address is already registered (`Email address already in use.`).
 
 #### `POST /auth/login`
 * **Description:** Authenticates user credentials and issues a JWT token.
@@ -522,6 +516,11 @@ Handles registration of accounts and issuance of secure JWT tokens.
   - `search` (String full-text keyword search against titles/localities)
 * **Response (200 OK):** Array of properties matching the criteria.
 
+#### `GET /properties/{id}`
+* **Security:** Public (No authorization token required)
+* **Description:** Retrieve details of a single property by its ID.
+* **Response (200 OK):** Property object.
+
 #### `POST /properties`
 * **Role required:** `ADMIN`
 * **Description:** Registers a new property post.
@@ -571,11 +570,16 @@ Handles registration of accounts and issuance of secure JWT tokens.
 ### 4. Applications (`/applications`)
 
 #### `GET /applications`
-* **Security:** Authenticated (returns filtered values based on query parameter)
+* **Security:** Authenticated
 * **Query Parameters:**
   - `customerId` (Optional String: to list user's submitted applications)
   - `propertyId` (Optional String: to list applications on a specific property)
 * **Response (200 OK):** Array of rental applications.
+
+#### `GET /applications/{id}`
+* **Security:** Authenticated
+* **Description:** Retrieve details of a specific rental application by its ID.
+* **Response (200 OK):** Rental application object.
 
 #### `POST /applications`
 * **Security:** Authenticated
@@ -595,20 +599,36 @@ Handles registration of accounts and issuance of secure JWT tokens.
     "documents": ["https://res.cloudinary.com/demo/image/upload/v123/id_proof.pdf"]
   }
   ```
-* **Response (201 Created):** Created Application item with state set to `"pending"`.
+* **Response (201 Created):** Created Application item with state set to `"under_review"`. Automatically sends notifications to customer and admin.
 
 #### `PATCH /applications/{id}`
-* **Security:** Authenticated
-* **Payload:** `{ "status": "approved" }` (Updates status to approved/rejected)
+* **Security:** Authenticated (Admin action)
+* **Payload:** `{ "status": "approved" }` (Updates status to approved/rejected. If approved, the property availability is automatically set to `false`).
 * **Response (200 OK):** Updated application object.
+
+#### `DELETE /applications/{id}`
+* **Security:** Authenticated
+* **Description:** Deletes a rental application by its ID.
+* **Response (204 No Content):** Successful deletion.
 
 ---
 
 ### 5. Leases (`/leases`)
 
+#### `GET /leases`
+* **Security:** Authenticated
+* **Query Parameters:**
+  - `tenantId` (Optional tenant filter)
+* **Response (200 OK):** List of leases.
+
+#### `GET /leases/{id}`
+* **Security:** Authenticated
+* **Description:** Retrieve details of a specific lease by its ID.
+* **Response (200 OK):** Lease agreement object.
+
 #### `POST /leases`
-* **Security:** Authenticated (Admin action helper)
-* **Description:** Generates a draft lease agreement from an approved application.
+* **Security:** Authenticated (Admin action)
+* **Description:** Generates a draft lease agreement from an approved application. Binds contract details and starts in a state of signature pending.
 * **Payload Example:**
   ```json
   {
@@ -620,15 +640,21 @@ Handles registration of accounts and issuance of secure JWT tokens.
     "monthlyRent": 45000.0,
     "deposit": 120000.0,
     "conditions": "Tenancy rules and terms of maintenance agreements.",
+    "contractText": "Full text of the legally binding agreement...",
     "propertyTitle": "Stunning 2BHK Sea-Facing Flat"
   }
   ```
-* **Response (201 Created):** New lease in state `"pending"`.
+* **Response (201 Created):** New lease object in state `"pending_signature"`. Sends signature pending alert to the tenant.
+
+#### `PATCH /leases/{id}`
+* **Security:** Authenticated (Admin action)
+* **Description:** Partially updates lease terms, conditions, start/end dates, or contract text.
+* **Response (200 OK):** Updated lease details.
 
 #### `POST /leases/{id}/sign`
-* **Security:** Authenticated (Tenant signature action)
+* **Security:** Authenticated (Tenant action)
 * **Payload:** `{ "signatureImage": "data:image/png;base64,iVBORw0KGgoAAAANS..." }`
-* **Description:** Appends base64 signature image. Transition status from `"pending"` to `"active"`.
+* **Description:** Appends base64 signature image. Transitions status from `"pending_signature"` to `"active"`. Automatically generates two Rent invoices: one for the Security Deposit, and one for the First Month's rent.
 * **Response (200 OK):** Active signed lease details.
 
 ---
@@ -638,8 +664,18 @@ Handles registration of accounts and issuance of secure JWT tokens.
 #### `GET /rents`
 * **Query Parameters:**
   - `tenantId` (Optional tenant filter)
-  - `status` (Optional status filter: `pending | paid`)
+  - `status` (Optional status filter: `pending | paid | overdue`)
 * **Response (200 OK):** `[ { Rent }, { Rent } ]`
+
+#### `POST /rents`
+* **Security:** Authenticated (Admin / Automated system action)
+* **Description:** Registers a new rent invoice record manually or programmatically.
+* **Response (201 Created):** Created Rent object.
+
+#### `PATCH /rents/{id}`
+* **Security:** Authenticated
+* **Description:** Partially updates rent record details (e.g. updating month, due date, status, etc.).
+* **Response (200 OK):** Updated Rent object.
 
 #### `POST /rents/{id}/pay`
 * **Description:** Mock payment endpoint that immediately flags the rent as `paid` and assigns a dummy transactional ID prefix `TXN-xxxx`.
@@ -668,7 +704,7 @@ Handles registration of accounts and issuance of secure JWT tokens.
     "razorpay_signature": "6e9bc837d7a7b8e1f0e49..."
   }
   ```
-* **Outcome:** Validates payload hash using secret key. On success, updates Rent record to status `"paid"`, stores transactional identifiers, and logs notifications.
+* **Outcome:** Validates payload hash using secret key. On success, updates Rent record to status `"paid"`, stores transactional identifiers, logs paid date, and logs notifications.
 * **Response (200 OK):** Settled Rent record object.
 
 #### `GET /rents/{id}/invoice`
@@ -685,6 +721,7 @@ Handles registration of accounts and issuance of secure JWT tokens.
 * **Response (200 OK):** `[ { MaintenanceRequest }, { MaintenanceRequest } ]`
 
 #### `POST /maintenanceRequests`
+* **Security:** Authenticated
 * **Description:** Raises a new maintenance ticket for repair issues.
 * **Payload Example:**
   ```json
@@ -712,22 +749,7 @@ Handles registration of accounts and issuance of secure JWT tokens.
 
 ---
 
-### 8. Messaging Engine (`/messages`)
-
-#### `GET /messages`
-* **Query Parameters:**
-  - `user1` (String userId)
-  - `user2` (String userId)
-* **Outcome:** Returns the chat history between the two users.
-* **Response (200 OK):** List of messages sorted by timestamp.
-
-#### `POST /messages`
-* **Payload:** `{ "senderId": "...", "receiverId": "...", "content": "Hello", "propertyId": "..." }`
-* **Response (201 Created):** Saved Message object.
-
----
-
-### 9. System Notifications (`/notifications`)
+### 8. System Notifications (`/notifications`)
 
 #### `GET /notifications`
 * **Query Parameters:** `userId` (Optional filter)
@@ -743,13 +765,14 @@ Handles registration of accounts and issuance of secure JWT tokens.
 
 ---
 
-### 10. Media Upload (`/upload`)
+### 9. Media Upload (`/upload`)
 
 #### `POST /upload`
 * **Request Content-Type:** `multipart/form-data`
 * **Body Form Parameters:**
   - `file`: Multipart File (Allowed: JPEG, PNG, PDF, DOCX up to limit)
 * **Outcome:** Uploads the binary stream to Cloudinary storage.
+* **Robust Dev Fallback:** If Cloudinary config parameters are empty or dummy in `.env`, the endpoint falls back gracefully to returning a random pre-selected, high-quality Unsplash image link, ensuring local/developer instances remain fully functional without active API keys.
 * **Response (200 OK):**
   ```json
   {
@@ -759,7 +782,66 @@ Handles registration of accounts and issuance of secure JWT tokens.
 
 ---
 
-## 🛡️ Global Security, Validation & Exception Handling
+### 10. Analytics & Insights (`/analytics`)
+
+#### `GET /analytics/admin`
+* **Role required:** `ADMIN`
+* **Description:** Aggregates system-wide key metrics to build real-time admin charts and panels.
+* **Metrics Returned:**
+  - Total properties registered.
+  - Occupied vs. Available properties count.
+  - Total accumulated revenue (sum of paid rent objects).
+  - Categorized breakdown of maintenance requests by status.
+  - Monthly revenue projection stats.
+  - Distinct count of active tenants.
+  - Count of applications with status `"under_review"`.
+* **Response (200 OK):**
+  ```json
+  {
+    "totalProperties": 42,
+    "occupiedProperties": 18,
+    "availableProperties": 24,
+    "totalRevenue": 845000.0,
+    "maintenanceStatus": {
+      "raised": 5,
+      "in progress": 2,
+      "resolved": 15
+    },
+    "monthlyRevenue": {
+      "June 2026": 45000.0,
+      "July 2026": 90000.0
+    },
+    "activeTenants": 18,
+    "pendingApplications": 3
+  }
+  ```
+
+#### `GET /analytics/customer/{userId}`
+* **Security:** Authenticated (matching account holder or Admin)
+* **Description:** Generates individual tenant metrics summary.
+* **Metrics Returned:**
+  - Active leases count.
+  - Cumulative rent paid.
+  - Maintenance ticket summary counts by status.
+  - Month-on-month expense stats.
+* **Response (200 OK):**
+  ```json
+  {
+    "activeLeases": 1,
+    "totalPaid": 90000.0,
+    "maintenanceStatus": {
+      "resolved": 2
+    },
+    "monthlyExpense": {
+      "June 2026": 45000.0,
+      "July 2026": 45000.0
+    }
+  }
+  ```
+
+---
+
+## Global Security, Validation & Exception Handling
 
 ### Security Authentication Lifecycle
 All protected API requests undergo dynamic verification in the backend pipelines:
@@ -781,6 +863,8 @@ The **GlobalExceptionHandler** translates uncaught system exceptions into a stan
 ```
 
 #### Exception Resolution Reference Table
+<div style="overflow-x: auto;">
+
 | Backend Class | Captured Event | Mapped HTTP Code | Sample Output Message |
 | :--- | :--- | :--- | :--- |
 | `ResourceNotFoundException` | Missing records in DB | `404 Not Found` | *Object not found* |
@@ -788,18 +872,29 @@ The **GlobalExceptionHandler** translates uncaught system exceptions into a stan
 | `BadRequestException` | Missing verification parameters | `400 Bad Request` | *Missing payment parameters* |
 | `MethodArgumentNotValidException` | Validation failures on payloads | `400 Bad Request` | *Validation failed: email is invalid* |
 | `AccessDeniedException` | User permissions role mismatch | `403 Forbidden` | *Access Denied: Access is denied* |
-| `Exception` | Generic unhandled errors | `500 Server Error` | *An unexpected error occurred...* |
+| `Exception` | Unhandled system errors | `500 Server Error` | *An unexpected error occurred...* |
+
+</div>
 
 ---
 
-## 🚀 Local Setup & Installation
+## Automated Background Schedulers
+The project includes a cron scheduler configuration `RentReminderScheduler` designed to automate operational alerts:
+- **Scan Frequency:** Executes every 5 minutes (`fixedRate = 300000ms`).
+- **Functionality:** Scans the database for rent records with `"pending"` or `"overdue"` status.
+- **Alert Dispatch:** Automatically dispatches a system alert notification (`Rent Due Reminder`) to the tenant if a matching alert does not already exist, preventing duplicate nagging alerts.
+- *Developer Note: Ensure `@EnableScheduling` is declared on your application configuration or startup class to enable these tasks in active deployment.*
+
+---
+
+## Local Setup & Installation
 
 ### Prerequisites
 Make sure you have installed:
 - **Java Development Kit (JDK) 21** or later.
 - **Apache Maven 3.8+** (or use the packaged `./mvnw` binary script wrapper).
 - **MongoDB** instance (Local instance or MongoDB Atlas Cloud database).
-- **Cloudinary** developer account.
+- **Cloudinary** developer account (Optional: fallbacks active).
 - **Razorpay** merchant account in Test Mode.
 
 ---
@@ -819,7 +914,7 @@ MONGODB_DATABASE=rental_portal
 SECURITY_JWT_SECRET=YourStrongAndSecure256BitSecretKeyHereMustBeLongEnough
 JWT_EXPIRATION_MS=86400000
 
-# Cloudinary CDN Configuration
+# Cloudinary CDN Configuration (Optional: Empty fallback triggers Unsplash mocks)
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
@@ -887,7 +982,7 @@ docker run -d \
 
 ---
 
-## 🔗 Quick Redirection Links
+## Quick Redirection Links
 - **Spring Initializr Configuration Reference Guides:**
   - View **HELP.md** for official Spring Guides links (Security, LDAP, Validation, Web, and Mongo).
 - **Interactive Swagger REST UI:**
@@ -898,11 +993,9 @@ docker run -d \
 ---
 
 ## 🙌 Contributing
-
 Contributions are welcome! If you have any ideas, suggestions, or bug reports, please open an issue or create a pull request.
 
-## 🔗Contact Me
-
+## Contact Me
 - **Email:** [agrahari0899@gmail.com](mailto:agrahari0899@gmail.com)
 - **GitHub:** [@saksham2882](https://github.com/saksham2882)
 - **LinkedIn:** [@saksham-agrahari](https://www.linkedin.com/in/saksham-agrahari/)
