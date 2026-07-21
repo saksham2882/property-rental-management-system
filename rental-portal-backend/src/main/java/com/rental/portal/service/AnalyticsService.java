@@ -24,12 +24,16 @@ public class AnalyticsService {
     @Autowired
     private MaintenanceRequestRepository maintenanceRequestRepo;
 
+    @Autowired
+    private RentalApplicationRepository rentalApplicationRepository;
+
 
     public Map<String, Object> getAdminStats() {
-        long totalProperties = propertyRepository.count();
-        
         List<Property> properties = propertyRepository.findAll();
-        long occupiedProperties = properties.stream().filter(p -> Boolean.FALSE.equals(p.getAvailable())).count();
+        long totalProperties = properties.size();
+        long occupiedProperties = properties.stream()
+                .filter(p -> Boolean.FALSE.equals(p.getAvailable()))
+                .count();
 
         List<Rent> rents = rentRepository.findAll();
         double totalRevenue = rents.stream()
@@ -38,10 +42,9 @@ public class AnalyticsService {
                 .sum();
 
         List<MaintenanceRequest> requests = maintenanceRequestRepo.findAll();
+        List<RentalApplication> applications = rentalApplicationRepository.findAll();
+        List<Lease> leases = leaseRepository.findAll();
         Map<String, Integer> maintenanceStatus = new HashMap<>();
-        maintenanceStatus.put("Open", 0);
-        maintenanceStatus.put("In Progress", 0);
-        maintenanceStatus.put("Resolved", 0);
 
         for (MaintenanceRequest r : requests) {
             String status = r.getStatus();
@@ -60,9 +63,19 @@ public class AnalyticsService {
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalProperties", totalProperties);
         stats.put("occupiedProperties", occupiedProperties);
+        stats.put("availableProperties", totalProperties - occupiedProperties);
         stats.put("totalRevenue", totalRevenue);
         stats.put("maintenanceStatus", maintenanceStatus);
         stats.put("monthlyRevenue", monthlyRevenue);
+        stats.put("activeTenants", leases.stream()
+                .filter(l -> "active".equalsIgnoreCase(l.getStatus()))
+                .map(Lease::getTenantId)
+                .filter(id -> id != null && !id.isBlank())
+                .distinct()
+                .count());
+        stats.put("pendingApplications", applications.stream()
+                .filter(a -> "under_review".equalsIgnoreCase(a.getStatus()))
+                .count());
 
         return stats;
     }
@@ -81,9 +94,6 @@ public class AnalyticsService {
 
         List<MaintenanceRequest> requests = maintenanceRequestRepo.findByTenantId(userId);
         Map<String, Integer> maintenanceStatus = new HashMap<>();
-        maintenanceStatus.put("Open", 0);
-        maintenanceStatus.put("In Progress", 0);
-        maintenanceStatus.put("Resolved", 0);
 
         for (MaintenanceRequest r : requests) {
             String status = r.getStatus();

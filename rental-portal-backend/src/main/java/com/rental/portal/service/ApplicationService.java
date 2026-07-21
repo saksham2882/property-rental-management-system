@@ -111,6 +111,13 @@ public class ApplicationService {
         }
         RentalApplication updatedApp = rentalAppRepo.save(application);
 
+        if ("approved".equalsIgnoreCase(status) && application.getPropertyId() != null) {
+            propertyRepo.findById(application.getPropertyId()).ifPresent(property -> {
+                property.setAvailable(false);
+                propertyRepo.save(property);
+            });
+        }
+
         try {
             String propertyTitle = "Property";
             Optional<Property> propOpt = propertyRepo.findById(application.getPropertyId());
