@@ -1,0 +1,29 @@
+<div class="container animate-fadeIn">
+  
+  <div class="layout">
+    
+    <div class="sticky-col">
+      <app-notification-broadcast-form
+        [broadcastForm]="broadcastForm"
+        [tenants]="tenants"
+        (submitBroadcast)="submitBroadcast()">
+      </app-notification-broadcast-form>
+    </div>
+
+    <div class="list-col">
+      <app-notification-history-list
+        [notifications]="filteredNotifications"
+        [tenantsMap]="tenantsMap"
+        [loading]="(loading$ | async) || false"
+        [searchTerm]="searchTerm"
+        [filterType]="filterType"
+        [filterRead]="filterRead"
+        (searchChange)="onSearchChange($event)"
+        (typeFilterChange)="onTypeFilterChange($event)"
+        (readFilterChange)="onReadFilterChange($event)"
+        (markRead)="onMarkRead($event)">
+      </app-notification-history-list>
+    </div>
+
+  </div>
+</div>
