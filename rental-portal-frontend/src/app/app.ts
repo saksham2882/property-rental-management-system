@@ -4,7 +4,6 @@ import { filter } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { Navbar } from "./shared/components/navbar/navbar";
 import { Footer } from "./shared/components/footer/footer";
-import { ChatWidgetComponent } from "./shared/components/chat-widget/chat-widget";
 import { NgxSonnerToaster } from 'ngx-sonner';
 import { LoaderService } from './core/services/loader-service';
 import { loadUserFromStorage } from './store/auth/auth.actions';
@@ -14,7 +13,7 @@ import { LoadingSpinnerComponent } from './shared/components/loading-spinner/loa
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Navbar, Footer, ChatWidgetComponent, NgxSonnerToaster, LoadingSpinnerComponent],
+  imports: [RouterOutlet, Navbar, Footer, NgxSonnerToaster, LoadingSpinnerComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -23,7 +22,6 @@ export class App implements OnInit {
   protected readonly title = signal('RentEase Portal');
   showFooter = signal(true);
   showNavbar = signal(true);
-  showChatbot = signal(true);
 
   public readonly loaderService = inject(LoaderService);
   private store = inject(Store);
@@ -50,7 +48,6 @@ export class App implements OnInit {
       const isAuthPage = url.includes('/auth/login') || url.includes('/auth/register');
       this.showFooter.set(!isAuthPage);
       this.showNavbar.set(!isAuthPage);
-      this.showChatbot.set(!isAuthPage);
     });
   }
 }
