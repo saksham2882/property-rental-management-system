@@ -1,0 +1,67 @@
+<div class="card panel">
+  <div class="header">
+    <h2 class="title">📢 Issue System Notification</h2>
+  </div>
+
+  <form [formGroup]="broadcastForm" (submit)="submitBroadcast.emit(); $event.preventDefault();" class="form">
+    
+    <div class="form-group">
+      <label class="form-label">Target Recipient(s)</label>
+      <app-dropdown
+        [options]="targetUserOptions"
+        [value]="broadcastForm.get('targetUser')?.value"
+        placeholder="Select Recipient"
+        iconName="users"
+        (valueChange)="onTargetUserChange($event)">
+      </app-dropdown>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Notification Severity / Type</label>
+      <app-dropdown
+        [options]="typeOptions"
+        [value]="broadcastForm.get('type')?.value"
+        placeholder="Select Type"
+        iconName="alert-triangle"
+        (valueChange)="onTypeChange($event)">
+      </app-dropdown>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Notification Title</label>
+      <input 
+        type="text" 
+        formControlName="title" 
+        class="form-input"
+        placeholder="e.g. Scheduled Power Outage / Rent Invoice Issued"
+        [class.is-error]="broadcastForm.get('title')?.touched && broadcastForm.get('title')?.invalid" />
+      
+      @if (broadcastForm.get('title')?.touched && broadcastForm.get('title')?.invalid) {
+        <span class="form-error">Title must be at least 3 characters.</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Alert Message Content</label>
+      <textarea 
+        formControlName="message" 
+        class="form-textarea" 
+        rows="4"
+        placeholder="Enter descriptive details of the notice for tenants..."
+        [class.is-error]="broadcastForm.get('message')?.touched && broadcastForm.get('message')?.invalid">
+      </textarea>
+      
+      @if (broadcastForm.get('message')?.touched && broadcastForm.get('message')?.invalid) {
+        <span class="form-error">Message must be at least 5 characters.</span>
+      }
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="broadcastForm.invalid" class="btn btn-primary btn-block">
+        <app-icon name="send" size="sm"></app-icon>
+        <span>Send Notification</span>
+      </button>
+    </div>
+
+  </form>
+</div>
