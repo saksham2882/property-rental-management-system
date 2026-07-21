@@ -1,0 +1,217 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.ledger-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+  margin-top: 30px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-4);
+}
+
+.stat-title {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.stat-amount {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.text-warning {
+  color: var(--danger) !important;
+}
+
+.text-success {
+  color: var(--primary) !important;
+}
+
+.tab-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.tab-btn:hover {
+  color: var(--text);
+}
+
+.tab-btn.active {
+  background: var(--surface);
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.badge {
+  padding: 4px 8px;
+}
+
+.loading-box {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8);
+}
+
+.rent-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.rent-card {
+  display: grid;
+  grid-template-columns: 160px 1fr 140px 120px;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-xl);
+  transition: var(--transition);
+}
+
+.rent-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.rent-card.is-overdue {
+  border-left: 4px solid var(--danger);
+}
+
+.col-period {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.date-text {
+  margin-left: 5px;
+}
+
+.col-tenant {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.tenant-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--primary-bg);
+  color: var(--primary);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  font-family: var(--font-display);
+}
+
+.tenant-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.tenant-info .name {
+  margin: 0;
+}
+
+.col-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.amount-val {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--accent-dark);
+}
+
+.col-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.settled-badge {
+  padding: 6px 12px;
+}
+
+@media (max-width: 900px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .rent-card {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+
+  .col-amount {
+    align-items: flex-start;
+  }
+
+  .col-action {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .rent-card {
+    gap: var(--space-3);
+  }
+
+  .tab-bar {
+    flex-direction: column;
+  }
+}

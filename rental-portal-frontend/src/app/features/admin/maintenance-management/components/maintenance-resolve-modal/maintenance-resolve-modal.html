@@ -1,0 +1,53 @@
+<app-modal [isOpen]="isOpen" title="Update Work Order Ticket" size="md" (close)="close.emit()">
+
+  @if (request) {
+    <div class="intro">
+      <p class="subtitle">
+        Update issue status and log repair actions for ticket category <strong class="text-accent">{{ request.category }}</strong>.
+      </p>
+      <div class="quote">
+        <p>"{{ request.description }}"</p>
+      </div>
+    </div>
+  }
+
+  <form [formGroup]="resolveForm" (submit)="submitResolution.emit(); $event.preventDefault();" class="form">
+    <div class="form-group">
+      <label class="form-label">Work Order Status</label>
+      <app-dropdown
+        [options]="statusOptions"
+        [value]="resolveForm.get('status')?.value"
+        placeholder="Select Work Order Status"
+        (valueChange)="onStatusChange($event)">
+      </app-dropdown>
+
+      @if (resolveForm.get('status')?.touched && resolveForm.get('status')?.invalid) {
+        <span class="form-error">Please select a status.</span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Resolution / Action Log Note</label>
+      <textarea 
+        formControlName="adminNote" 
+        class="form-textarea" 
+        rows="4"
+        placeholder="Log details on technician assignment, material receipts, or completion notes..."
+        [class.is-error]="resolveForm.get('adminNote')?.touched && resolveForm.get('adminNote')?.invalid">
+      </textarea>
+
+      @if (resolveForm.get('adminNote')?.touched && resolveForm.get('adminNote')?.invalid) {
+        <span class="form-error">Action log notes are required.</span>
+      }
+    </div>
+
+    <div class="footer">
+      <button type="button" (click)="close.emit()" class="btn btn-secondary btn-block">
+        Cancel
+      </button>
+      <button type="submit" [disabled]="resolveForm.invalid" class="btn btn-primary btn-block">
+        Save Update
+      </button>
+    </div>
+  </form>
+</app-modal>

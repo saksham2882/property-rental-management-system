@@ -1,0 +1,102 @@
+<div class="sidebar-wrapper">
+
+  @if (!selectedTenant) {
+    <div class="sidebar-header">
+      <div class="title-group">
+        <app-icon name="users" size="md"></app-icon>
+        <h3 class="title">Customers</h3>
+      </div>
+      <span class="badge badge-primary">{{ sortedTenants.length }}</span>
+    </div>
+
+    <div class="sidebar-list">
+      @for (tenant of sortedTenants; track tenant.id) {
+
+        @let activeLease = getActiveLease(tenant.id);
+        @let tStatus = getTenantPaymentStatus(tenant.id);
+
+        <div class="card customer-card" (click)="onSelect(tenant)">
+          <div class="avatar">
+            {{ tenant.name.substring(0, 2) | uppercase }}
+          </div>
+
+          <div class="customer-info">
+            <span class="name truncate">{{ tenant.name }}</span>
+            <span class="subtext truncate">
+              {{ activeLease ? activeLease.propertyTitle : tenant.email }}
+            </span>
+          </div>
+
+          @if (tStatus === 'overdue') {
+            <span class="badge badge-danger">Overdue</span>
+          } 
+          @else if (tStatus === 'pending') {
+            <span class="badge badge-warning">Pending</span>
+          } 
+          @else if (tStatus === 'paid') {
+            <span class="badge badge-success">Active</span>
+          } 
+          @else {
+            <span class="badge badge-muted">No Lease</span>
+          }
+        </div>
+      }
+    </div>
+  } 
+  @else {
+    <div class="selected-tenant-view">
+      <button class="btn btn-secondary btn-sm btn-block" (click)="onClear()">
+        <app-icon name="arrow-left" size="sm"></app-icon>
+        <span>Back to Customers</span>
+      </button>
+
+      <div class="card selected-header-card">
+        <div class="avatar">
+          {{ selectedTenant.name.substring(0, 2) | uppercase }}
+        </div>
+        <div class="tenant-details">
+          <h4 class="name truncate">{{ selectedTenant.name }}</h4>
+          <span class="email truncate">{{ selectedTenant.email }}</span>
+        </div>
+      </div>
+
+      @let leasesList = getTenantLeases(selectedTenant.id);
+      <div class="section-title">
+        <app-icon name="file-text" size="sm"></app-icon>
+        <h4>Lease Agreements ({{ leasesList.length }})</h4>
+      </div>
+
+      <div class="sidebar-list">
+        @for (lease of leasesList; track lease.id) {
+
+          @let payStatus = getLeasePaymentStatus(lease.id);
+
+          <div class="card lease-card"
+               [class.is-selected]="selectedLeaseId === lease.id"
+               (click)="onLeaseClick(lease.id)">
+
+            <div class="lease-row-top">
+              <span class="property-title truncate">{{ lease.propertyTitle }}</span>
+              <span class="badge"
+                    [class.badge-danger]="payStatus === 'overdue'"
+                    [class.badge-warning]="payStatus === 'pending'"
+                    [class.badge-success]="payStatus === 'paid'">
+                {{ payStatus | uppercase }}
+              </span>
+            </div>
+
+            <div class="lease-row-bottom">
+              <span>{{ lease.startDate }} → {{ lease.endDate }}</span>
+              <span class="price-val">{{ lease.monthlyRent | priceFormat }}/mo</span>
+            </div>
+          </div>
+        } 
+        @empty {
+          <div class="empty-state-mini">
+            <p>No leases found for this customer.</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

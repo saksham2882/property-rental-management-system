@@ -1,0 +1,51 @@
+<div class="container animate-fadeIn">
+
+  <div class="page-header">
+    <div class="page-title-block">
+      <h1>Rent Management</h1>
+      <p>Track monthly rent billing, monitor collections, and view tenant payment ledgers.</p>
+    </div>
+
+    <button class="btn btn-primary" (click)="toggleForm()">
+      <app-icon name="plus" size="sm"></app-icon>
+      <span>Record Rent Invoice</span>
+    </button>
+  </div>
+
+  <div class="rent-split">
+    <div class="rent-split-left">
+      <app-rent-tenant-sidebar
+        [tenants]="tenants"
+        [leases]="leases"
+        [rents]="rents"
+        [selectedTenant]="selectedTenant"
+        [selectedLeaseId]="selectedLeaseId"
+        (selectTenant)="onSelectTenant($event)"
+        (clearTenant)="onClearTenant()"
+        (selectLease)="onSelectLease($event)">
+      </app-rent-tenant-sidebar>
+    </div>
+
+    <div>
+      <app-rent-list
+        [rents]="rents"
+        [tenantsMap]="tenantsMap"
+        [leases]="leases"
+        [selectedTenant]="selectedTenant"
+        [selectedLeaseId]="selectedLeaseId"
+        [loading]="(loading$ | async) || false"
+        (addInvoice)="toggleForm()"
+        (markPaid)="onMarkPaid($event)"
+        (clearLeaseFilter)="onClearLeaseFilter()">
+      </app-rent-list>
+    </div>
+  </div>
+
+  <app-create-rent-modal
+    [isOpen]="isFormOpen"
+    [rentForm]="rentForm"
+    [tenants]="tenants"
+    (close)="toggleForm()"
+    (submitRent)="onSubmit()">
+  </app-create-rent-modal>
+</div>
