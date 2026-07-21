@@ -41,7 +41,7 @@ RentEase Portal Backend is a robust Spring Boot 3 REST engine engineered to powe
 
 ---
 
-## 🔄 System Architecture & Flows
+## System Architecture & Flows
 
 ### Architectural Topology
 The application utilizes a classic Spring 3-Tier Layered Architecture (Controller -> Service -> Repository) coupled with custom Servlet security filters and third-party SaaS engines.
@@ -269,7 +269,7 @@ sequenceDiagram
 
 ---
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```text
 rental-portal-backend
@@ -359,7 +359,8 @@ rental-portal-backend
 
 ---
 
-## 🛠️ Tech Stack & Rationales
+## Tech Stack & Rationales
+<div style="overflow-x: auto;">
 
 | Library/Framework | Version | Purpose | Rationale |
 | :--- | :--- | :--- | :--- |
@@ -375,9 +376,11 @@ rental-portal-backend
 | **Lombok** | Runtime | Boilerplate Eliminator | Generates getters, setters, builders, and constructors dynamically. |
 | **SpringDoc OpenApi**| `2.8.5` | Dynamic REST OpenAPI schema | Generates interactive OpenAPI specifications and provides Swagger UI. |
 
+</div>
+
 ---
 
-## 🔌 REST API Documentation
+## REST API Documentation
 
 ### 🔑 Authorization Note
 - **Public Routes:** `/auth/**`, `/error`, Swagger routes (`/swagger-ui/**`, `/v3/api-docs/**`), and `GET /properties/**` are accessible anonymously.
@@ -838,7 +841,7 @@ Handles registration of accounts and issuance of secure JWT tokens.
 
 ---
 
-## 🛡️ Global Security, Validation & Exception Handling
+## Global Security, Validation & Exception Handling
 
 ### Security Authentication Lifecycle
 All protected API requests undergo dynamic verification in the backend pipelines:
@@ -860,6 +863,8 @@ The **GlobalExceptionHandler** translates uncaught system exceptions into a stan
 ```
 
 #### Exception Resolution Reference Table
+<div style="overflow-x: auto;">
+
 | Backend Class | Captured Event | Mapped HTTP Code | Sample Output Message |
 | :--- | :--- | :--- | :--- |
 | `ResourceNotFoundException` | Missing records in DB | `404 Not Found` | *Object not found* |
@@ -869,9 +874,11 @@ The **GlobalExceptionHandler** translates uncaught system exceptions into a stan
 | `AccessDeniedException` | User permissions role mismatch | `403 Forbidden` | *Access Denied: Access is denied* |
 | `Exception` | Unhandled system errors | `500 Server Error` | *An unexpected error occurred...* |
 
+</div>
+
 ---
 
-## ⏰ Automated Background Schedulers
+## Automated Background Schedulers
 The project includes a cron scheduler configuration `RentReminderScheduler` designed to automate operational alerts:
 - **Scan Frequency:** Executes every 5 minutes (`fixedRate = 300000ms`).
 - **Functionality:** Scans the database for rent records with `"pending"` or `"overdue"` status.
@@ -880,7 +887,7 @@ The project includes a cron scheduler configuration `RentReminderScheduler` desi
 
 ---
 
-## 🚀 Local Setup & Installation
+## Local Setup & Installation
 
 ### Prerequisites
 Make sure you have installed:
@@ -975,7 +982,7 @@ docker run -d \
 
 ---
 
-## 🔗 Quick Redirection Links
+## Quick Redirection Links
 - **Spring Initializr Configuration Reference Guides:**
   - View **HELP.md** for official Spring Guides links (Security, LDAP, Validation, Web, and Mongo).
 - **Interactive Swagger REST UI:**
@@ -988,7 +995,7 @@ docker run -d \
 ## 🙌 Contributing
 Contributions are welcome! If you have any ideas, suggestions, or bug reports, please open an issue or create a pull request.
 
-## 🔗 Contact Me
+## Contact Me
 - **Email:** [agrahari0899@gmail.com](mailto:agrahari0899@gmail.com)
 - **GitHub:** [@saksham2882](https://github.com/saksham2882)
 - **LinkedIn:** [@saksham-agrahari](https://www.linkedin.com/in/saksham-agrahari/)
