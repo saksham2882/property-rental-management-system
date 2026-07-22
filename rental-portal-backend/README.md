@@ -109,6 +109,7 @@ erDiagram
         list amenities
         list images
         string ownerId FK
+        string ownerName
         string postedAt
         double averageRating
         int totalReviews
@@ -145,6 +146,7 @@ erDiagram
         string applicationId FK
         string propertyId FK
         string tenantId FK
+        string landlordName
         string startDate
         string endDate
         double monthlyRent
@@ -468,6 +470,26 @@ Handles registration of accounts and issuance of secure JWT tokens.
 * **Failure Responses:**
   - `401 Unauthorized`: Bad password or invalid email (`Invalid email or password`).
 
+#### `POST /auth/guest`
+* **Description:** Authenticates or auto-registers a template guest user matching the role.
+* **Query Parameters:**
+  - `role` (String, `customer` or `admin`)
+* **Success Response (200 OK):**
+  ```json
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "user": {
+      "id": "guest-cus",
+      "name": "Guest Customer",
+      "email": "guest.customer@rentease.com",
+      "password": null,
+      "role": "customer",
+      "phone": "0000000000",
+      "createdAt": "2026-07-22"
+    }
+  }
+  ```
+
 ---
 
 ### 2. User Profiles & Wishlist (`/users`)
@@ -773,10 +795,11 @@ Handles registration of accounts and issuance of secure JWT tokens.
   - `file`: Multipart File (Allowed: JPEG, PNG, PDF, DOCX up to limit)
 * **Outcome:** Uploads the binary stream to Cloudinary storage.
 * **Robust Dev Fallback:** If Cloudinary config parameters are empty or dummy in `.env`, the endpoint falls back gracefully to returning a random pre-selected, high-quality Unsplash image link, ensuring local/developer instances remain fully functional without active API keys.
+* **Guest Mode Support:** If the authenticated caller is a guest user (ID starts with `guest-`), the file is not sent to Cloudinary. Instead, the endpoint immediately converts and returns the file as a client-side base64 data URL.
 * **Response (200 OK):**
   ```json
   {
-    "url": "https://res.cloudinary.com/cloudinary_cloud_name/image/upload/v171926/hash_name.pdf"
+    "url": "data:image/png;base64,iVBORw0KGgoAAAANS..."
   }
   ```
 

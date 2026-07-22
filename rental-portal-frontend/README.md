@@ -47,6 +47,10 @@ The frontend implements a curated design system directly via CSS Variables (`sty
 * **Interactive Landing Page:** Explore modern search sliders, property statistics, verified customer reviews, and general onboarding directions.
 * **Advanced Catalog Filtering:** Filter through properties in real-time by city, configuration (bedrooms/bathrooms), budget range, area range, furnishing status, and full-text keywords.
 * **Property Details & Reviews:** View comprehensive property images, descriptions, pricing breakdowns, amenities, and user-submitted feedback (including dynamically computed average ratings).
+* **Guest Onboarding Access:** Instant login without credentials via "Guest Customer" or "Guest Landlord" buttons directly on the authentication forms.
+* **Locked-Action Signup Modal:** Attempting to execute mutating actions (submitting applications, drafting leases, paying rent, reporting maintenance, editing profiles) triggers an elegant global Signup/Login Prompt Modal.
+* **Local Image Previews:** Uploads during guest mode bypass third-party servers and are immediately rendered client-side as temporary Base64 data URLs.
+* **Privacy-Enhanced Directories:** Lists only other guest customer accounts on the tenant dashboard when logged in as a guest admin.
 
 ### 🔑 Authentication & Profiles
 * **JWT Authentication:** Simple Register/Login with client-side form validation.
@@ -112,7 +116,7 @@ The store is split into seven domain state slices: `auth`, `properties`, `applic
 ### HTTP Request Interception Lifecycle
 All outgoing requests are intercepted and enriched via dynamic Angular Functional Interceptors:
 
-1. **`authInterceptor`:** Checks local storage for a valid JWT token, injecting it as an `Authorization: Bearer <token>` header. Additionally, if the backend returns a `401 Unauthorized` or `403 Forbidden` response, it automatically dispatches a store `logout()` action to securely purge the session.
+1. **`authInterceptor`:** Checks local storage for a valid JWT token, injecting it as an `Authorization: Bearer <token>` header. If the backend returns a `401 Unauthorized` or `403 Forbidden` response for a regular user, it automatically dispatches a store `logout()` action to securely purge the session. However, if the current user is a guest, intercepting a 403 or 400 error triggers the global `GuestModalService` to show the signup modal instead of triggering a session logout.
 2. **`cacheInterceptor`:** Optimizes network load by locally caching read-only GET queries for `/properties`, `/leases`, and `/rents`. If a user makes a mutating request (POST, PATCH, DELETE), the cache is automatically invalidated to guarantee fresh data representation.
 3. **`loaderInterceptor`:** Tracks mutating HTTP transactions to toggle a global page loading indicator, preventing double-clicks and enhancing overall user responsiveness.
 
@@ -128,6 +132,7 @@ flowchart TD
     Guest[👤 Guest User] -->|Explore| Landing["Landing Page / Hero Section"]
     Guest -->|Browse| Search["Property Catalog & Advanced Filters"]
     Guest -->|Register & Login| Auth["Authentication & Registration Module"]
+    Guest -->|One-Click Entry| GuestDashboard["Dashboard (Guest Customer / Landlord)"]
 ```
 
 ### 🔑 Tenant (Customer) Use Cases

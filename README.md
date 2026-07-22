@@ -23,20 +23,15 @@ RentEase Portal is a comprehensive, full-stack real estate platform engineered t
 3. [Full-Stack Architecture Topology](#-full-stack-architecture-topology)
 4. [Role-Based Feature Matrix](#-role-based-feature-matrix)
 5. [Role-Based Use Case Diagrams](#-role-based-use-case-diagrams)
-6. [Core System Workflows](#-core-system-workflows)
-   - [Lease E-Signature Workflow](#lease-e-signature-workflow)
-   - [Razorpay Rent Payment Lifecycle](#razorpay-rent-payment-lifecycle)
-   - [Reactive NgRx State Transition Loop](#reactive-ngrx-state-transition-loop)
-   - [Maintenance Repair Ticket Lifecycle](#maintenance-repair-ticket-lifecycle)
-7. [Database Schema & ERD Overview](#-database-schema--erd-overview)
-8. [Technology Stack & Rationales](#-technology-stack--rationales)
-9. [Detailed REST API Endpoints Summary](#-detailed-rest-api-endpoints-summary)
-10. [Local Environment Setup & Configuration](#-local-environment-setup--configuration)
+6. [Database Schema & ERD Overview](#-database-schema--erd-overview)
+7. [Technology Stack & Rationales](#-technology-stack--rationales)
+8. [Detailed REST API Endpoints Summary](#-detailed-rest-api-endpoints-summary)
+9. [Local Environment Setup & Configuration](#-local-environment-setup--configuration)
     - [Parent Workspace Setup (.env)](#parent-workspace-setup-env)
     - [Backend Service Setup](#backend-service-setup)
     - [Frontend Web App Setup](#frontend-web-app-setup)
-11. [Detailed Documentation Modules](#-detailed-documentation-modules)
-12. [Contact & Support](#-contact--support)
+10. [Detailed Documentation Modules](#-detailed-documentation-modules)
+11. [Contact & Support](#-contact--support)
 
 ---
 
@@ -95,6 +90,19 @@ Below are high-fidelity user interface previews demonstrating the application's 
 ## 💡 Project Overview
 
 The project is architected around the core goal of eliminating operational bottlenecks in residential and commercial leasing. RentEase Portal provides a secure, fully automated path from a tenant's initial search query to moving in and settling rent bills.
+
+### 🛡️ Key Architectural Security Features
+
+#### 1. Multi-Tenant / Multi-Landlord Isolation (Scenario 2)
+* **Isolated Dashboards:** Each Landlord/Admin manages only their own property listings, received rental applications, drafted leases, monthly invoices, and tenant maintenance tickets.
+* **Strict Security Boundaries:** Cross-landlord access is blocked at the database and service layers. For example, trying to view or mutate an application, lease, rent record, or maintenance request for a property owned by another landlord throws an `AccessDeniedException` (HTTP 403).
+* **Dynamic Tenant-to-Landlord Mapping:** Customer interfaces adapt dynamically to display the specific landlord's name, email, and signature across rental applications, digitally signed leases, and generated PDF invoice receipts instead of generic portal branding.
+
+#### 2. Guest Mode (Read-Only Exploration)
+* **Zero-Credential Access:** Users can explore both the Tenant and Landlord dashboards directly from the login/register forms using "Guest Customer" or "Guest Landlord" buttons.
+* **Strict Mutation Interception:** Guest accounts (identified by a `"guest-"` prefix) are restricted from write operations. Any attempt to post property, submit an application, sign a lease, create invoices, pay rents, file maintenance tickets, or modify profiles returns a block from the backend and triggers a premium global signup prompt modal on the frontend.
+* **Ephemeral Uploads:** Image uploads (properties, tickets, or signatures) during guest mode are converted directly to temporary client-rendered Base64 data URLs, completely bypassing third-party Cloudinary APIs.
+* **Privacy-Enhanced Directories:** Tenant listings in the guest admin panel are filtered, showing only other guest profiles to prevent exposure of real customer credentials.
 
 ---
 
@@ -157,6 +165,7 @@ flowchart TD
     Guest[👤 Guest User] -->|Explore| Landing["Landing Page / Hero Section"]
     Guest -->|Browse| Search["Property Catalog & Advanced Filters"]
     Guest -->|Register & Login| Auth["Authentication & Registration Module"]
+    Guest -->|One-Click Entry| GuestDashboard["Dashboard (Guest Customer / Landlord)"]
 ```
 
 ### Tenant (Customer) Use Cases
@@ -224,6 +233,7 @@ erDiagram
         list amenities
         list images
         string ownerId FK
+        string ownerName
         string postedAt
         double averageRating
         int totalReviews
@@ -260,6 +270,7 @@ erDiagram
         string applicationId FK
         string propertyId FK
         string tenantId FK
+        string landlordName
         string startDate
         string endDate
         double monthlyRent
