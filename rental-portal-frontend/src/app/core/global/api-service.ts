@@ -10,7 +10,7 @@ import { ToastService } from '../services/toast-service';
 })
 export class ApiService {
   
-  private baseUrl = 'http://localhost:8080';
+  private baseUrl = 'https://rentease-backend-ot1y.onrender.com';
 
   constructor(
     private http: HttpClient,
