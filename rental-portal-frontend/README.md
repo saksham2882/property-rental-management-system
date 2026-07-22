@@ -212,40 +212,8 @@ flowchart TD
 
 ---
 
-## Routing & Navigation Flow
-Routes are secured using role-based guards, lazy-loading components on demand to optimize initial load times.
-
-```mermaid
-flowchart TD
-    A[App Startup] --> B{"Logged In?"}
-    B -->|No| C[Guest Routes]
-    B -->|Yes / Role: Admin| D[Protected Admin Routes]
-    B -->|Yes / Role: Customer| E[Protected Customer Routes]
-
-    subgraph Guest Routes
-        C --> C1["Landing Page: /"]
-        C --> C2["Login: /auth/login"]
-        C --> C3["Register: /auth/register"]
-    end
-
-    subgraph Protected Admin Routes
-        D --> D1["Dashboard: /admin/dashboard"]
-        D --> D2["Properties CRUD: /admin/properties"]
-        D --> D3["Review Apps: /admin/applications"]
-        D --> D4["Rent Tracking: /admin/rent"]
-        D --> D5["Maintenance: /admin/maintenance"]
-    end
-
-    subgraph Protected Customer Routes
-        E --> E1["Dashboard: /customer/dashboard"]
-        E --> E2["Property Catalog: /customer/properties"]
-        E --> E3["Detail & Reviews: /customer/properties/:id"]
-        E --> E4["Apply Form: /customer/apply/:propertyId"]
-        E --> E5["Active Lease: /customer/lease"]
-        E --> E6["Rent Payment: /customer/rent"]
-        E --> E7["Maintenance Request: /customer/maintenance"]
-    end
-```
+## 🛣️ Routing & Navigation Flow
+The application utilizes role-based routing guards to secure views. Below is the Routing Matrix showing access rules and component mappings.
 
 ### Routing Matrix
 <div style="overflow-x: auto;">
