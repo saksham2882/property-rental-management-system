@@ -120,39 +120,36 @@ All outgoing requests are intercepted and enriched via dynamic Angular Functiona
 
 ## Role-Based Use Case Diagrams
 
-The following diagram illustrates system capabilities mapped across Guest, Tenant (Customer), and Landlord/Admin actors:
+The following diagrams illustrate system capabilities separated by role to ensure clean, readable layout structures:
 
+### 👤 Guest User Use Cases
 ```mermaid
 flowchart TD
-    subgraph Roles
-        Guest[👤 Guest User]
-        Customer[🔑 Authenticated Tenant]
-        Admin[🏢 Administrator / Landlord]
-    end
+    Guest[👤 Guest User] -->|Explore| Landing["Landing Page / Hero Section"]
+    Guest -->|Browse| Search["Property Catalog & Advanced Filters"]
+    Guest -->|Register & Login| Auth["Authentication & Registration Module"]
+```
 
-    subgraph Guest Actions
-        Guest -->|Explore| Landing[Landing Page / Hero Section]
-        Guest -->|Browse| Search[Property Catalog & Filters]
-        Guest -->|Register/Login| Auth[Authentication Module]
-    end
+### 🔑 Tenant (Customer) Use Cases
+```mermaid
+flowchart TD
+    Customer[🔑 Authenticated Tenant] -->|Apply| AppSubmit["Submit Rental Application"]
+    Customer -->|Review & Sign| LeaseSign["E-Signature on Lease Canvas"]
+    Customer -->|Pay Bills| PayRent["Razorpay Online Rent Checkout"]
+    Customer -->|Report Problems| MainReq["Raise Maintenance Ticket"]
+    Customer -->|Read Alerts| Alerts["Notifications Center"]
+    Customer -->|Preferences| Profile["Manage Profile & Wishlist"]
+```
 
-    subgraph Tenant Actions
-        Customer -->|Apply| AppSubmit[Submit Rental Application]
-        Customer -->|Review & Sign| LeaseSign[E-Signature on Lease Canvas]
-        Customer -->|Pay Bills| PayRent[Razorpay Online Rent Checkout]
-        Customer -->|Report Problems| MainReq[Raise Maintenance Ticket]
-        Customer -->|Read Alerts| Alerts[Notifications Center]
-        Customer -->|Preferences| Profile[Manage Profile & Wishlist]
-    end
-
-    subgraph Admin Actions
-        Admin -->|Monitor| AdminDash[Analytics & Revenue Graphs]
-        Admin -->|Control Listings| PropertyCRUD[Property Listings CRUD]
-        Admin -->|Verify Docs| AppAudit[Approve/Reject Applications]
-        Admin -->|Draft Leases| LeaseGen[Generate Lease Agreements]
-        Admin -->|Invoice Management| RentBill[Create/Manage Rent Invoices]
-        Admin -->|Dispatch Repairs| ResolveMain[Update Maintenance Tickets]
-    end
+### 🏢 Landlord / Admin Use Cases
+```mermaid
+flowchart TD
+    Admin[🏢 Administrator / Landlord] -->|Monitor| AdminDash["Analytics & Revenue Graphs"]
+    Admin -->|Control Listings| PropertyCRUD["Property Listings CRUD"]
+    Admin -->|Verify Docs| AppAudit["Approve/Reject Applications"]
+    Admin -->|Draft Leases| LeaseGen["Generate Lease Agreements"]
+    Admin -->|Invoice Management| RentBill["Create/Manage Rent Invoices"]
+    Admin -->|Dispatch Repairs| ResolveMain["Update Maintenance Tickets"]
 ```
 
 ---
@@ -160,21 +157,21 @@ flowchart TD
 ## System Workflow Diagrams
 
 ### NgRx State Transition Workflow
-This flowchart outlines the reactive data architecture where state is updated predictably following components actions:
+This flowchart outlines the reactive data architecture where state is updated predictably following component actions in a vertical data pipeline:
 
 ```mermaid
-flowchart LR
-    UI[🖥️ Angular Component] -->|1. Dispatch Action| Action[actions / e.g. loadProperties]
-    Action -->|2. Triggers| Reducer[reducers / State Redux]
-    Action -->|2. Intercepts| Effect[effects / Side-Effects]
+flowchart TD
+    UI[🖥️ Angular Component] -->|1. Dispatch Action| Action["actions / e.g. loadProperties"]
+    Action -->|2. Triggers| Reducer["reducers / State Redux"]
+    Action -->|2. Intercepts| Effect["effects / Side-Effects"]
     
-    Effect -->|3. REST API Request| Service[HTTP Core Services]
+    Effect -->|3. REST API Request| Service["HTTP Core Services"]
     Service -->|4. Response| Effect
-    Effect -->|5. Success Action| ActionSuccess[actions / loadPropertiesSuccess]
+    Effect -->|5. Success Action| ActionSuccess["actions / loadPropertiesSuccess"]
     ActionSuccess -->|6. Map New Data| Reducer
     
-    Reducer -->|7. Update State| Store[State Store]
-    Store -->|8. Stream Selection| Selector[selectors / Memoized State]
+    Reducer -->|7. Update State| Store["State Store"]
+    Store -->|8. Stream Selection| Selector["selectors / Memoized State"]
     Selector -->|9. Async pipe update| UI
 ```
 
@@ -183,20 +180,20 @@ Process showing the step-by-step transaction flow from ordering to invoice gener
 
 ```mermaid
 flowchart TD
-    Start[Invoice Due] -->|1. POST /rents/{id}/order| Order[Create Razorpay Order]
-    Order -->|2. Binds razorpayOrderId| SaveDB[Store Order in DB]
-    SaveDB -->|3. Checkout Parameters Sent| RenderSDK[Render Razorpay Checkout UI]
-    RenderSDK -->|4. Complete Transaction| ProcessPayment[Razorpay Gateway Processing]
-    ProcessPayment -->|5. Success Payload Returned| Verify[POST /rents/{id}/verify]
+    Start[Invoice Due] -->|"1. POST /rents/{id}/order"| Order["Create Razorpay Order"]
+    Order -->|2. Binds razorpayOrderId| SaveDB["Store Order in DB"]
+    SaveDB -->|3. Checkout Parameters Sent| RenderSDK["Render Razorpay Checkout UI"]
+    RenderSDK -->|4. Complete Transaction| ProcessPayment["Razorpay Gateway Processing"]
+    ProcessPayment -->|"5. Success Payload Returned"| Verify["POST /rents/{id}/verify"]
     
     subgraph Signature Validation
-        Verify -->|6. Calculate HMAC-SHA-256| CheckSig{Signature Valid?}
+        Verify -->|6. Calculate HMAC-SHA-256| CheckSig{"Signature Valid?"}
     end
     
-    CheckSig -->|No| Fail[Return 400 Bad Request]
-    CheckSig -->|Yes| Settle[Set Rent Status: 'paid' & Binds Transaction Details]
-    Settle -->|7. Generate Invoices| PdfGen[OpenPDF Renders Receipt Layout]
-    PdfGen -->|8. Notify User & Admin| Notification[System Alerts Dispatched]
+    CheckSig -->|No| Fail["Return 400 Bad Request"]
+    CheckSig -->|Yes| Settle["Set Rent Status: 'paid' & Binds Transaction Details"]
+    Settle -->|7. Generate Invoices| PdfGen["OpenPDF Renders Receipt Layout"]
+    PdfGen -->|8. Notify User & Admin| Notification["System Alerts Dispatched"]
 ```
 
 ### Maintenance Ticket Lifecycle
@@ -204,51 +201,19 @@ Lifecycle workflow of tenant complaints resolved by administrators:
 
 ```mermaid
 flowchart TD
-    Tenant[Tenant / Tenant Panel] -->|1. Raises Ticket / Uploads Images| Raised[Status: raised]
-    Raised -->|2. Alert Received| Admin[Admin / Ticket Dashboard]
-    Admin -->|3. Set Work In Progress / Note Added| Processing[Status: in progress]
-    Processing -->|4. Dispatch Repair Services| Fix[Repair Done / Issue Resolved]
-    Fix -->|5. Resolve Ticket / Admin Note Saved| Resolved[Status: resolved]
-    Resolved -->|6. Logs Date & Time| Completed[Audit Log Saved]
-    Completed -->|7. Notify Tenant| Notify[Status: resolved notification sent]
+    Tenant[Tenant / Tenant Panel] -->|1. Raises Ticket / Uploads Images| Raised["Status: raised"]
+    Raised -->|2. Alert Received| Admin["Admin / Ticket Dashboard"]
+    Admin -->|3. Set Work In Progress / Note Added| Processing["Status: in progress"]
+    Processing -->|4. Dispatch Repair Services| Fix["Repair Done / Issue Resolved"]
+    Fix -->|5. Resolve Ticket / Admin Note Saved| Resolved["Status: resolved"]
+    Resolved -->|6. Logs Date & Time| Completed["Audit Log Saved"]
+    Completed -->|7. Notify Tenant| Notify["Status: resolved notification sent"]
 ```
 
 ---
 
-## Routing & Navigation Flow
-Routes are secured using role-based guards, lazy-loading components on demand to optimize initial load times.
-
-```mermaid
-graph TD
-    A[App Startup] --> B{Logged In?}
-    B -->|No| C[Guest Routes]
-    B -->|Yes / Role: Admin| D[Protected Admin Routes]
-    B -->|Yes / Role: Customer| E[Protected Customer Routes]
-
-    subgraph Guest Routes
-        C --> C1[Landing Page: /]
-        C --> C2[Login: /auth/login]
-        C --> C3[Register: /auth/register]
-    end
-
-    subgraph Protected Admin Routes
-        D --> D1[Dashboard: /admin/dashboard]
-        D --> D2[Properties CRUD: /admin/properties]
-        D --> D3[Review Apps: /admin/applications]
-        D --> D4[Rent Tracking: /admin/rent]
-        D --> D5[Maintenance: /admin/maintenance]
-    end
-
-    subgraph Protected Customer Routes
-        E --> E1[Dashboard: /customer/dashboard]
-        E --> E2[Property Catalog: /customer/properties]
-        E --> E3[Detail & Reviews: /customer/properties/:id]
-        E --> E4[Apply Form: /customer/apply/:propertyId]
-        E --> E5[Active Lease: /customer/lease]
-        E --> E6[Rent Payment: /customer/rent]
-        E --> E7[Maintenance Request: /customer/maintenance]
-    end
-```
+## 🛣️ Routing & Navigation Flow
+The application utilizes role-based routing guards to secure views. Below is the Routing Matrix showing access rules and component mappings.
 
 ### Routing Matrix
 <div style="overflow-x: auto;">
