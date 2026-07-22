@@ -2,12 +2,18 @@ package com.rental.portal.service;
 
 import com.rental.portal.model.*;
 import com.rental.portal.repository.*;
+import com.rental.portal.security.UserPrincipal;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Service
 public class AnalyticsService {
@@ -28,24 +34,49 @@ public class AnalyticsService {
     private RentalApplicationRepository rentalApplicationRepository;
 
 
+    private String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            return ((UserPrincipal) authentication.getPrincipal()).getUser().getId();
+        }
+        return null;
+    }
+
     public Map<String, Object> getAdminStats() {
-        List<Property> properties = propertyRepository.findAll();
+        String currentUserId = getCurrentUserId();
+        List<Property> properties = new ArrayList<>();
+        List<Lease> leases = new ArrayList<>();
+        List<Rent> rents = new ArrayList<>();
+        List<MaintenanceRequest> requests = new ArrayList<>();
+        List<RentalApplication> applications = new ArrayList<>();
+
+        if (currentUserId != null) {
+            properties = propertyRepository.findByOwnerId(currentUserId);
+            List<String> ownedPropertyIds = properties.stream().map(Property::getId).collect(Collectors.toList());
+
+            if (!ownedPropertyIds.isEmpty()) {
+                leases = leaseRepository.findByPropertyIdIn(ownedPropertyIds);
+                requests = maintenanceRequestRepo.findByPropertyIdIn(ownedPropertyIds);
+                applications = rentalApplicationRepository.findByPropertyIdIn(ownedPropertyIds);
+                
+                List<String> leaseIds = leases.stream().map(Lease::getId).collect(Collectors.toList());
+                if (!leaseIds.isEmpty()) {
+                    rents = rentRepository.findByLeaseIdIn(leaseIds);
+                }
+            }
+        }
+
         long totalProperties = properties.size();
         long occupiedProperties = properties.stream()
                 .filter(p -> Boolean.FALSE.equals(p.getAvailable()))
                 .count();
 
-        List<Rent> rents = rentRepository.findAll();
         double totalRevenue = rents.stream()
                 .filter(r -> "paid".equalsIgnoreCase(r.getStatus()))
                 .mapToDouble(Rent::getAmount)
                 .sum();
 
-        List<MaintenanceRequest> requests = maintenanceRequestRepo.findAll();
-        List<RentalApplication> applications = rentalApplicationRepository.findAll();
-        List<Lease> leases = leaseRepository.findAll();
         Map<String, Integer> maintenanceStatus = new HashMap<>();
-
         for (MaintenanceRequest r : requests) {
             String status = r.getStatus();
             if (status != null) {

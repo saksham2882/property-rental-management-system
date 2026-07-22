@@ -31,10 +31,11 @@ public class PropertyController {
             @RequestParam(required = false) Double rentMax,
             @RequestParam(required = false) Integer areaMin,
             @RequestParam(required = false) Integer areaMax,
-            @RequestParam(required = false) String search
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String ownerId
         ) {
         List<Property> properties = propertyService.getProperties(
-                city, type, bedrooms, furnishing, available, rentMin, rentMax, areaMin, areaMax, search
+                city, type, bedrooms, furnishing, available, rentMin, rentMax, areaMin, areaMax, search, ownerId
         );
         return ResponseEntity.ok(properties);
     }

@@ -8,7 +8,10 @@ import com.rental.portal.model.Lease;
 import com.rental.portal.model.Property;
 import com.rental.portal.model.Rent;
 import com.rental.portal.model.User;
+import com.rental.portal.repository.UserRepository;
+
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
@@ -18,6 +21,9 @@ import java.util.Locale;
 
 @Service
 public class PdfGenerationService {
+
+    @Autowired
+    private UserRepository userRepository;
 
     public byte[] generateRentInvoice(Rent rent, User tenant, Lease lease, Property property) throws DocumentException, IOException {
 
@@ -96,11 +102,21 @@ public class PdfGenerationService {
         billingTable.addCell(tenantCell);
 
         // Landlord Details
+        String landlordName = "RentEase Landlord";
+        String landlordEmail = "support@rentease.com";
+        if (property != null && property.getOwnerId() != null) {
+            User landlord = userRepository.findById(property.getOwnerId()).orElse(null);
+            if (landlord != null) {
+                landlordName = landlord.getName();
+                landlordEmail = landlord.getEmail();
+            }
+        }
+
         PdfPCell landlordCell = new PdfPCell();
         landlordCell.setBorder(Rectangle.NO_BORDER);
         landlordCell.addElement(new Paragraph("LANDLORD / ISSUER", sectionTitleFont));
-        landlordCell.addElement(new Paragraph("Issued By: RentEase", bodyFont));
-        landlordCell.addElement(new Paragraph("Support: support@rentease.com", bodyFont));
+        landlordCell.addElement(new Paragraph("Issued By: " + landlordName, bodyFont));
+        landlordCell.addElement(new Paragraph("Support: " + landlordEmail, bodyFont));
         landlordCell.addElement(new Paragraph("Status: " + rent.getStatus().toUpperCase(), boldFont));
         billingTable.addCell(landlordCell);
 

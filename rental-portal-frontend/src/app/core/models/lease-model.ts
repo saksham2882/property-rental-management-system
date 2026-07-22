@@ -12,5 +12,6 @@ export interface Lease {
   propertyTitle: string;
   signatureImage?: string;
   contractText?: string;
+  landlordName?: string;
   createdAt?: string;
 }

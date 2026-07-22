@@ -10,4 +10,6 @@ public interface RentalApplicationRepository extends MongoRepository<RentalAppli
     List<RentalApplication> findByCustomerId(String customerId);
 
     List<RentalApplication> findByPropertyId(String propertyId);
+
+    List<RentalApplication> findByPropertyIdIn(List<String> propertyIds);
 }

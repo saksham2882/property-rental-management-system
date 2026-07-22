@@ -63,7 +63,11 @@ public class AuthService {
 
         user.setId(UUID.randomUUID().toString().substring(0, 8));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("customer");
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("customer");
+        } else {
+            user.setRole(user.getRole().toLowerCase());
+        }
         user.setCreatedAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
         User result = userRepository.save(user);

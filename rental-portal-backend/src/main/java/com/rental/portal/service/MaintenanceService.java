@@ -53,12 +53,31 @@ public class MaintenanceService {
                 if (!isAdmin && !isOwnRecord) {
                     throw new AccessDeniedException("You are not authorized to access this tenant's maintenance requests");
                 }
+
+                if (isAdmin) {
+                    List<String> ownedPropertyIds = propertyRepo.findByOwnerId(currentUser.getId()).stream()
+                            .map(Property::getId)
+                            .collect(java.util.stream.Collectors.toList());
+                    if (ownedPropertyIds.isEmpty()) {
+                        return new java.util.ArrayList<>();
+                    }
+                    return maintenanceRequestRepo.findByPropertyIdIn(ownedPropertyIds).stream()
+                            .filter(r -> tenantId.equals(r.getTenantId()))
+                            .collect(java.util.stream.Collectors.toList());
+                }
                 return maintenanceRequestRepo.findByTenantId(tenantId);
             }
 
             if ("ADMIN".equalsIgnoreCase(userRole)) {
-                return maintenanceRequestRepo.findAll();
-            } else {
+                List<String> ownedPropertyIds = propertyRepo.findByOwnerId(currentUser.getId()).stream()
+                        .map(Property::getId)
+                        .collect(java.util.stream.Collectors.toList());
+                if (ownedPropertyIds.isEmpty()) {
+                    return new java.util.ArrayList<>();
+                }
+                return maintenanceRequestRepo.findByPropertyIdIn(ownedPropertyIds);
+            } 
+            else {
                 return maintenanceRequestRepo.findByTenantId(currentUser.getId());
             }
         }
@@ -105,10 +124,15 @@ public class MaintenanceService {
                     .build();
             notificationRepo.save(tenantNotif);
 
+            String propertyOwnerId = "1";
+            if (propOpt.isPresent() && propOpt.get().getOwnerId() != null) {
+                propertyOwnerId = propOpt.get().getOwnerId();
+            }
+
             // Admin notification
             Notification adminNotif = Notification.builder()
                     .id(UUID.randomUUID().toString().substring(0, 8))
-                    .userId("1")
+                    .userId(propertyOwnerId)
                     .title("New Support Request")
                     .message("A new support request #" + request.getId() + " (" + request.getCategory() + ") has been raised by " + tenantName + " for unit \"" + propertyTitle + "\".")
                     .type("warning")
@@ -131,6 +155,20 @@ public class MaintenanceService {
         }
 
         MaintenanceRequest request = reqOpt.get();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            User currentUser = userPrincipal.getUser();
+
+            if ("ADMIN".equalsIgnoreCase(currentUser.getRole())) {
+                Optional<Property> prop = propertyRepo.findById(request.getPropertyId());
+                if (prop.isPresent() && !currentUser.getId().equals(prop.get().getOwnerId())) {
+                    throw new AccessDeniedException("You do not own the property for this request");
+                }
+            }
+        }
+
         if (updateData.getStatus() != null) {
             request.setStatus(updateData.getStatus());
 
