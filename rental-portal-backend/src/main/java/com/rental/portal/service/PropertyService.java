@@ -4,10 +4,17 @@ import com.rental.portal.model.Property;
 import com.rental.portal.model.Review;
 import com.rental.portal.repository.PropertyRepository;
 import com.rental.portal.repository.ReviewRepository;
+import com.rental.portal.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.rental.portal.security.UserPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -29,8 +36,20 @@ public class PropertyService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private UserRepository userRepository;
 
-    public List<Property> getProperties(String city, String type, Integer bedrooms, String furnishing, Boolean available, Double rentMin, Double rentMax, Integer areaMin, Integer areaMax, String search) {
+
+    private String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            return ((UserPrincipal) authentication.getPrincipal()).getUser().getId();
+        }
+        return null;
+    }
+
+
+    public List<Property> getProperties(String city, String type, Integer bedrooms, String furnishing, Boolean available, Double rentMin, Double rentMax, Integer areaMin, Integer areaMax, String search, String ownerId) {
         Query query = new Query();
 
         if (city != null && !city.isEmpty()) {
@@ -72,12 +91,32 @@ public class PropertyService {
             query.addCriteria(searchCriteria);
         }
 
-        return mongoTemplate.find(query, Property.class);
+        if (ownerId != null && !ownerId.isEmpty()) {
+            query.addCriteria(Criteria.where("ownerId").is(ownerId));
+        }
+
+        List<Property> properties = mongoTemplate.find(query, Property.class);
+        populateOwnerNames(properties);
+        return properties;
+    }
+
+    private void populateOwnerNames(List<Property> properties) {
+        for (Property p : properties) {
+            if (p.getOwnerId() != null) {
+                userRepository.findById(p.getOwnerId()).ifPresent(u -> p.setOwnerName(u.getName()));
+            }
+        }
     }
 
 
     public Optional<Property> getPropertyById(String id) {
-        return propertyRepository.findById(id);
+        Optional<Property> prop = propertyRepository.findById(id);
+        prop.ifPresent(p -> {
+            if (p.getOwnerId() != null) {
+                userRepository.findById(p.getOwnerId()).ifPresent(u -> p.setOwnerName(u.getName()));
+            }
+        });
+        return prop;
     }
 
 
@@ -86,6 +125,12 @@ public class PropertyService {
         property.setPostedAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         if (property.getAvailable() == null) {
             property.setAvailable(true);
+        }
+
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null) {
+            property.setOwnerId(currentUserId);
+            userRepository.findById(currentUserId).ifPresent(u -> property.setOwnerName(u.getName()));
         }
         return propertyRepository.save(property);
     }
@@ -98,6 +143,10 @@ public class PropertyService {
         }
 
         Property property = propOpt.get();
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && !currentUserId.equals(property.getOwnerId())) {
+            throw new AccessDeniedException("You do not own this property");
+        }
 
         if (updateData.getTitle() != null) property.setTitle(updateData.getTitle());
         if (updateData.getCity() != null) property.setCity(updateData.getCity());
@@ -120,8 +169,14 @@ public class PropertyService {
 
 
     public boolean deleteProperty(String id) {
-        if (!propertyRepository.existsById(id)) {
+        Optional<Property> propOpt = propertyRepository.findById(id);
+        if (propOpt.isEmpty()) {
             return false;
+        }
+
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && !currentUserId.equals(propOpt.get().getOwnerId())) {
+            throw new AccessDeniedException("You do not own this property");
         }
         propertyRepository.deleteById(id);
         return true;

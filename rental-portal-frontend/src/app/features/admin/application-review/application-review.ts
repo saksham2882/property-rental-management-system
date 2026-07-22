@@ -6,6 +6,7 @@ import { Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { selectAllApplications, selectApplicationsLoading } from '../../../store/applications/applications.selectors';
 import { selectAllProperties } from '../../../store/properties/properties.selectors';
+import { selectCurrentUser } from '../../../store/auth/auth.selectors';
 import { loadApplications, updateApplicationStatus } from '../../../store/applications/applications.actions';
 import { loadProperties } from '../../../store/properties/properties.actions';
 import { createLease } from '../../../store/leases/leases.actions';
@@ -34,9 +35,11 @@ export class ApplicationReviewComponent implements OnInit, OnDestroy {
   applications$ = this.store.select(selectAllApplications);
   properties$ = this.store.select(selectAllProperties);
   loading$ = this.store.select(selectApplicationsLoading);
+  currentUser$ = this.store.select(selectCurrentUser);
 
   applications: RentalApplication[] = [];
   propertiesMap = new Map<string, Property>();
+  adminName = 'Administrator';
 
   isDetailsModalOpen = false;
   selectedAppForDetails: RentalApplication | null = null;
@@ -59,7 +62,12 @@ export class ApplicationReviewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store.dispatch(loadApplications({}));
-    this.store.dispatch(loadProperties({}));
+    this.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
+      if (user) {
+        this.adminName = user.name;
+        this.store.dispatch(loadProperties({ filters: { ownerId: user.id } }));
+      }
+    });
 
     this.properties$.pipe(takeUntil(this.destroy$)).subscribe(props => {
       const newMap = new Map<string, Property>();
@@ -169,7 +177,7 @@ export class ApplicationReviewComponent implements OnInit, OnDestroy {
       conditions: formValues.conditions,
       propertyTitle: property?.title || 'Rental Space',
       status: 'pending_signature',
-      contractText: generateLeaseAgreement(this.selectedApp, formValues, property),
+      contractText: generateLeaseAgreement(this.selectedApp, formValues, property, this.adminName),
       createdAt: new Date().toISOString()
     };
 

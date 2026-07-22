@@ -8,14 +8,21 @@ import com.rental.portal.repository.RentalApplicationRepository;
 import com.rental.portal.repository.NotificationRepository;
 import com.rental.portal.repository.PropertyRepository;
 import com.rental.portal.repository.UserRepository;
+import com.rental.portal.security.UserPrincipal;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -33,23 +40,91 @@ public class ApplicationService {
     private UserRepository userRepo;
 
 
-    public List<RentalApplication> getApplications(String customerId, String propertyId) {
-        if (customerId != null) {
-            return rentalAppRepo.findByCustomerId(customerId);
+    private String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            return ((UserPrincipal) authentication.getPrincipal()).getUser().getId();
         }
+        return null;
+    }
+
+    private boolean isCurrentUserAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            return "admin".equalsIgnoreCase(((UserPrincipal) authentication.getPrincipal()).getUser().getRole());
+        }
+        return false;
+    }
+
+    public List<RentalApplication> getApplications(String customerId, String propertyId) {
+        String currentUserId = getCurrentUserId();
+        if (!isCurrentUserAdmin()) {
+            if (customerId != null && !customerId.equals(currentUserId)) {
+                throw new AccessDeniedException("You are not authorized to view applications for other users");
+            }
+            return rentalAppRepo.findByCustomerId(currentUserId);
+        }
+
+        // Admin path
+        if (customerId != null) {
+            // Find properties owned by this admin
+            List<String> ownedPropertyIds = propertyRepo.findByOwnerId(currentUserId).stream()
+                    .map(Property::getId)
+                    .collect(Collectors.toList());
+            if (ownedPropertyIds.isEmpty()) {
+                return new ArrayList<>();
+            }
+            return rentalAppRepo.findByCustomerId(customerId).stream()
+                    .filter(a -> ownedPropertyIds.contains(a.getPropertyId()))
+                    .collect(Collectors.toList());
+        }
+
         if (propertyId != null) {
+            Optional<Property> prop = propertyRepo.findById(propertyId);
+            if (prop.isEmpty() || !currentUserId.equals(prop.get().getOwnerId())) {
+                return new ArrayList<>();
+            }
             return rentalAppRepo.findByPropertyId(propertyId);
         }
-        return rentalAppRepo.findAll();
+
+        List<String> ownedPropertyIds = propertyRepo.findByOwnerId(currentUserId).stream()
+                .map(Property::getId)
+                .collect(Collectors.toList());
+
+        if (ownedPropertyIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return rentalAppRepo.findByPropertyIdIn(ownedPropertyIds);
     }
 
 
     public Optional<RentalApplication> getById(String id) {
-        return rentalAppRepo.findById(id);
+        Optional<RentalApplication> appOpt = rentalAppRepo.findById(id);
+        if (appOpt.isPresent()) {
+            String currentUserId = getCurrentUserId();
+            RentalApplication application = appOpt.get();
+
+            if (isCurrentUserAdmin()) {
+                Optional<Property> prop = propertyRepo.findById(application.getPropertyId());
+                if (prop.isEmpty() || !currentUserId.equals(prop.get().getOwnerId())) {
+                    throw new AccessDeniedException("You are not authorized to view this application");
+                }
+            } else {
+                if (!currentUserId.equals(application.getCustomerId())) {
+                    throw new AccessDeniedException("You are not authorized to view this application");
+                }
+            }
+        }
+        return appOpt;
     }
 
 
     public RentalApplication submitApplication(RentalApplication application) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null) {
+            application.setCustomerId(currentUserId);
+        }
+
         application.setId(UUID.randomUUID().toString().substring(0, 8));
         application.setAppliedAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         application.setStatus("under_review");
@@ -80,10 +155,15 @@ public class ApplicationService {
                     .build();
             notificationRepo.save(customerNotif);
 
+            String propertyOwnerId = "1";
+            if (propOpt.isPresent() && propOpt.get().getOwnerId() != null) {
+                propertyOwnerId = propOpt.get().getOwnerId();
+            }
+
             // Admin notification
             Notification adminNotif = Notification.builder()
                     .id(UUID.randomUUID().toString().substring(0, 8))
-                    .userId("1")
+                    .userId(propertyOwnerId)
                     .title("New Application Received")
                     .message("New rental application submitted by " + customerName + " for property \"" + propertyTitle + "\".")
                     .type("info")
@@ -106,6 +186,14 @@ public class ApplicationService {
         }
 
         RentalApplication application = appOpt.get();
+        if (isCurrentUserAdmin()) {
+            String currentUserId = getCurrentUserId();
+            Optional<Property> prop = propertyRepo.findById(application.getPropertyId());
+            if (prop.isPresent() && !currentUserId.equals(prop.get().getOwnerId())) {
+                throw new AccessDeniedException("You do not own the property for this application");
+            }
+        }
+
         if (status != null) {
             application.setStatus(status);
         }
@@ -161,10 +249,15 @@ public class ApplicationService {
                     .build();
             notificationRepo.save(customerNotif);
 
+            String propertyOwnerId = "1";
+            if (propOpt.isPresent() && propOpt.get().getOwnerId() != null) {
+                propertyOwnerId = propOpt.get().getOwnerId();
+            }
+
             // Admin notification
             Notification adminNotif = Notification.builder()
                     .id(UUID.randomUUID().toString().substring(0, 8))
-                    .userId("1")
+                    .userId(propertyOwnerId)
                     .title("Application Status Changed")
                     .message("The application from " + customerName + " for \"" + propertyTitle + "\" has been marked as: " + statusLabel + ".")
                     .type("info")
@@ -181,8 +274,21 @@ public class ApplicationService {
 
 
     public boolean deleteApplication(String id) {
-        if (!rentalAppRepo.existsById(id)) {
+        Optional<RentalApplication> appOpt = rentalAppRepo.findById(id);
+        if (appOpt.isEmpty()) {
             return false;
+        }
+
+        String currentUserId = getCurrentUserId();
+        if (isCurrentUserAdmin()) {
+            Optional<Property> prop = propertyRepo.findById(appOpt.get().getPropertyId());
+            if (prop.isEmpty() || !currentUserId.equals(prop.get().getOwnerId())) {
+                throw new AccessDeniedException("You are not authorized to delete this application");
+            }
+        } else {
+            if (!currentUserId.equals(appOpt.get().getCustomerId())) {
+                throw new AccessDeniedException("You are not authorized to delete this application");
+            }
         }
         rentalAppRepo.deleteById(id);
         return true;

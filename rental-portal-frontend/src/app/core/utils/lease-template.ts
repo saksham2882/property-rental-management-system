@@ -5,7 +5,8 @@ import { Property } from '../models/property-model';
 export function generateLeaseAgreement(
   app: RentalApplication,
   formValues: { startDate: string; endDate: string; monthlyRent: number; deposit: number; conditions: string },
-  property: Property | undefined
+  property: Property | undefined,
+  adminName?: string
 ): string {
 
   const startStr = new Date(formValues.startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -32,7 +33,7 @@ export function generateLeaseAgreement(
 
       <h3 style="text-align: center; color: var(--primary); font-weight: 850; margin-bottom: 28px; text-transform: uppercase; letter-spacing: 0.08em; border-bottom: 2px solid var(--border); padding-bottom: 12px;">Residential Lease Agreement</h3>
       
-      <p style="text-align: justify; margin-bottom: 16px;">This Residential Lease Agreement ("Agreement") is made and entered into on this <strong>${startStr}</strong>, by and between the Landlord, <strong>RentEase Administration</strong>, acting as the authorized property management partner on behalf of the registered property owner, and the Tenant, <strong>${app.applicantName}</strong> (having contact coordinates: Email: <strong>${app.applicantEmail}</strong>, Phone: <strong>${app.applicantPhone || 'N/A'}</strong>).</p>
+      <p style="text-align: justify; margin-bottom: 16px;">This Residential Lease Agreement ("Agreement") is made and entered into on this <strong>${startStr}</strong>, by and between the Landlord, <strong>${adminName || 'RentEase Administration'}</strong>, acting as the authorized property management partner on behalf of the registered property owner, and the Tenant, <strong>${app.applicantName}</strong> (having contact coordinates: Email: <strong>${app.applicantEmail}</strong>, Phone: <strong>${app.applicantPhone || 'N/A'}</strong>).</p>
 
       <p style="margin-bottom: 24px;">WHEREAS, Landlord is the administrator of the residential property described below and desires to lease the Premises to Tenant, and Tenant desires to lease the Premises from Landlord under the terms and covenants set forth herein:</p>
 

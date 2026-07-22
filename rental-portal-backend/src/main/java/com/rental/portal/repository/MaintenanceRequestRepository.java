@@ -8,4 +8,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface MaintenanceRequestRepository extends MongoRepository<MaintenanceRequest, String> {
 
     List<MaintenanceRequest> findByTenantId(String tenantId);
+    List<MaintenanceRequest> findByPropertyIdIn(List<String> propertyIds);
 }

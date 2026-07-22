@@ -12,4 +12,8 @@ public interface RentRepository extends MongoRepository<Rent, String> {
     List<Rent> findByStatus(String status);
 
     List<Rent> findByTenantIdAndStatus(String tenantId, String status);
+
+    List<Rent> findByLeaseIdIn(List<String> leaseIds);
+
+    List<Rent> findByLeaseIdInAndStatus(List<String> leaseIds, String status);
 }

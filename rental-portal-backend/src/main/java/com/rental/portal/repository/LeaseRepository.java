@@ -8,4 +8,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface LeaseRepository extends MongoRepository<Lease, String> {
 
     List<Lease> findByTenantId(String tenantId);
+    List<Lease> findByPropertyIdIn(List<String> propertyIds);
 }

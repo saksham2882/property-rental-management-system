@@ -30,6 +30,7 @@ export class PropertyService {
     if (filters.minRent !== undefined) params = params.set('rentMin', filters.minRent.toString());
     if (filters.maxRent !== undefined) params = params.set('rentMax', filters.maxRent.toString());
     if (filters.search) params = params.set('search', filters.search);
+    if (filters.ownerId) params = params.set('ownerId', filters.ownerId);
     return this.api.get<Property[]>(this.apiPath, { params });
   }
 
