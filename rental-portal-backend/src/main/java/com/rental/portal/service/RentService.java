@@ -139,8 +139,12 @@ public class RentService {
 
 
     public Rent createRent(Rent rent) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to create rent invoices. Please sign up.");
+        }
+
         if (isCurrentUserAdmin()) {
-            String currentUserId = getCurrentUserId();
             Optional<Lease> leaseOpt = leaseRepository.findById(rent.getLeaseId());
 
             if (leaseOpt.isPresent()) {
@@ -175,6 +179,11 @@ public class RentService {
 
 
     public Optional<Rent> updateRent(String id, Rent statusData) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to update rent records. Please sign up.");
+        }
+
         Optional<Rent> rentOpt = rentRepository.findById(id);
         if (rentOpt.isEmpty()) {
             return Optional.empty();
@@ -182,7 +191,6 @@ public class RentService {
 
         Rent rent = rentOpt.get();
         if (isCurrentUserAdmin()) {
-            String currentUserId = getCurrentUserId();
             Optional<Lease> leaseOpt = leaseRepository.findById(rent.getLeaseId());
             
             if (leaseOpt.isPresent()) {
@@ -200,6 +208,11 @@ public class RentService {
 
 
     public Optional<Rent> payRentMock(String id) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to perform rent payments. Please sign up.");
+        }
+
         Optional<Rent> rentOpt = rentRepository.findById(id);
         if (rentOpt.isEmpty()) {
             return Optional.empty();
@@ -220,6 +233,11 @@ public class RentService {
 
 
     public Map<String, Object> initiateRazorpayOrder(String id) throws Exception {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to perform rent payments. Please sign up.");
+        }
+
         Optional<Rent> rentOpt = rentRepository.findById(id);
         if (rentOpt.isEmpty()) {
             throw new ResourceNotFoundException("Rent record not found");
@@ -257,6 +275,11 @@ public class RentService {
 
 
     public Rent verifyRazorpayPayment(String id, Map<String, String> payload) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to perform rent payments. Please sign up.");
+        }
+        
         Optional<Rent> rentOpt = rentRepository.findById(id);
         if (rentOpt.isEmpty()) {
             throw new ResourceNotFoundException("Rent record not found");

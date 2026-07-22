@@ -6,6 +6,11 @@ export const login = createAction(
   props<{ email: string; password: string }>()
 );
 
+export const loginAsGuest = createAction(
+  '[Auth] Login As Guest',
+  props<{ role: string }>()
+);
+
 export const loginSuccess = createAction(
   '[Auth] Login Success',
   props<{ token: string; user: User }>()

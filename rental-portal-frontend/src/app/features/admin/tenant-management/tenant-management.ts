@@ -9,6 +9,7 @@ import { UserService } from '../../../core/services/user-service';
 import { User } from '../../../core/models/user-model';
 import { Lease } from '../../../core/models/lease-model';
 import { TenantTableListComponent } from './components/tenant-list/tenant-list';
+import { selectCurrentUser } from '../../../store/auth/auth.selectors';
 
 @Component({
   selector: 'app-tenant-management',
@@ -25,6 +26,7 @@ export class TenantManagementComponent implements OnInit, OnDestroy {
 
   leases$ = this.store.select(selectAllLeases);
   loading$ = this.store.select(selectLeasesLoading);
+  currentUser$ = this.store.select(selectCurrentUser);
 
   tenants: User[] = [];
   leases: Lease[] = [];
@@ -33,12 +35,21 @@ export class TenantManagementComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.store.dispatch(loadLeases({}));
 
-    this.userService.getAllUsers('customer').pipe(
-      delay(0),
-      takeUntil(this.destroy$)
-    ).subscribe(list => {
-      this.tenants = [...list];
-      this.cdr.markForCheck();
+    this.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
+      if (user) {
+        const isGuestAdmin = user.id?.startsWith('guest-');
+        this.userService.getAllUsers('customer').pipe(
+          delay(0),
+          takeUntil(this.destroy$)
+        ).subscribe(list => {
+          if (isGuestAdmin) {
+            this.tenants = list.filter(u => u.id?.startsWith('guest-'));
+          } else {
+            this.tenants = [...list];
+          }
+          this.cdr.markForCheck();
+        });
+      }
     });
 
     this.leases$.pipe(

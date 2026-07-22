@@ -59,6 +59,21 @@
     </button>
   </form>
 
+  <div class="guest-divider">
+    <span class="divider-text">Or Explore Without Account</span>
+  </div>
+
+  <div class="flex gap-4" style="margin-top: 8px;">
+    <button type="button" (click)="onGuestLogin('customer')" class="btn btn-outline flex-1">
+      <app-icon name="user" size="md"></app-icon>
+      <span>Guest Customer</span>
+    </button>
+    <button type="button" (click)="onGuestLogin('admin')" class="btn btn-outline flex-1" >
+      <app-icon name="building" size="md"></app-icon>
+      <span>Guest Landlord</span>
+    </button>
+  </div>
+
   <div class="footer">
     Don't have an account?
     <a routerLink="/auth/register" class="link">Sign Up</a>

@@ -16,4 +16,8 @@ export class AuthService {
   register(userData: Partial<User>): Observable<{ token: string; user: User }> {
     return this.api.post<{ token: string; user: User }>('/auth/register', userData);
   }
+
+  loginAsGuest(role: string): Observable<{ token: string; user: User }> {
+    return this.api.post<{ token: string; user: User }>(`/auth/guest?role=${role}`, {});
+  }
 }
