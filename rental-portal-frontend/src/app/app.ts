@@ -10,10 +10,14 @@ import { loadUserFromStorage } from './store/auth/auth.actions';
 import { loadNotifications } from './store/notifications/notifications.actions';
 import { User } from './core/models/user-model';
 import { LoadingSpinnerComponent } from './shared/components/loading-spinner/loading-spinner';
+import { CommonModule } from '@angular/common';
+import { ModalComponent } from './shared/components/modal/modal';
+import { IconComponent } from './shared/components/icon/icon';
+import { GuestModalService } from './core/services/guest-modal-service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Navbar, Footer, NgxSonnerToaster, LoadingSpinnerComponent],
+  imports: [RouterOutlet, Navbar, Footer, NgxSonnerToaster, LoadingSpinnerComponent, CommonModule, ModalComponent, IconComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -24,8 +28,18 @@ export class App implements OnInit {
   showNavbar = signal(true);
 
   public readonly loaderService = inject(LoaderService);
+  public readonly guestModalService = inject(GuestModalService);
   private store = inject(Store);
   private router = inject(Router);
+
+  onCloseGuestModal(): void {
+    this.guestModalService.close();
+  }
+
+  navigateToAuth(path: string): void {
+    this.guestModalService.close();
+    this.router.navigate([path]);
+  }
 
   ngOnInit(): void {
     const savedTheme = localStorage.getItem('theme') || 'light';

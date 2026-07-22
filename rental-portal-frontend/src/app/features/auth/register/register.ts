@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../../shared/components/icon/icon';
 import { selectAuthLoading, selectAuthError } from '../../../store/auth/auth.selectors';
-import { register } from '../../../store/auth/auth.actions';
+import { register, loginAsGuest } from '../../../store/auth/auth.actions';
 
 @Component({
   selector: 'app-register',
@@ -148,5 +148,9 @@ export class RegisterComponent implements OnInit {
     
     delete userData.confirmPassword;
     this.store.dispatch(register({ userData }));
+  }
+
+  onGuestLogin(role: string): void {
+    this.store.dispatch(loginAsGuest({ role }));
   }
 }

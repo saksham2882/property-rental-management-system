@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../../shared/components/icon/icon';
 import { selectAuthLoading, selectAuthError } from '../../../store/auth/auth.selectors';
-import { login } from '../../../store/auth/auth.actions';
+import { login, loginAsGuest } from '../../../store/auth/auth.actions';
 
 @Component({
   selector: 'app-login',
@@ -38,5 +38,9 @@ export class LoginComponent {
     }
     const { email, password } = this.loginForm.value;
     this.store.dispatch(login({ email, password }));
+  }
+
+  onGuestLogin(role: string): void {
+    this.store.dispatch(loginAsGuest({ role }));
   }
 }

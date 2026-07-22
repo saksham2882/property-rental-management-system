@@ -40,4 +40,14 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
+    @PostMapping("/guest")
+    public ResponseEntity<?> loginAsGuest(@RequestParam String role) {
+        try {
+            AuthResponse response = authService.loginAsGuest(role);
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
+    }
 }

@@ -40,6 +40,26 @@ export class AuthEffects {
     )
   );
 
+  loginAsGuest$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.loginAsGuest),
+      switchMap(({ role }) =>
+        this.authService.loginAsGuest(role).pipe(
+          map((res) => {
+            localStorage.setItem('auth-token', res.token);
+            localStorage.setItem('rental_user', JSON.stringify(res.user));
+            this.toast.success(`Logged in as Guest ${role === 'admin' ? 'Landlord' : 'Customer'}!`);
+            return AuthActions.loginSuccess({ token: res.token, user: res.user });
+          }),
+          catchError((err) => {
+            const msg = err.error?.message || err.message || 'Guest login failed';
+            return of(AuthActions.loginFailure({ error: msg }));
+          })
+        )
+      )
+    )
+  );
+
   loginSuccess$ = createEffect(
     () =>
       this.actions$.pipe(

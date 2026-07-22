@@ -133,6 +133,55 @@
   cursor: not-allowed;
 }
 
+.guest-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0 15px 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.guest-divider::before,
+.guest-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1.5px solid var(--border);
+}
+
+.guest-divider:not(:empty)::before {
+  margin-right: .5em;
+}
+
+.guest-divider:not(:empty)::after {
+  margin-left: .5em;
+}
+
+.btn-outline {
+  background: transparent !important;
+  color: var(--text) !important;
+  border: 1.5px solid var(--border) !important;
+  box-shadow: none;
+  font-weight: 600;
+  padding: 10px 16px !important;
+  border-radius: 8px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  height: 40px;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background: var(--bg-2) !important;
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+  transform: translateY(-1px);
+}
+
 @media (max-width: 575px) {
   .card {
     width: 100% !important;

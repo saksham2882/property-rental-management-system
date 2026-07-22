@@ -121,6 +121,9 @@ public class ApplicationService {
 
     public RentalApplication submitApplication(RentalApplication application) {
         String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to submit rental applications. Please sign up.");
+        }
         if (currentUserId != null) {
             application.setCustomerId(currentUserId);
         }
@@ -180,6 +183,10 @@ public class ApplicationService {
 
 
     public Optional<RentalApplication> updateStatus(String id, String status) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to update application status. Please sign up.");
+        }
         Optional<RentalApplication> appOpt = rentalAppRepo.findById(id);
         if (appOpt.isEmpty()) {
             return Optional.empty();
@@ -187,7 +194,6 @@ public class ApplicationService {
 
         RentalApplication application = appOpt.get();
         if (isCurrentUserAdmin()) {
-            String currentUserId = getCurrentUserId();
             Optional<Property> prop = propertyRepo.findById(application.getPropertyId());
             if (prop.isPresent() && !currentUserId.equals(prop.get().getOwnerId())) {
                 throw new AccessDeniedException("You do not own the property for this application");
@@ -274,12 +280,14 @@ public class ApplicationService {
 
 
     public boolean deleteApplication(String id) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to delete applications. Please sign up.");
+        }
         Optional<RentalApplication> appOpt = rentalAppRepo.findById(id);
         if (appOpt.isEmpty()) {
             return false;
         }
-
-        String currentUserId = getCurrentUserId();
         if (isCurrentUserAdmin()) {
             Optional<Property> prop = propertyRepo.findById(appOpt.get().getPropertyId());
             if (prop.isEmpty() || !currentUserId.equals(prop.get().getOwnerId())) {

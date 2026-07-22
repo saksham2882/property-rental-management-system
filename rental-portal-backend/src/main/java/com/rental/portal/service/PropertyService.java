@@ -121,13 +121,16 @@ public class PropertyService {
 
 
     public Property createProperty(Property property) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to create properties. Please sign up.");
+        }
+
         property.setId(UUID.randomUUID().toString().substring(0, 8));
         property.setPostedAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         if (property.getAvailable() == null) {
             property.setAvailable(true);
         }
-
-        String currentUserId = getCurrentUserId();
         if (currentUserId != null) {
             property.setOwnerId(currentUserId);
             userRepository.findById(currentUserId).ifPresent(u -> property.setOwnerName(u.getName()));
@@ -137,13 +140,16 @@ public class PropertyService {
 
 
     public Optional<Property> updateProperty(String id, Property updateData) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to update properties. Please sign up.");
+        }
         Optional<Property> propOpt = propertyRepository.findById(id);
         if (propOpt.isEmpty()) {
             return Optional.empty();
         }
 
         Property property = propOpt.get();
-        String currentUserId = getCurrentUserId();
         if (currentUserId != null && !currentUserId.equals(property.getOwnerId())) {
             throw new AccessDeniedException("You do not own this property");
         }
@@ -169,12 +175,14 @@ public class PropertyService {
 
 
     public boolean deleteProperty(String id) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to delete properties. Please sign up.");
+        }
         Optional<Property> propOpt = propertyRepository.findById(id);
         if (propOpt.isEmpty()) {
             return false;
         }
-
-        String currentUserId = getCurrentUserId();
         if (currentUserId != null && !currentUserId.equals(propOpt.get().getOwnerId())) {
             throw new AccessDeniedException("You do not own this property");
         }

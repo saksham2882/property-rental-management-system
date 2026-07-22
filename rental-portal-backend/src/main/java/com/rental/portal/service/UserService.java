@@ -3,7 +3,11 @@ package com.rental.portal.service;
 import com.rental.portal.model.User;
 import com.rental.portal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import com.rental.portal.security.UserPrincipal;
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +20,21 @@ public class UserService {
     private UserRepository userRepository;
 
 
+    private String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            return ((UserPrincipal) authentication.getPrincipal()).getUser().getId();
+        }
+        return null;
+    }
+
     public List<User> getAllUsers(String role) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            return userRepository.findByRole("customer").stream()
+                    .filter(u -> u.getId() != null && u.getId().startsWith("guest-"))
+                    .collect(java.util.stream.Collectors.toList());
+        }
         if (role != null) {
             return userRepository.findByRole(role);
         }
@@ -32,6 +50,9 @@ public class UserService {
     }
 
     public Optional<User> updateUserProfile(String id, User updateData) {
+        if (id != null && id.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to update profiles. Please sign up.");
+        }
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
             return Optional.empty();
@@ -54,6 +75,9 @@ public class UserService {
 
 
     public boolean addToWishlist(String userId, String propertyId) {
+        if (userId != null && userId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to modify wishlist. Please sign up.");
+        }
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
             return false;
@@ -71,6 +95,9 @@ public class UserService {
 
 
     public boolean removeFromWishlist(String userId, String propertyId) {
+        if (userId != null && userId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to modify wishlist. Please sign up.");
+        }
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty()) {
             return false;

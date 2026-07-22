@@ -36,6 +36,14 @@ public class MaintenanceService {
     @Autowired
     private UserRepository userRepo;
 
+    private String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            return ((UserPrincipal) authentication.getPrincipal()).getUser().getId();
+        }
+        return null;
+    }
+
 
     public List<MaintenanceRequest> getRequests(String tenantId) {
 
@@ -87,6 +95,11 @@ public class MaintenanceService {
 
 
     public MaintenanceRequest submitRequest(MaintenanceRequest request) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to submit maintenance tickets. Please sign up.");
+        }
+
         request.setId(UUID.randomUUID().toString().substring(0, 8));
         request.setRaisedAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         request.setStatus("pending");
@@ -149,6 +162,11 @@ public class MaintenanceService {
 
 
     public Optional<MaintenanceRequest> updateRequest(String id, MaintenanceRequest updateData) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new AccessDeniedException("Guest users are not allowed to update maintenance tickets. Please sign up.");
+        }
+
         Optional<MaintenanceRequest> reqOpt = maintenanceRequestRepo.findById(id);
         if (reqOpt.isEmpty()) {
             return Optional.empty();
