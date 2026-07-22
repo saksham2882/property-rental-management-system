@@ -138,8 +138,11 @@ public class LeaseService {
 
 
     public Lease createLease(Lease lease) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new org.springframework.security.access.AccessDeniedException("Guest users are not allowed to create lease agreements. Please sign up.");
+        }
         if (isCurrentUserAdmin()) {
-            String currentUserId = getCurrentUserId();
             propertyRepository.findById(lease.getPropertyId()).ifPresent(property -> {
                 if (!currentUserId.equals(property.getOwnerId())) {
                     throw new AccessDeniedException("You do not own this property");
@@ -171,6 +174,10 @@ public class LeaseService {
 
 
     public Optional<Lease> updateLease(String id, Lease updateData) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new org.springframework.security.access.AccessDeniedException("Guest users are not allowed to update lease agreements. Please sign up.");
+        }
         Optional<Lease> leaseOpt = leaseRepository.findById(id);
         if (leaseOpt.isEmpty()) {
             return Optional.empty();
@@ -178,7 +185,6 @@ public class LeaseService {
 
         Lease lease = leaseOpt.get();
         if (isCurrentUserAdmin()) {
-            String currentUserId = getCurrentUserId();
             propertyRepository.findById(lease.getPropertyId()).ifPresent(property -> {
                 if (!currentUserId.equals(property.getOwnerId())) {
                     throw new AccessDeniedException("You do not own this property");
@@ -198,13 +204,16 @@ public class LeaseService {
 
 
     public Optional<Lease> signLease(String id, String signatureBase64) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId != null && currentUserId.startsWith("guest-")) {
+            throw new org.springframework.security.access.AccessDeniedException("Guest users are not allowed to sign lease agreements. Please sign up.");
+        }
         Optional<Lease> leaseOpt = leaseRepository.findById(id);
         if (leaseOpt.isEmpty()) {
             return Optional.empty();
         }
 
         Lease lease = leaseOpt.get();
-        String currentUserId = getCurrentUserId();
         if (!currentUserId.equals(lease.getTenantId())) {
             throw new AccessDeniedException("You are not authorized to sign this lease");
         }

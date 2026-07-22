@@ -16,4 +16,29 @@
   @if (loaderService.loading()) {
     <app-loading-spinner [overlay]="true"></app-loading-spinner>
   }
+
+  <app-modal [isOpen]="(guestModalService.showModal$ | async) || false" title="Unlock Full Access" size="sm" (close)="onCloseGuestModal()">
+    <div class="guest-modal-body">
+      <div class="modal-icon">
+        <app-icon name="lock" size="lg"></app-icon>
+      </div>
+
+      <h4 class="modal-title">Explore Beyond Limitations</h4>
+      <p class="modal-desc">
+        Guest accounts are read-only. Create a free account or login to list properties, submit applications, manage leases, and pay rents!
+      </p>
+
+      <div class="modal-actions">
+        <button (click)="navigateToAuth('/auth/register')" class="btn btn-submit modal-signup-btn">
+          <app-icon name="plus" size="sm"></app-icon>
+          <span>Sign Up Now</span>
+        </button>
+        <button (click)="navigateToAuth('/auth/login')" class="btn btn-outline modal-login-btn">
+          <app-icon name="key" size="sm"></app-icon>
+          <span>Log In</span>
+        </button>
+      </div>
+    </div>
+    
+  </app-modal>
 </div>

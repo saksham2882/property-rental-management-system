@@ -94,4 +94,33 @@ public class AuthService {
         result.setPassword(null);
         return new AuthResponse(jwt, result);
     }
+
+    public AuthResponse loginAsGuest(String role) {
+        String email = "guest." + role.toLowerCase() + "@rentease.com";
+        String password = "GuestPassword123!";
+        
+        if (!userRepository.existsByEmail(email)) {
+            User guest = new User();
+            guest.setId("guest-" + role.toLowerCase().substring(0, 3));
+            guest.setEmail(email);
+            guest.setPassword(passwordEncoder.encode(password));
+            guest.setName("Guest " + (role.equalsIgnoreCase("admin") ? "Landlord" : "Customer"));
+            guest.setRole(role.toLowerCase());
+            guest.setPhone("0000000000");
+            guest.setCreatedAt(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+            userRepository.save(guest);
+        }
+        
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(email, password)
+        );
+        
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = tokenProvider.generateToken(authentication);
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        User user = userPrincipal.getUser();
+        user.setPassword(null);
+        
+        return new AuthResponse(jwt, user);
+    }
 }
