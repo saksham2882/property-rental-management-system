@@ -183,89 +183,6 @@ flowchart TD
 
 ---
 
-## 🔄 Core System Workflows
-
-### Lease E-Signature Workflow
-Automates the transition from approved application variables to binding tenant agreements:
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Tenant as Tenant / Applicant
-    actor Admin as System Admin
-    participant AppAPI as Application Service
-    participant LeaseAPI as Lease Service
-
-    Tenant->>AppAPI: POST /applications (Payload: Income, Move-in, Cloudinary documents)
-    Note over AppAPI: Status initialized to 'under_review'
-    Admin->>AppAPI: GET /applications (Audit list of requests)
-    Admin->>AppAPI: PATCH /applications/{id} (payload: {status: 'approved'})
-    
-    Admin->>LeaseAPI: POST /leases (payload: Lease periods, deposit, rent, conditions, contractText)
-    Note over LeaseAPI: Lease entry created (Status: pending_signature)
-    
-    Tenant->>LeaseAPI: GET /leases?tenantId={id} (Check pending sign requests)
-    Tenant->>LeaseAPI: POST /leases/{id}/sign (payload: signatureImage as base64 data URL)
-    Note over LeaseAPI: Signature updated, status becomes 'active', & auto-creates Rent invoices (Deposit & First Month)
-    LeaseAPI-->>Tenant: Lease Active (Returns active lease object)
-```
-
-### Razorpay Rent Payment Lifecycle
-Process showing the step-by-step transaction flow from ordering to invoice generation:
-
-```mermaid
-flowchart TD
-    Start[Invoice Due] -->|"1. POST /rents/{id}/order"| Order["Create Razorpay Order"]
-    Order -->|2. Binds razorpayOrderId| SaveDB["Store Order in DB"]
-    SaveDB -->|3. Checkout Parameters Sent| RenderSDK["Render Razorpay Checkout UI"]
-    RenderSDK -->|4. Complete Transaction| ProcessPayment["Razorpay Gateway Processing"]
-    ProcessPayment -->|"5. Success Payload Returned"| Verify["POST /rents/{id}/verify"]
-    
-    subgraph Signature Validation
-        Verify -->|6. Calculate HMAC-SHA-256| CheckSig{"Signature Valid?"}
-    end
-    
-    CheckSig -->|No| Fail["Return 400 Bad Request"]
-    CheckSig -->|Yes| Settle["Set Rent Status: 'paid' & Binds Transaction Details"]
-    Settle -->|7. Generate Invoices| PdfGen["OpenPDF Renders Receipt Layout"]
-    PdfGen -->|8. Notify User & Admin| Notification["System Alerts Dispatched"]
-```
-
-### Reactive NgRx State Transition Loop
-Outline of the reactive data architecture where state is updated predictably following component actions:
-
-```mermaid
-flowchart TD
-    UI[🖥️ Angular Component] -->|1. Dispatch Action| Action["actions / e.g. loadProperties"]
-    Action -->|2. Triggers| Reducer["reducers / State Redux"]
-    Action -->|2. Intercepts| Effect["effects / Side-Effects"]
-    
-    Effect -->|3. REST API Request| Service["HTTP Core Services"]
-    Service -->|4. Response| Effect
-    Effect -->|5. Success Action| ActionSuccess["actions / loadPropertiesSuccess"]
-    ActionSuccess -->|6. Map New Data| Reducer
-    
-    Reducer -->|7. Update State| Store["State Store"]
-    Store -->|8. Stream Selection| Selector["selectors / Memoized State"]
-    Selector -->|9. Async pipe update| UI
-```
-
-### Maintenance Repair Ticket Lifecycle
-Lifecycle workflow of tenant complaints resolved by administrators:
-
-```mermaid
-flowchart TD
-    Tenant[Tenant / Tenant Panel] -->|1. Raises Ticket / Uploads Images| Raised["Status: raised"]
-    Raised -->|2. Alert Received| Admin["Admin / Ticket Dashboard"]
-    Admin -->|3. Set Work In Progress / Note Added| Processing["Status: in progress"]
-    Processing -->|4. Dispatch Repair Services| Fix["Repair Done / Issue Resolved"]
-    Fix -->|5. Resolve Ticket / Admin Note Saved| Resolved["Status: resolved"]
-    Resolved -->|6. Logs Date & Time| Completed["Audit Log Saved"]
-    Completed -->|7. Notify Tenant| Notify["Status: resolved notification sent"]
-```
-
----
-
 ## 🗄️ Database Schema & ERD Overview
 
 The database structure is document-oriented (MongoDB), mapping to the following schemas:
@@ -606,20 +523,37 @@ FRONTEND_URL=http://localhost:4200
 
 ---
 
-### Backend Service Setup
+### 🐳 Setup Option A: Unified Containerized Setup (Docker Compose - Recommended)
+You can build and spin up the database, backend services, and frontend client in a single command. 
 
-#### Prerequisites
+Ensure you have created the parent `.env` file and installed Docker, then execute the following in the root workspace folder:
+```bash
+# Build and launch all services in the background
+docker-compose up -d --build
+```
+This starts the following:
+* **MongoDB Container:** Exposed on port `27017` with persistent volume mappings.
+* **Spring Boot API Backend:** Running on host port `8080`.
+* **Angular Web App:** Running on host port `4200`.
+
+---
+
+### 🛠️ Setup Option B: Manual Local Setup (Step-by-Step)
+
+#### 1. Backend Service Setup
+
+##### Prerequisites
 - **JDK 21** or later installed.
 - **Apache Maven 3.8+** (or use the included `./mvnw` script wrapper).
 - **MongoDB** instance running locally on port `27017` (or Atlas cloud link).
 
-#### 1. Spin up a Local Database (Docker Compose option)
+##### Database Launch (Fast Docker option)
 To run a local MongoDB container in the background, navigate to the parent workspace and run:
 ```bash
-docker-compose up -d
+docker run -d -p 27017:27017 --name local-mongo mongo:latest
 ```
 
-#### 2. Build and Start the Spring Boot App
+##### Build and Start Backend
 Navigate to the backend module folder:
 ```bash
 cd rental-portal-backend
@@ -644,31 +578,24 @@ MongoDB Connection Status: SUCCESSFUL!
 
 The server will boot on port `8080`.
 
----
+#### 2. Frontend Web App Setup
 
-### Frontend Web App Setup
-
-#### Prerequisites
+##### Prerequisites
 - **Node.js** v20+ or v22+ installed.
 - **npm** (comes packaged with Node).
 
-#### 1. Install Dependencies
+##### Install Dependencies & Start
 Navigate to the frontend module folder:
 ```bash
 cd rental-portal-frontend
 npm install
 ```
 
-#### 2. Adjust API Endpoint Targets
-The client app communicates directly with `http://localhost:8080`. To change the target API URL, modify `baseUrl` inside the configuration:
-* Target config path: `src/app/core/global/api-service.ts`
-
-#### 3. Run Development Server
 Start the local webpack development server:
 ```bash
 npm start
 ```
-The application compiles. Open [http://localhost:4200](http://localhost:4200) in your web browser.
+The application compiles and runs on [http://localhost:4200](http://localhost:4200). (Communicates with the backend API target configured in `src/app/core/global/api-service.ts`).
 
 ---
 

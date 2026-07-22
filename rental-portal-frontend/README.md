@@ -357,6 +357,25 @@ The application will launch and compile. Navigate to [http://localhost:4200](htt
 
 ---
 
+### 🐳 Running via Docker
+
+#### 1. Compile & Build the Image
+To build the Docker image using the Node.js development server:
+```bash
+docker build -t rental-portal-frontend:latest .
+```
+
+#### 2. Run the Container
+```bash
+docker run -d \
+  -p 4200:4200 \
+  --name rental-frontend \
+  rental-portal-frontend:latest
+```
+Open [http://localhost:4200](http://localhost:4200) to view the application served through the Dockerized Node.js container.
+
+---
+
 ## Production Build & Tests
 
 ### Production Compilation
