@@ -16,6 +16,7 @@ export interface Property {
   amenities: string[];
   images: string[];
   ownerId: string;
+  ownerName?: string;
   postedAt: string;
   averageRating?: number;
   totalReviews?: number;
@@ -32,4 +33,5 @@ export interface PropertyFilter {
   search?: string;
   favoritesOnly?: boolean;
   favoriteIds?: string[];
+  ownerId?: string;
 }

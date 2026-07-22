@@ -59,11 +59,11 @@
     <span class="manager-label">Property Manager</span>
     <div class="manager-details">
       <div class="avatar">
-        {{ 'RentEase Admin'.substring(0,1).toUpperCase() }}
+        {{ (property.ownerName || 'RentEase Admin').substring(0,1).toUpperCase() }}
       </div>
       <div class="manager-text">
-        <span class="manager-name">RentEase Admin</span>
-        <span class="manager-role">Corporate Manager</span>
+        <span class="manager-name">{{ property.ownerName || 'RentEase Admin' }}</span>
+        <span class="manager-role">Property Landlord</span>
       </div>
     </div>
   </div>

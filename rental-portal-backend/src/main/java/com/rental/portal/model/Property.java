@@ -40,6 +40,7 @@ public class Property {
     private List<String> images = new ArrayList<>();
     
     private String ownerId;
+    private String ownerName;
     private String postedAt;
 
     @Builder.Default

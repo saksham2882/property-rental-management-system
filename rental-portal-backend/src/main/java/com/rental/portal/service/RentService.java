@@ -9,6 +9,11 @@ import com.rental.portal.exception.ResourceNotFoundException;
 import com.rental.portal.model.*;
 import com.rental.portal.repository.*;
 import com.rental.portal.util.PdfGenerationService;
+import com.rental.portal.security.UserPrincipal;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -54,12 +60,69 @@ public class RentService {
     private String razorpayKeySecret;
 
 
+    private String getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            return ((UserPrincipal) authentication.getPrincipal()).getUser().getId();
+        }
+        return null;
+    }
+
+    private boolean isCurrentUserAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            return "admin".equalsIgnoreCase(((UserPrincipal) authentication.getPrincipal()).getUser().getRole());
+        }
+        return false;
+    }
+
+    private void validateRentAccess(Rent rent) {
+        String currentUserId = getCurrentUserId();
+        if (currentUserId == null) {
+            throw new AccessDeniedException("Authentication required");
+        }
+        if (isCurrentUserAdmin()) {
+            Optional<Lease> leaseOpt = leaseRepository.findById(rent.getLeaseId());
+            if (leaseOpt.isPresent()) {
+                Optional<Property> prop = propertyRepository.findById(leaseOpt.get().getPropertyId());
+                if (prop.isEmpty() || !currentUserId.equals(prop.get().getOwnerId())) {
+                    throw new AccessDeniedException("You are not authorized to access this rent record");
+                }
+            } else {
+                throw new AccessDeniedException("Lease not found for rent record");
+            }
+        } else {
+            if (!currentUserId.equals(rent.getTenantId())) {
+                throw new AccessDeniedException("You are not authorized to access this rent record");
+            }
+        }
+    }
+
     public List<Rent> getRents(String tenantId, String status) {
         if (tenantId != null && status != null) {
             return rentRepository.findByTenantIdAndStatus(tenantId, status);
         }
         if (tenantId != null) {
             return rentRepository.findByTenantId(tenantId);
+        }
+        if (isCurrentUserAdmin()) {
+            String currentUserId = getCurrentUserId();
+            List<String> ownedPropertyIds = propertyRepository.findByOwnerId(currentUserId).stream()
+                    .map(Property::getId)
+                    .collect(Collectors.toList());
+            if (ownedPropertyIds.isEmpty()) {
+                return new ArrayList<>();
+            }
+            List<String> leaseIds = leaseRepository.findByPropertyIdIn(ownedPropertyIds).stream()
+                    .map(Lease::getId)
+                    .collect(Collectors.toList());
+            if (leaseIds.isEmpty()) {
+                return new ArrayList<>();
+            }
+            if (status != null) {
+                return rentRepository.findByLeaseIdInAndStatus(leaseIds, status);
+            }
+            return rentRepository.findByLeaseIdIn(leaseIds);
         }
         if (status != null) {
             return rentRepository.findByStatus(status);
@@ -69,11 +132,24 @@ public class RentService {
 
 
     public Optional<Rent> getRentById(String id) {
-        return rentRepository.findById(id);
+        Optional<Rent> rentOpt = rentRepository.findById(id);
+        rentOpt.ifPresent(this::validateRentAccess);
+        return rentOpt;
     }
 
 
     public Rent createRent(Rent rent) {
+        if (isCurrentUserAdmin()) {
+            String currentUserId = getCurrentUserId();
+            Optional<Lease> leaseOpt = leaseRepository.findById(rent.getLeaseId());
+
+            if (leaseOpt.isPresent()) {
+                Optional<Property> prop = propertyRepository.findById(leaseOpt.get().getPropertyId());
+                if (prop.isPresent() && !currentUserId.equals(prop.get().getOwnerId())) {
+                    throw new AccessDeniedException("You do not own the property for this lease");
+                }
+            }
+        }
         rent.setId(UUID.randomUUID().toString().substring(0, 8));
         if (rent.getStatus() == null) {
             rent.setStatus("pending");
@@ -105,6 +181,17 @@ public class RentService {
         }
 
         Rent rent = rentOpt.get();
+        if (isCurrentUserAdmin()) {
+            String currentUserId = getCurrentUserId();
+            Optional<Lease> leaseOpt = leaseRepository.findById(rent.getLeaseId());
+            
+            if (leaseOpt.isPresent()) {
+                Optional<Property> prop = propertyRepository.findById(leaseOpt.get().getPropertyId());
+                if (prop.isPresent() && !currentUserId.equals(prop.get().getOwnerId())) {
+                    throw new AccessDeniedException("You do not own the property for this lease");
+                }
+            }
+        }
         if (statusData.getStatus() != null) rent.setStatus(statusData.getStatus());
         if (statusData.getPaidDate() != null) rent.setPaidDate(statusData.getPaidDate());
 
@@ -119,6 +206,7 @@ public class RentService {
         }
 
         Rent rent = rentOpt.get();
+        validateRentAccess(rent);
         if ("paid".equalsIgnoreCase(rent.getStatus())) {
             throw new ConflictException("Rent already settled");
         }
@@ -138,6 +226,7 @@ public class RentService {
         }
 
         Rent rent = rentOpt.get();
+        validateRentAccess(rent);
         if ("paid".equalsIgnoreCase(rent.getStatus())) {
             throw new ConflictException("Rent already settled");
         }
@@ -174,6 +263,7 @@ public class RentService {
         }
 
         Rent rent = rentOpt.get();
+        validateRentAccess(rent);
         String razorpayPaymentId = payload.get("razorpay_payment_id");
         if (razorpayPaymentId == null) {
             razorpayPaymentId = payload.get("razorpayPaymentId");
@@ -224,9 +314,19 @@ public class RentService {
                                         .build();
         notificationRepository.save(customerNotif);
  
+        String propertyOwnerId = "1";
+        Optional<Lease> leaseOpt = leaseRepository.findById(rent.getLeaseId());
+        
+        if (leaseOpt.isPresent()) {
+            Optional<Property> propOpt = propertyRepository.findById(leaseOpt.get().getPropertyId());
+            if (propOpt.isPresent() && propOpt.get().getOwnerId() != null) {
+                propertyOwnerId = propOpt.get().getOwnerId();
+            }
+        }
+
         Notification adminNotif = Notification.builder()
                                     .id(UUID.randomUUID().toString().substring(0, 8))
-                                    .userId("1")
+                                    .userId(propertyOwnerId)
                                     .title("Rent Paid (Razorpay)")
                                     .message("Tenant " + tenantName + " has paid rent of INR " + rent.getAmount() + " for " + rent.getMonth() + " via Razorpay. Txn ID: " + razorpayPaymentId)
                                     .type("success")
@@ -246,6 +346,7 @@ public class RentService {
         }
 
         Rent rent = rentOpt.get();
+        validateRentAccess(rent);
         User tenant = userRepository.findById(rent.getTenantId()).orElse(null);
         Lease lease = leaseRepository.findById(rent.getLeaseId()).orElse(null);
         Property property = null;

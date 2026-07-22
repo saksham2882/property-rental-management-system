@@ -66,14 +66,15 @@ export class PropertyManagementComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
-    this.store.dispatch(loadProperties({}));
+    this.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
+      if (user) {
+        this.userId = user.id;
+        this.store.dispatch(loadProperties({ filters: { ownerId: user.id } }));
+      }
+    });
 
     this.properties$.pipe(takeUntil(this.destroy$)).subscribe(list => {
       this.properties = list;
-    });
-
-    this.currentUser$.pipe(takeUntil(this.destroy$)).subscribe(user => {
-      if (user) this.userId = user.id;
     });
   }
 

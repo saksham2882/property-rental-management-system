@@ -29,5 +29,6 @@ public class Lease {
     private String propertyTitle;
     private String signatureImage;
     private String contractText;
+    private String landlordName;
     private String createdAt;
 }
