@@ -1,5 +1,4 @@
-# 🏢 RentEase Portal - Full-Stack Property Rental Management System
-> **Enterprise-Grade Real Estate Platform for Tenants, Landlords, and Property Administrators**
+# RentEase Portal - Property Rental Management System
 
 [![Angular Version](https://img.shields.io/badge/Angular-21-red?style=for-the-badge&logo=angular)](https://angular.dev/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-brightgreen?style=for-the-badge&logo=springboot)](https://spring.io/projects/spring-boot)
@@ -72,8 +71,6 @@ Below are high-fidelity user interface previews demonstrating the application's 
 </details>
 </div>
 
-<br>
-
 <div style="overflow-x: auto;">
 <details>
 <summary><b>Click to expand: Landlord / Admin Panel Walkthrough</b></summary>
@@ -134,7 +131,7 @@ graph TD
 
 The platform dynamically adjusts UI capabilities based on active JSON Web Token roles.
 
-| Feature Module | 👤 Guest User | 🔑 Tenant (Customer) | 🏢 Landlord / Admin |
+| Feature Module | Guest User | Tenant (Customer) | Landlord / Admin |
 | :--- | :---: | :---: | :---: |
 | **Interactive Landing Page** | Read Only | View & Navigate | Dashboard Access |
 | **Property Directory Catalog** | Browse / Filter | Search / Add to Wishlist | Full Inventory Control |
@@ -154,7 +151,7 @@ The platform dynamically adjusts UI capabilities based on active JSON Web Token 
 
 The following diagrams illustrate system capabilities separated by role to ensure clean, readable layout structures:
 
-### 👤 Guest User Use Cases
+### Guest User Use Cases
 ```mermaid
 flowchart TD
     Guest[👤 Guest User] -->|Explore| Landing["Landing Page / Hero Section"]
@@ -162,7 +159,7 @@ flowchart TD
     Guest -->|Register & Login| Auth["Authentication & Registration Module"]
 ```
 
-### 🔑 Tenant (Customer) Use Cases
+### Tenant (Customer) Use Cases
 ```mermaid
 flowchart TD
     Customer[🔑 Authenticated Tenant] -->|Apply| AppSubmit["Submit Rental Application"]
@@ -173,7 +170,7 @@ flowchart TD
     Customer -->|Preferences| Profile["Manage Profile & Wishlist"]
 ```
 
-### 🏢 Landlord / Admin Use Cases
+### Landlord / Admin Use Cases
 ```mermaid
 flowchart TD
     Admin[🏢 Administrator / Landlord] -->|Monitor| AdminDash["Analytics & Revenue Graphs"]
@@ -449,7 +446,7 @@ erDiagram
 
 ---
 
-## 🔌 Detailed REST API Endpoints Summary
+## Detailed REST API Endpoints Summary
 
 ### Authentication Module (`/auth`)
 <div style="overflow-x: auto;">
@@ -573,7 +570,7 @@ erDiagram
 
 ---
 
-## 🚀 Local Environment Setup & Configuration
+## Local Environment Setup & Configuration
 
 ### Parent Workspace Setup (.env)
 The project is configured to read credential imports directly from a parent folder configuration. In the **root workspace directory** (parent folder of both backend and frontend projects), create a `.env` file containing the environment settings shown below:
@@ -679,8 +676,8 @@ The application compiles. Open [http://localhost:4200](http://localhost:4200) in
 
 For module-specific architecture summaries, component breakdowns, dependencies configurations, and execution guides, explore the sub-project documentation modules:
 
-* 🏢 **Backend API Engine Documentation:** See [README.md](rental-portal-backend/README.md)
-* 💻 **Frontend Web Client Documentation:** See [README.md](rental-portal-frontend/README.md)
+* **Backend API Engine Documentation:** See [README.md](rental-portal-backend/README.md)
+* **Frontend Web Client Documentation:** See [README.md](rental-portal-frontend/README.md)
 
 ---
 
