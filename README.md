@@ -93,7 +93,7 @@ Below are high-fidelity user interface previews demonstrating the application's 
 </div>
 
 <div style="overflow-x: auto;">
-<details open>
+<details>
 <summary><b>Click to expand: Landlord / Admin Panel Walkthrough</b></summary>
 <br>
 
