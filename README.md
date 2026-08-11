@@ -40,7 +40,7 @@ RentEase Portal is a comprehensive, full-stack real estate platform engineered t
 Below are high-fidelity user interface previews demonstrating the application's key modules, designed with a premium HSL color palette, custom glassmorphism, responsive dashboard grids, and complete light/dark theme adaptation.
 
 ### Main UI Preview
-![Dashboard Preview]()
+![Preview](/docs/screenshots/banner.png)
 
 > **Looking for screenshots?**
 > Please check out the `/docs/screenshots/` folder in this repository for complete visual steps. Click to expand the sections below to see previews of the Tenant and Landlord workspaces.
@@ -50,37 +50,81 @@ Below are high-fidelity user interface previews demonstrating the application's 
 <summary><b>Click to expand: Tenant (Customer) Panel Walkthrough</b></summary>
 <br>
 
+* **Tenant Dashboard Overview:** Comprehensive customer control panel displaying active rentals, quick navigation, and recent activities.
+  ![Tenant Dashboard](docs/screenshots/user/user_dashboard.png)
+
 * **Property Filter Catalog:** Browse listings with real-time budget sliders, room filters, locality searches, and availability toggles.
-  ![Property Catalog](https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80)
-* **Property Detail & Reviews:** Extended descriptions, geographic details, reviews, and average rating computations.
-  ![Property Detail](https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80)
+  ![Property Catalog](docs/screenshots/user/catalog.png)
+
+* **Property Detail & Reviews:** Extended descriptions, geographic details, photos, reviews, and average rating computations.
+  ![Property Detail](docs/screenshots/user/property-show.png)
+
 * **Rental Application Form:** Onboarding portal where applicants upload document proof (managed by Cloudinary) and state move-in preferences.
-  ![Rental Application](https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?auto=format&fit=crop&w=800&q=80)
-* **Digital Lease signing:** Interactive base64 canvas capture designed for tenants to read contract text and attach sign proof.
-  ![Lease Agreement](https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80)
+  ![Rental Application](docs/screenshots/user/application-rental.png)
+
+* **My Applications Tracker:** Real-time application tracker showing under-review, approved, or rejected statuses.
+  ![My Applications](docs/screenshots/user/my-application.png)
+
+* **Digital Lease Canvas E-Signature:** Interactive base64 canvas capture designed for tenants to read contract text and attach sign proof.
+  ![Digital Lease Signing](docs/screenshots/user/lease-sign.png)
+
+* **Lease Agreement View:** Digital lease contract terms, payment schedules, and verified signatures.
+  ![Lease Agreement](docs/screenshots/user/my-lease.png)
+
 * **Rent Transactions Ledger:** Monthly ledger checking payment histories and triggering online Razorpay checkouts.
-  ![Rent Tracking](https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80)
-* **Submit Maintenance Request:** Reporting portal for issues with photograph attachments.
-  ![Maintenance Request](https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?auto=format&fit=crop&w=800&q=80)
+  ![Rent Ledger](docs/screenshots/user/rent-pay.png)
+
+* **Razorpay Payment Gateway:** Secure modal payment checkout integration supporting card, UPI, and net banking options.
+  ![Razorpay Payment](docs/screenshots/user/payment.png)
+
+* **PDF Invoice Receipt:** Custom generated styled PDF receipt file available for immediate download post-payment.
+  ![Payment Receipt](docs/screenshots/user/receipt.png)
+
+* **Submit Maintenance Request:** Reporting portal for issues with photograph attachments and urgency levels.
+  ![Maintenance Request](docs/screenshots/user/maintenance.png)
+
+* **Maintenance Ticket Tracking:** Real-time status tracking for raised issues with administrative notes.
+  ![Maintenance Ticket](docs/screenshots/user/ticket.png)
+
+* **Notification Alerts Center:** Personal alert feed for application updates, rent invoices, and general announcements.
+  ![Notification Center](docs/screenshots/user/notification.png)
 
 </details>
 </div>
 
 <div style="overflow-x: auto;">
-<details>
+<details open>
 <summary><b>Click to expand: Landlord / Admin Panel Walkthrough</b></summary>
 <br>
 
-* **Property Inventory Management:** Listing creator, editor, and availability toggles.
-  ![Property Listings](https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80)
-* **Tenant Applications Verification:** Document inspector and status resolver.
-  ![Application Reviews](https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80)
-* **Lease Agreements Registry:** Database tracker of active leases and signed contracts.
-  ![Tenant Leases](https://images.unsplash.com/photo-1549923746-c502d488f3aa?auto=format&fit=crop&w=800&q=80)
-* **Rent Billing Scheduler:** Manual invoice creator for tenant accounts.
-  ![Rent Invoicing](https://images.unsplash.com/photo-1563013544-824ae1d704d3?auto=format&fit=crop&w=800&q=80)
-* **Maintenance Issues Resolution:** Dispatched contractor coordinator and note logger.
-  ![Issue Resolutions](https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=800&q=80)
+* **Admin Dashboard & Analytics:** High-level platform metrics showing revenue summaries, maintenance metrics, and listing counts.
+  ![Admin Dashboard](docs/screenshots/admin/admin-dashboard.png)
+
+* **Property Inventory Management:** Listing creator, editor, status monitoring, and availability toggles.
+  ![Property Inventory](docs/screenshots/admin/listing.png)
+
+* **Add / Edit Property Listing:** Comprehensive property listing creator with photo uploads, amenities checklist, and pricing details.
+  ![Add Property Listing](docs/screenshots/admin/add_new.png)
+
+* **Tenant Applications Verification:** Document inspector and status resolver to approve or reject rental requests.
+  ![Application Review](docs/screenshots/admin/app-review.png)
+
+* **Lease Agreements Generator:** Custom lease contract generator to set terms, monthly rent, deposit, and condition clauses.
+  ![Lease Generator](docs/screenshots/admin/lease-generate.png)
+
+* **Tenant Registry & Directory:** Database tracker of registered tenant profiles, contact details, and assigned properties.
+  ![Tenant Directory](docs/screenshots/admin/tenant.png)
+
+* **Rent Billing & Invoicing Management:** Manual invoice creator, payment tracking, and ledger management for tenant accounts.
+  ![Rent Management](docs/screenshots/admin/rent-management.png)
+
+* **Maintenance Issues Resolution:** Dispatched contractor coordinator, ticket status updates, and note logger.
+  ![Maintenance Management](docs/screenshots/admin/maintenance-management.png)
+
+* **System Broadcast & Announcements:** Platform-wide messaging tool to dispatch system notifications and maintenance updates.
+  ![System Broadcast](docs/screenshots/admin/broadcast.png)
+
+
 
 </details>
 </div>
