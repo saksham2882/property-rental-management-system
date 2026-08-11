@@ -40,7 +40,7 @@ RentEase Portal is a comprehensive, full-stack real estate platform engineered t
 Below are high-fidelity user interface previews demonstrating the application's key modules, designed with a premium HSL color palette, custom glassmorphism, responsive dashboard grids, and complete light/dark theme adaptation.
 
 ### Main UI Preview
-![Preview](/docs/screenshots/banner.png)
+![Preview](docs/screenshots/banner.png)
 
 > **Looking for screenshots?**
 > Please check out the `/docs/screenshots/` folder in this repository for complete visual steps. Click to expand the sections below to see previews of the Tenant and Landlord workspaces.
